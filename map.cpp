@@ -171,6 +171,9 @@ void Map::drawTile(QPainter *qp, Tiletype type, int x, int y, QPoint pixelOffset
     case WATER:
         pixmap = Pixmap(WATER);
         break;
+    case SNOW:
+        pixmap = Pixmap(SNOW);
+        break;
     }
 
     if(pixmap == NULL)
