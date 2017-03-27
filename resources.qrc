@@ -1,0 +1,11 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>maps/map.fml</file>
+    <file>images/playah.png</file>
+    <file>images/watertile.png</file>
+    <file>images/boxtile.png</file>
+    <file>images/walltile.png</file>
+    <file>images/floortile.png</file>
+    <file>images/targettile.png</file>
+</qresource>
+</RCC>
