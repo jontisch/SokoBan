@@ -24,20 +24,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += global.cpp \
+    game.cpp \
     main.cpp \
         mainwindow.cpp \
     map.cpp \
     move_stack.cpp \
-    menuitem.cpp \
-    game.cpp
+    menuitem.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += game.h \
+    mainwindow.h \
     map.h \
     move_stack.h \
     global.h \
     menuitem.h \
-    collection.h \
-    game.h
+    collection.h
 
 FORMS    += mainwindow.ui
 

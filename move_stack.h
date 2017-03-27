@@ -18,11 +18,12 @@ public:
 
         struct
         {
-            int x;
-            int y;
-            Tiletype previousType;
-        } changedTiles[2];
-        int nChangedTiles;
+            int fromX;
+            int fromY;
+            int toX;
+            int toY;
+        } movedBox;
+        bool movedABox;
     };
 
     void pushMove(Move move);

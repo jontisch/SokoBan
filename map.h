@@ -24,17 +24,29 @@ public:
     ~Map();
 
     void setTile(int x, int y, Tiletype Type);
-    Tiletype getTile(int x, int y);
+    Tiletype getTileType(int x, int y);
     void draw(QPainter * qp, QRect rect);
     void movePlayer(int dx, int dy, bool force = false);
     void revertMove();
+    void addBox(int x, int y);
+    void removeBox(int x, int y);
     QPoint pixelToTile(int x, int y, QRect renderRect);
     void saveMap(QString mapName);
 
 protected:
 
 private:
-    Tiletype *tiles;
+
+    struct Tile
+    {
+        Tiletype type;
+        bool hasBox;
+        bool isTarget;
+    };
+
+    void drawTile(QPainter *qp, Tiletype type, int x, int y, QPoint pixelOffset, int tileSize);
+
+    Tile *tiles;
     Tiletype *referenceTiles;
     int _width;
     int _height;

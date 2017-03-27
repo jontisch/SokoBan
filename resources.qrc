@@ -7,5 +7,6 @@
     <file>images/walltile.png</file>
     <file>images/floortile.png</file>
     <file>images/targettile.png</file>
+    <file>images/snowtile.png</file>
 </qresource>
 </RCC>

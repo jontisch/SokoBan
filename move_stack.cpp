@@ -34,7 +34,7 @@ void MoveStack::pushMove(int playerDX,
 
     move.playerDX = playerDX;
     move.playerDY = playerDY;
-    move.nChangedTiles = 0;
+    move.movedABox = false;
 
     pushMove(move);
 }
@@ -51,11 +51,10 @@ bool MoveStack::revertMove(Map *map)
 
     Move *move = &moves[nMoves-1];
     map->movePlayer(-move->playerDX, -move->playerDY, true);
-    for(int i = 0; i < move->nChangedTiles; i++)
+    if(move->movedABox)
     {
-        map->setTile(move->changedTiles[i].x,
-                     move->changedTiles[i].y,
-                     move->changedTiles[i].previousType);
+        map->removeBox(move->movedBox.toX, move->movedBox.toY);
+        map->addBox(move->movedBox.fromX, move->movedBox.fromY);
     }
     nMoves--;
 

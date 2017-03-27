@@ -79,7 +79,7 @@ void MainWindow::initMenus()
 {
     _mainMenu = new Menu("Main Menu");
 
-    _mainMenu->addMenuItem(new MenuAction("Resume", _mainMenu,[&]{}, true));
+    _mainMenu->addMenuItem(new MenuAction("Resume", _mainMenu,NULL, true));
 
     Menu *playMenu = new Menu("Play Game", _mainMenu, "Play game");
     _mainMenu->addMenuItem(playMenu);
@@ -101,7 +101,7 @@ void MainWindow::initMenus()
         }
         closedir(dir);
     }else{
-        qDebug() << "Couldn't read path";
+        qDebug() << "Couldn't read path" << appPath.toStdString().c_str();
     }
     _activeMenu = _mainMenu;
 }
