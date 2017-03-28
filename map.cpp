@@ -4,18 +4,17 @@
 void Map::setup()
 {
     _moveStack = new MoveStack();
-
 }
 
 
-Map::Map(int width, int height, int playerX, int playerY): _width(width), _height(height), _player(playerX,playerY), _movesMade(0)
+Map::Map(int width, int height, int playerX, int playerY): _width(width), _height(height), _player(playerX,playerY), _movesMade(0), _startTile(playerX, playerY)
 {
     tiles = (Tile *)malloc(sizeof(Tile)* width * height);
 
     setup();
 }
 
-Map::Map(QString filename): _movesMade(0){
+Map::Map(QString filename): _movesMade(0), _startTile(0, 0){
     QFile mapFile(filename);
 
 
@@ -32,63 +31,94 @@ Map::Map(QString filename): _movesMade(0){
 
     int y = 0;
     int c = 0;
+    bool metaFound = false;
     while(!in.atEnd()) {
         QString line = in.readLine();
         if(y == 0) _width = line.length();
+        if(line.length() < 1) break;
+        if(line.at(0) == '#')
+        {
+            metaFound = true;
+            break;
+        }
         for(int x = 0; x < line.length(); x++)
         {
             const char character = line.at(x).toLatin1();
             int integer = character - 48;
-            Tiletype type = (Tiletype)integer;
-            bool hasBox = false;
-            bool isTarget = false;
-            if(type == START){
-                _player = QPoint(x,y);
-                type = FLOOR;
-            }
-            else if(type == TARGET)
-            {
-                type = FLOOR;
-                isTarget = true;
-                targetsLeft++;
-            }
-            else if(type == BOX)
-            {
-                type = FLOOR;
-                hasBox = true;
-            }
+
+            TileType type = (TileType)integer;
+            if(!IsValidTileType(type)) type = FLOOR;
+            temporaryTiles[c].flags = NO_TILE_FLAGS;
             temporaryTiles[c].type = type;
-            temporaryTiles[c].hasBox = hasBox;
-            temporaryTiles[c].isTarget = isTarget;
 
             c++;
         }
         y++;
+    }
+    if(metaFound)
+    {
+        while(!in.atEnd())
+        {
+            QString line = in.readLine();
+            QStringList xSplit = line.split('x');
+            QString xString = xSplit.at(0);
+            if(xSplit.count() < 2)
+            {
+                qDebug() << "Invalid map meta data";
+                break;
+            }
+            QStringList colonSplit = xSplit.at(1).split(':');
+            QString yString = colonSplit.at(0);
+            if(colonSplit.count() < 2)
+            {
+                qDebug() << "Invalid map meta data";
+                break;
+            }
+            QString flagsString = colonSplit.at(1);
+
+            //TODO Not safe...
+            int x = atoi(xString.toLatin1().data());
+            int y = atoi(yString.toLatin1().data());
+            long flags = atol(flagsString.toLatin1().data());
+
+
+            temporaryTiles[x + _width * y].flags = flags;
+            if(flags & IS_TARGET)
+            {
+                targetsLeft++;
+            }
+            if(flags & IS_START)
+            {
+                _player = QPoint(x,y);
+                _startTile = QPoint(x, y);
+            }
+        }
     }
 
     _height = y;
     tiles = (Tile *)malloc(sizeof(Tile)*_width*_height);
     memcpy(tiles, temporaryTiles, sizeof(Tile)*_width*_height);
 
-    referenceTiles = (Tiletype *)malloc(sizeof(Tiletype)*_width*_height);
-    memcpy(referenceTiles, temporaryTiles, sizeof(Tiletype)*_width*_height);
+    /*
+    referenceTiles = (TileType *)malloc(sizeof(TileType)*_width*_height);
+    memcpy(referenceTiles, temporaryTiles, sizeof(TileType)*_width*_height);
     for(int i = 0; i < _width * _height; i++)
     {
         if(referenceTiles[i] == BOX) referenceTiles[i] = FLOOR;
     }
-
+    */
 
     free(temporaryTiles);
     mapFile.close();
 
     setup();
 }
-void Map::setTile(int x, int y, Tiletype Type)
+void Map::setTile(int x, int y, TileType Type)
 {
     tiles[x+_width*y].type = Type;
 }
 
-Tiletype Map::getTileType(int x, int y)
+TileType Map::getTileType(int x, int y)
 {
     return tiles[ x + _width * y ].type;
 }
@@ -141,38 +171,33 @@ void Map::saveMap(QString filename)
         }
         out << "\n";
     }
+    out << "#\n";
+    for(int y = 0; y < _height; y++){
+        for(int x = 0; x < _width; x++){
+            long flags = tiles[x + _width * y].flags;
+            if(flags != NO_TILE_FLAGS)
+            {
+                out << x << "x" << y << ":" << flags << "\n";
+            }
+        }
+    }
     mapFile.close();
 }
 
-void Map::drawTile(QPainter *qp, Tiletype type, int x, int y, QPoint pixelOffset, int tileSize)
+void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x, int y, QPoint pixelOffset, int tileSize)
 {
     int size = 0;
     QBrush brush;
-    QPixmap *pixmap = NULL;
-    switch(type)
+    QPixmap *pixmap = Pixmap(pixmapIdentifier);
+    switch(pixmapIdentifier)
     {
-    case FLOOR:
-        pixmap = Pixmap(FLOOR);
-        break;
-    case BOX:
+    case PIXMAP_BOX:
         size = 4;
-        pixmap = Pixmap(BOX);
         break;
-    case WALL:
+    case PIXMAP_WALL:
         size = 8;
-        pixmap = Pixmap(WALL);
         break;
-    case TARGET:
-        pixmap = Pixmap(TARGET);
-        break;
-    case START:
-        pixmap = Pixmap(START);
-        break;
-    case WATER:
-        pixmap = Pixmap(WATER);
-        break;
-    case SNOW:
-        pixmap = Pixmap(SNOW);
+    default:
         break;
     }
 
@@ -201,16 +226,16 @@ void Map::draw(QPainter *qp, QRect rect)
     for(int x = 0; x < _width;x++){
         for(int y = 0; y < _height; y++){
 
-            if(tiles[x + _width * y].hasBox)
+            if(tiles[x + _width * y].flags & HAS_BOX)
             {
-                drawTile(qp, BOX, x, y, pixelOffset, tileSize);
+                drawTilePixmap(qp, PIXMAP_BOX, x, y, pixelOffset, tileSize);
             }
             else
             {
-                drawTile(qp, tiles[x + _width * y].type, x, y, pixelOffset, tileSize);
-                if(tiles[x + _width * y].isTarget)
+                drawTilePixmap(qp, PixmapForTileType(tiles[x + _width * y].type), x, y, pixelOffset, tileSize);
+                if(tiles[x + _width * y].flags & IS_TARGET)
                 {
-                    drawTile(qp, TARGET, x, y, pixelOffset, tileSize);
+                    drawTilePixmap(qp, PIXMAP_TARGET, x, y, pixelOffset, tileSize);
                 }
             }
 
@@ -224,16 +249,36 @@ void Map::draw(QPainter *qp, QRect rect)
     }
 }
 
-void Map::addBox(int x, int y)
+void Map::addTileFlag(int x, int y, TileFlag flag)
 {
-    tiles[x + _width * y].hasBox = true;
-    if(tiles[x + _width * y].isTarget) targetsLeft--;
+    bool hadBox = tiles[x + _width * y].flags & HAS_BOX;
+
+    if(flag == HAS_BOX && !hadBox && tiles[x + _width * y].flags & IS_TARGET)
+    {
+        targetsLeft--;
+    }
+    else if(flag == IS_START)
+    {
+        removeTileFlag(_startTile.x(), _startTile.y(), IS_START);
+    }
+    tiles[x + _width * y].flags |= flag;
 }
 
-void Map::removeBox(int x, int y)
+void Map::removeTileFlag(int x, int y, TileFlag flag)
 {
-    tiles[x + _width * y].hasBox = false;
-    if(tiles[x + _width * y].isTarget) targetsLeft++;
+    bool hadBox = tiles[x + _width * y].flags & HAS_BOX;
+    if(flag == HAS_BOX && hadBox && tiles[x + _width * y].flags & IS_TARGET)
+    {
+        targetsLeft++;
+    }
+    tiles[x + _width * y].flags &= ~(flag);
+}
+
+bool Map::tileIsWalkable(int x, int y)
+{
+    if(x < 0 || y < 0 || x >= _width || y >= _height) return false;
+    TileType type = getTileType(x, y);
+    return (type != WALL && type != WATER);
 }
 
 void Map::movePlayer(int dx, int dy, bool force)
@@ -254,19 +299,19 @@ void Map::movePlayer(int dx, int dy, bool force)
     int newX = _player.x()+dx;
     int newY = _player.y()+dy;
     int nextTile = newX + newY* _width;
-    if(tiles[nextTile].type != WALL){
+    if(tileIsWalkable(newX, newY)){
 
         bool canWalk = true;
 
-        if(tiles[nextTile].hasBox)
+        if(tiles[nextTile].flags & HAS_BOX)
         {
             int boxX = newX;
             int boxY = newY;
             int boxNewX = boxX + dx;
             int boxNewY = boxY + dy;
 
-            if(tiles[boxNewX+_width*boxNewY].type == WALL ||
-               tiles[boxNewX+_width*boxNewY].hasBox)
+            if(!tileIsWalkable(boxNewX, boxNewY) ||
+               tiles[boxNewX+_width*boxNewY].flags & HAS_BOX)
             {
                 canWalk = false;
             }
@@ -278,8 +323,8 @@ void Map::movePlayer(int dx, int dy, bool force)
                 move.movedBox.toX = boxNewX;
                 move.movedBox.toY = boxNewY;
 
-                addBox(boxNewX,boxNewY);
-                removeBox(boxX, boxY);
+                addTileFlag(boxNewX,boxNewY, HAS_BOX);
+                removeTileFlag(boxX, boxY, HAS_BOX);
             }
         }
 
@@ -294,11 +339,15 @@ void Map::movePlayer(int dx, int dy, bool force)
         }
     }
 
-    qDebug() << targetsLeft << "targets left";
     if(targetsLeft <= 0)
     {
         qDebug() << "Victory!" << _movesMade << " moves made";
     }
+}
+
+void Map::setPlayerPosition(int x, int y)
+{
+    _player = QPoint(x, y);
 }
 
 
@@ -310,6 +359,6 @@ void Map::revertMove()
 Map::~Map()
 {
     free(tiles);
-    free(referenceTiles);
+    //free(referenceTiles);
     delete _moveStack;
 }

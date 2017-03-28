@@ -6,23 +6,23 @@
 
 #define MAP_DIR "/../../SokoBan/SokoBan/maps"
 
-enum Tiletype {
-    FLOOR = 0,
-    BOX = 1,
-    WALL = 2,
-    TARGET = 3,
-    START = 4,
-    WATER = 5,
-    SNOW = 6
+
+enum PixmapIdentifier
+{
+    PIXMAP_FLOOR,
+    PIXMAP_BOX,
+    PIXMAP_WALL,
+    PIXMAP_TARGET,
+    PIXMAP_WATER,
+    PIXMAP_SNOW
 };
-#define N_TILETYPES 7
+#define N_PIXMAPS 6
 
-void initPixmaps();
 
-QPixmap *Pixmap(int index);
+void InitPixmaps();
 
-const char *tileTypeName(Tiletype type);
+QPixmap *Pixmap(PixmapIdentifier index);
 
-void *enlargeMemory(int currentSize, int newSize, void *pointer);
+void *EnlargeMemory(int currentSize, int newSize, void *pointer);
 
 #endif // GLOBAL_H

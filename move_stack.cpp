@@ -53,8 +53,8 @@ bool MoveStack::revertMove(Map *map)
     map->movePlayer(-move->playerDX, -move->playerDY, true);
     if(move->movedABox)
     {
-        map->removeBox(move->movedBox.toX, move->movedBox.toY);
-        map->addBox(move->movedBox.fromX, move->movedBox.fromY);
+        map->removeTileFlag(move->movedBox.toX, move->movedBox.toY, HAS_BOX);
+        map->addTileFlag(move->movedBox.fromX, move->movedBox.fromY, HAS_BOX);
     }
     nMoves--;
 

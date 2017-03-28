@@ -4,59 +4,29 @@
 
 QPixmap **PIXMAPS;
 
-void initPixmaps()
+
+void InitPixmaps()
 {
-    PIXMAPS = (QPixmap **)malloc(sizeof(QPixmap *)*N_TILETYPES);
+    PIXMAPS = (QPixmap **)malloc(sizeof(QPixmap *)*N_PIXMAPS);
 
-    PIXMAPS[WATER] = new QPixmap(":/images/watertile.png");
+    PIXMAPS[PIXMAP_WATER] = new QPixmap(":/images/watertile.png");
 
-    PIXMAPS[FLOOR] = new QPixmap(":/images/floortile.png");
-    PIXMAPS[START] = PIXMAPS[FLOOR];
+    PIXMAPS[PIXMAP_FLOOR] = new QPixmap(":/images/floortile.png");
 
-    PIXMAPS[BOX] = new QPixmap(":/images/boxtile.png");
-    PIXMAPS[WALL] = new QPixmap(":/images/walltile.png");
-    PIXMAPS[TARGET] = new QPixmap(":/images/targettile.png");
+    PIXMAPS[PIXMAP_BOX] = new QPixmap(":/images/boxtile.png");
+    PIXMAPS[PIXMAP_WALL] = new QPixmap(":/images/walltile.png");
+    PIXMAPS[PIXMAP_TARGET] = new QPixmap(":/images/targettile.png");
 
-    PIXMAPS[SNOW] = new QPixmap(":/images/snowtile.png");
+    PIXMAPS[PIXMAP_SNOW] = new QPixmap(":/images/snowtile.png");
 
 }
 
-QPixmap *Pixmap(int index){
-    return PIXMAPS[index];
+QPixmap *Pixmap(PixmapIdentifier ident){
+    return PIXMAPS[ident];
 }
 
-const char *tileTypeName(Tiletype type)
-{
-    switch(type)
-    {
-    case FLOOR:
-        return "Floor";
-        break;
-    case BOX:
-        return "Box";
-        break;
-    case WALL:
-        return "Wall";
-        break;
-    case TARGET:
-        return "Target";
-        break;
-    case START:
-        return "Start";
-        break;
-    case WATER:
-        return "Water";
-        break;
-    case SNOW:
-        return "Snow";
-        break;
-    default:
-        return "Unknown tile type";
-        break;
-    }
-}
 
-void *enlargeMemory(int currentSize, int newSize, void *pointer){
+void *EnlargeMemory(int currentSize, int newSize, void *pointer){
     void *temp = malloc(newSize);
     memcpy(temp, pointer, currentSize);
     free(pointer);

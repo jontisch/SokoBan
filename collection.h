@@ -48,8 +48,8 @@ int Collection<T>::add(T newElement){
     _nElements++;
     if(_nFreeSlots == 0){
         if(_size >= _allocatedMem){
-            elements = (element*)enlargeMemory(sizeof(element)*_allocatedMem, sizeof(element)*_allocatedMem*2, elements);
-            _freeSlots = (int*)enlargeMemory(sizeof(int)*_allocatedMem, sizeof(int)*_allocatedMem*2, _freeSlots);
+            elements = (element*)EnlargeMemory(sizeof(element)*_allocatedMem, sizeof(element)*_allocatedMem*2, elements);
+            _freeSlots = (int*)EnlargeMemory(sizeof(int)*_allocatedMem, sizeof(int)*_allocatedMem*2, _freeSlots);
             _allocatedMem = _allocatedMem*2;
         }
         elements[_size].elem = newElement;
