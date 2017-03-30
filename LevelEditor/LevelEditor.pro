@@ -27,12 +27,14 @@ SOURCES += main.cpp\
         editorwindow.cpp \
     ../map.cpp \
     ../global.cpp \
-    ../move_stack.cpp
+    ../move_stack.cpp \
+    ../tile.cpp
 
 HEADERS  += editorwindow.h \
     ../map.h \
     ../global.h \
-    ../move_stack.h
+    ../move_stack.h \
+    ../tile.h
 
 FORMS    += editorwindow.ui
 

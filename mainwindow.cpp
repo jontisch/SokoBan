@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     _menuVisible = true;
-    initPixmaps();
+    InitPixmaps();
     this->setFixedSize(1024,768);
 
     _game = new Game();

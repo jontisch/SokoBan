@@ -3,6 +3,7 @@
 
 #include "global.h"
 #include "move_stack.h"
+#include "tile.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -23,33 +24,28 @@ public:
     Map(QString filename);
     ~Map();
 
-    void setTile(int x, int y, Tiletype Type);
-    Tiletype getTileType(int x, int y);
+    void setTile(int x, int y, TileType Type);
+    TileType getTileType(int x, int y);
     void draw(QPainter * qp, QRect rect);
     void movePlayer(int dx, int dy, bool force = false);
+    void setPlayerPosition(int x, int y);
     void revertMove();
-    void addBox(int x, int y);
-    void removeBox(int x, int y);
+    void addTileFlag(int x, int y, TileFlag flag);
+    void removeTileFlag(int x, int y, TileFlag flag);
+    bool tileIsWalkable(int x, int y);
     QPoint pixelToTile(int x, int y, QRect renderRect);
     void saveMap(QString mapName);
 
 protected:
 
 private:
-
-    struct Tile
-    {
-        Tiletype type;
-        bool hasBox;
-        bool isTarget;
-    };
-
-    void drawTile(QPainter *qp, Tiletype type, int x, int y, QPoint pixelOffset, int tileSize);
+    void drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x, int y, QPoint pixelOffset, int tileSize);
 
     Tile *tiles;
-    Tiletype *referenceTiles;
+    //TileType *referenceTiles;
     int _width;
     int _height;
+    QPoint _startTile;
     QPoint _player;
     MoveStack *_moveStack;
     int targetsLeft;

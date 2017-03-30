@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
     <file>maps/map.fml</file>
+    <file>maps/map2pointO.fml</file>
     <file>images/playah.png</file>
     <file>images/watertile.png</file>
     <file>images/boxtile.png</file>
