@@ -133,6 +133,7 @@ void EditorWindow::on_load_button_clicked()
                                                     tr("Load map"),
                                                     appPath + "/../../maps/",
                                                     tr("Friendly Map Language Files (*.fml)"));
+    if(filename == NULL) return;
 
     if(_map) delete _map;
     _map = new Map(filename);
