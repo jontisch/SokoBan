@@ -7,14 +7,14 @@ void Map::setup()
 }
 
 
-Map::Map(int width, int height, int playerX, int playerY): _width(width), _height(height), _player(playerX,playerY), _movesMade(0), _startTile(playerX, playerY)
+Map::Map(int width, int height, int playerX, int playerY): _width(width), _height(height), _player(playerX,playerY), _movesMade(0), _startTile(playerX, playerY), _loaded(true)
 {
     tiles = (Tile *)malloc(sizeof(Tile)* width * height);
 
     setup();
 }
 
-Map::Map(QString filename): _movesMade(0), _startTile(0, 0){
+Map::Map(QString filename): _movesMade(0), _startTile(0, 0), _loaded(false){
     QFile mapFile(filename);
 
 
@@ -25,7 +25,7 @@ Map::Map(QString filename): _movesMade(0), _startTile(0, 0){
 
     QTextStream in(&mapFile);
 
-    Tile *temporaryTiles = (Tile *)malloc(sizeof(Tile)*100*100);
+    Tile *temporaryTiles = (Tile *)malloc(sizeof(Tile)*MAX_MAP_SIZE*MAX_MAP_SIZE);
 
     targetsLeft = 0;
 
@@ -112,6 +112,7 @@ Map::Map(QString filename): _movesMade(0), _startTile(0, 0){
     mapFile.close();
 
     setup();
+    _loaded = true;
 }
 void Map::setTile(int x, int y, TileType Type)
 {
@@ -128,7 +129,7 @@ int Map::calculateTileSize(QRect renderRect)
     int tileWidth = renderRect.width()/_width;
     int tileHeight = renderRect.height()/_height;
     int tileSize = (tileWidth > tileHeight) ? tileHeight : tileWidth;
-    while(tileSize % 4 != 0) tileSize--;
+
     return tileSize;
 }
 
@@ -184,6 +185,97 @@ void Map::saveMap(QString filename)
     mapFile.close();
 }
 
+bool Map::loaded()
+{
+    return _loaded;
+}
+
+int Map::width()
+{
+    return _width;
+}
+
+int Map::height()
+{
+    return _height;
+}
+
+void Map::setSize(QSize size)
+{
+    int w = size.width();
+    int h = size.height();
+
+    Tile *tmp = (Tile*)malloc(sizeof(Tile)*w*h);
+    memset(tmp, 0, sizeof(Tile)*w*h);
+
+    Tile *current = tmp;
+    int rowElements = _width;
+    int rowsToCopy = _height;
+    if(w < _width){
+        rowElements = w;
+    }
+    if(h < _height){
+        rowsToCopy = h;
+    }
+
+    for(int i = 0; i < rowsToCopy; i++){
+        memcpy(current, &tiles[i*_width], sizeof(Tile)*rowElements);
+        current += w;
+    }
+    _width = w;
+    _height = h;
+
+    free(tiles);
+    tiles = tmp;
+}
+
+void Map::shiftTiles(Map::TileShiftDir dir)
+{
+    switch(dir){
+    case UP:
+    {
+        Tile *firstRow = (Tile*)malloc(sizeof(Tile)*_width);
+        memcpy(firstRow, tiles, sizeof(Tile)*_width);
+        memcpy(tiles, &tiles[_width], sizeof(Tile)*_width*(_height-1));
+        memcpy(&tiles[_width*(_height-1)], firstRow, sizeof(Tile)*_width);
+        movePlayer(0,-1,true);
+        break;
+    }
+    case DOWN:
+    {
+        Tile *lastRow = (Tile*)malloc(sizeof(Tile)*_width);
+        memcpy(lastRow, &tiles[(_height-1)*_width], sizeof(Tile)*_width);
+        memcpy(&tiles[_width], tiles, sizeof(Tile)*_width*(_height-1));
+        memcpy(tiles, lastRow, sizeof(Tile)*_width);
+        movePlayer(0,1,true);
+        break;
+    }
+    case LEFT:
+    {
+        for(int i = 0; i < _height; i++){
+            Tile first = tiles[i*_width];
+            memcpy(&tiles[i*_width], &tiles[i*_width+1], sizeof(Tile)*(_width-1));
+            tiles[i*_width+_width-1] = first;
+        }
+        movePlayer(-1,0,true);
+        break;
+    }
+    case RIGHT:
+    {
+        for(int i = 0; i < _height; i++){
+            Tile last = tiles[i*_width+_width-1];
+            memcpy(&tiles[i*_width+1], &tiles[i*_width], sizeof(Tile)*(_width-1));
+            tiles[i*_width] = last;
+        }
+        movePlayer(1,0,true);
+        break;
+    }
+    default:
+        break;
+
+    }
+}
+
 void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x, int y, QPoint pixelOffset, int tileSize)
 {
     int size = 0;
@@ -198,9 +290,6 @@ void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x,
         size = 8;
         break;
     default:
-        break;
-    case LAVA:
-        pixmap = Pixmap(LAVA);
         break;
     }
 
@@ -288,8 +377,20 @@ void Map::movePlayer(int dx, int dy, bool force)
 {
     if(force)
     {
-        _player.setX(_player.x()+dx);
-        _player.setY(_player.y()+dy);
+        int newX = _player.x()+dx;
+        int newY = _player.y()+dy;
+        if(newX >= _width){
+            newX = 0;
+        }else if(newX < 0){
+            newX = _width-1;
+        }
+        if(newY >= _height){
+            newY = 0;
+        }else if(newY < 0){
+            newY = _height-1;
+        }
+        _player.setX(newX);
+        _player.setY(newY);
         return;
     }
 

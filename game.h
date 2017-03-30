@@ -15,7 +15,7 @@ public:
 
     bool hasMap();
     void draw(QPainter *painter, QRect renderRect);
-    void loadMap(QString mapFilename);
+    bool loadMap(QString mapFilename);
 private:
     Map *_map;
 };

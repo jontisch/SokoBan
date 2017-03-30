@@ -12,12 +12,13 @@ enum TileFlag {
 #define N_TILEFLAGS 3 //Don't count NO_TILE_FLAGS
 
 enum TileType {
-    FLOOR = 0,
+    WATER = 0,
     WALL = 2,
-    WATER = 5,
-    SNOW = 6
+    FLOOR = 5,
+    SNOW = 6,
+    LAVA = 7
 };
-#define N_TILETYPES 7
+#define N_TILETYPES 8
 
 
 const char *TileTypeName(TileType type);

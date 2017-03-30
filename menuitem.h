@@ -6,6 +6,8 @@
 #include "global.h"
 #include "collection.h"
 #include "game.h"
+#include "menuactiondelegate.h"
+#include "tile.h"
 
 class Menu;
 
@@ -14,10 +16,11 @@ class MenuItem
 public:
     MenuItem(QString text, Menu *ownerMenu, bool visible=true);
     QString getText();
-    bool renderMenuItem(QRect renderRect, QPainter *qp, bool isCurrent);
+    bool renderMenuItem(QRect renderRect, QRect mapRenderRect, QPainter *qp, bool isCurrent);
     virtual Menu *select() = 0;
     Menu *getOwner();
     bool isVisible();
+    void setVisible(bool visible);
 protected:
     QString _text;
     Menu *_ownerMenu;
@@ -37,11 +40,31 @@ public:
     void nextPos(bool forward);
     Menu *menuSelect();
     Menu *select();
+    void setPos(int pos);
+    Map *getMap();
 protected:
     QString _title;
     Collection<MenuItem*> _menuItems;
 private:
+
+    struct MenuRenderingMeasurements
+    {
+        int tileSize;
+        int topPadding;
+        int menuOffset;
+        int itemHeight;
+        int itemWidth;
+        int spacing;
+        int itemX;
+        int headerFontSize;
+        int itemFontSize;
+    };
+
+    QRect calculateItemRenderRect(int index, MenuRenderingMeasurements *m);
+    Menu::MenuRenderingMeasurements calculateRenderingMeasurements(QRect renderRect);
     int _currentPos;
+    Map *_bgMap;
+    void updateMap();
 };
 
 
@@ -50,23 +73,14 @@ private:
 class MenuAction: public MenuItem
 {
 public:
-    MenuAction(QString text, Menu *ownerMenu, void(*action)(), bool visible=true);
+    MenuAction(QString text, Menu *ownerMenu, int action, MenuActionDelegate *delegate, bool visible=true);
     Menu *select();
+
 protected:
-    void(*_action)();
-};
-
-class LoadMapMenuAction: public MenuAction
-{
-public:
-    LoadMapMenuAction(QString text, Menu *ownerMenu, Game *game, QString mapFilename, bool visible=true);
-    Menu *select();
-
+    int _action;
 private:
-    Game *_game;
-    QString _mapFilename;
+    MenuActionDelegate *_delegate;
 };
-
 
 
 

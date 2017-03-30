@@ -1,6 +1,9 @@
 #ifndef MAP_H
 #define MAP_H
 
+
+#define MAX_MAP_SIZE 128
+
 #include "global.h"
 #include "move_stack.h"
 #include "tile.h"
@@ -23,7 +26,7 @@ public:
     Map(int Width, int Height, int playerX, int playerY);
     Map(QString filename);
     ~Map();
-
+    enum TileShiftDir{UP,DOWN,LEFT,RIGHT};
     void setTile(int x, int y, TileType Type);
     TileType getTileType(int x, int y);
     void draw(QPainter * qp, QRect rect);
@@ -34,8 +37,14 @@ public:
     void removeTileFlag(int x, int y, TileFlag flag);
     bool tileIsWalkable(int x, int y);
     QPoint pixelToTile(int x, int y, QRect renderRect);
+    int calculateTileSize(QRect renderRect);
+    QPoint calculatePixelOffset(int tileSize, QRect renderRect);
     void saveMap(QString mapName);
-
+    bool loaded();
+    int width();
+    int height();
+    void setSize(QSize size);
+    void shiftTiles(TileShiftDir dir);
 protected:
 
 private:
@@ -50,9 +59,8 @@ private:
     MoveStack *_moveStack;
     int targetsLeft;
     int _movesMade;
+    bool _loaded;
 
-    int calculateTileSize(QRect renderRect);
-    QPoint calculatePixelOffset(int tileSize, QRect renderRect);
 
     void setup();
 };

@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <assert.h>
 
+
 MenuItem::MenuItem(QString text, Menu *ownerMenu, bool visible):_text(text),_ownerMenu(ownerMenu),_visible(visible){
 
 }
@@ -10,12 +11,11 @@ QString MenuItem::getText(){
     return _text;
 }
 
-bool MenuItem::renderMenuItem(QRect renderRect, QPainter *qp, bool isCurrent)
+bool MenuItem::renderMenuItem(QRect renderRect, QRect mapRenderRect, QPainter *qp, bool isCurrent)
 {
+
     if(_visible){
-        qp->drawText(renderRect,
-                     Qt::AlignHCenter,
-                    QString((isCurrent?"*":"") + _text));
+        qp->drawText(renderRect, Qt::AlignCenter, _text);
     }
     return _visible;
 }
@@ -30,9 +30,16 @@ bool MenuItem::isVisible()
     return _visible;
 }
 
+void MenuItem::setVisible(bool visible)
+{
+    _visible = visible;
+}
+
 
 
 Menu::Menu(QString title, Menu *ownerMenu, QString text, bool visible):_menuItems(8),_title(title), MenuItem((text != NULL)?text:title, ownerMenu, visible), _currentPos(-1){
+    QString appPath = QCoreApplication::applicationDirPath() + MAP_DIR;
+    _bgMap = new Map(QString(appPath + "/menumap.fml"));
 
 }
 
@@ -43,33 +50,26 @@ QString Menu::getTitle()
 
 void Menu::renderMenu(QRect renderRect, QPainter *qp)
 {
-    int headerFontSize = 50;
-    int itemFontSize = 30;
-    int itemOffset = 20;
-    int yOffset = 120;
+    MenuRenderingMeasurements m = calculateRenderingMeasurements(renderRect);
 
 
-    //qp->fillRect(renderRect, QBrush(*Pixmap(WATER)));
-    //Map bgMap(QCoreApplication::applicationDirPath() + QString(MAP_DIR) + "/menumap.fml");
-    //bgMap.draw(qp,renderRect);
+    _bgMap->draw(qp, renderRect);
 
 
 
-    qp->setFont(QFont(QString("sans serif"), headerFontSize, 10));
-    qp->drawText(QRect(renderRect.topLeft(),QPoint(renderRect.right(), yOffset)),Qt::AlignHCenter,_title);
-    qp->setFont(QFont(QString("sans serif"), itemFontSize, 10));
+    qp->setFont(QFont(QString("sans serif"), m.headerFontSize, 10));
+    qp->drawText(QRect(m.itemX,m.menuOffset,m.itemWidth,m.itemHeight),Qt::AlignCenter,_title);
+    qp->setFont(QFont(QString("sans serif"), m.itemFontSize, 10));
+    int c = 0;
     for(int i = 0; i < _menuItems.size(); i++ ){
 
         assert(_menuItems.isValid(i));
-        if((*_menuItems.getPointer(i))->renderMenuItem(QRect(renderRect.x(),
-                                                  renderRect.y()+yOffset,
-                                                  renderRect.width(),
-                                                  itemFontSize+itemOffset),
+
+        if((*_menuItems.getPointer(i))->renderMenuItem(calculateItemRenderRect(c, &m), renderRect,
                                                   qp,
                                                   (_currentPos==i))){
-            yOffset += itemFontSize+itemOffset;
+            c++;
         }
-
     }
 }
 
@@ -90,6 +90,19 @@ void Menu::addMenuItem(MenuItem *item)
 MenuItem *Menu::getSelected()
 {
     return *_menuItems.getPointer(_currentPos);
+}
+
+void Menu::setPos(int pos)
+{
+    _currentPos = pos;
+    MenuItem *nextItem;
+    if(!_menuItems.get(pos, &nextItem) || !nextItem->isVisible()) nextPos(true);
+    else updateMap();
+}
+
+Map *Menu::getMap()
+{
+    return _bgMap;
 }
 
 void Menu::nextPos(bool forward){
@@ -118,6 +131,8 @@ void Menu::nextPos(bool forward){
             counter++;
 
      }
+
+    updateMap();
 }
 
 
@@ -126,31 +141,62 @@ Menu *Menu::select()
     return this;
 }
 
+Menu::MenuRenderingMeasurements Menu::calculateRenderingMeasurements(QRect renderRect)
+{
+    MenuRenderingMeasurements result;
+    result.tileSize = _bgMap->calculateTileSize(renderRect);
+    result.topPadding = _bgMap->calculatePixelOffset(result.tileSize, renderRect).y();
+    result.menuOffset = 2.8*result.tileSize + result.topPadding;
+    result.itemHeight = 3*result.tileSize;
+    result.itemWidth = 10*result.tileSize;
+    result.spacing = result.tileSize;
+    result.itemX = renderRect.x()+renderRect.width()/2-result.itemWidth/2;
+    result.headerFontSize = 1.25*result.tileSize;
+    result.itemFontSize = result.tileSize;
 
+    return result;
+}
 
-MenuAction::MenuAction(QString text, Menu *ownerMenu, void(*action)(), bool visible):MenuItem(text, ownerMenu, visible),_action(action){
+QRect Menu::calculateItemRenderRect(int index, MenuRenderingMeasurements *m)
+{
+    return QRect(m->itemX,
+                 m->menuOffset+(index+1)*(m->itemHeight+m->spacing),
+                 m->itemWidth,
+                 m->itemHeight);
+}
+
+void Menu::updateMap(){
+
+    MenuItem *item;
+    int c = 0;
+    int i = 0;
+    while(_menuItems.get(i, &item))
+    {
+        if(item->isVisible()){
+            QPoint tile(_bgMap->width()/2 - 10/2, 3 + 4*(c+1) + 3/2);
+            if(i == _currentPos){
+                getMap()->addTileFlag(tile.x(), tile.y(), HAS_BOX);
+                getMap()->addTileFlag(tile.x()+9, tile.y(), HAS_BOX);
+            } else {
+                getMap()->removeTileFlag(tile.x(), tile.y(), HAS_BOX);
+                getMap()->removeTileFlag(tile.x()+9, tile.y(), HAS_BOX);
+            }
+            c++;
+
+        }
+        i++;
+    }
+
+}
+
+MenuAction::MenuAction(QString text, Menu *ownerMenu, int action, MenuActionDelegate *delegate, bool visible):MenuItem(text, ownerMenu, visible),_action(action),_delegate(delegate){
 
 
 }
 
 Menu *MenuAction::select()
 {
-    if(_action) _action();
+    _delegate->executeMenuAction(_action);
     return _ownerMenu;
 }
 
-
-
-
-
-
-LoadMapMenuAction::LoadMapMenuAction(QString text, Menu *ownerMenu, Game *game, QString mapFilename, bool visible): MenuAction(text, ownerMenu, NULL, visible), _game(game), _mapFilename(mapFilename)
-{
-
-}
-
-Menu *LoadMapMenuAction::select()
-{
-    _game->loadMap(_mapFilename);
-    return NULL;
-}

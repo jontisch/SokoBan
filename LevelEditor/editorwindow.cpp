@@ -3,6 +3,7 @@
 #include <QListWidgetItem>
 #include <QDebug>
 #include <QFileDialog>
+#include <math.h>
 
 EditorWindow::EditorWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -10,7 +11,9 @@ EditorWindow::EditorWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     InitPixmaps();
-    map = new Map(":/maps/map2pointO.fml");
+    QString appPath = QCoreApplication::applicationDirPath();
+    qDebug() << appPath;
+    _map = new Map(appPath + "/../../maps/menumap.fml");
 
     selectedFlag = HAS_BOX;
     selectedTileType = FLOOR;
@@ -40,6 +43,13 @@ EditorWindow::EditorWindow(QWidget *parent) :
     ui->list_flags->setCurrentRow(flag_row);
 
     mode = SET_TYPE;
+
+    ui->slider_width->setMinimum(1);
+    ui->slider_height->setMinimum(1);
+    ui->slider_width->setMaximum(MAX_MAP_SIZE);
+    ui->slider_height->setMaximum(MAX_MAP_SIZE);
+
+    updateUI();
 }
 
 QRect EditorWindow::mapArea()
@@ -53,20 +63,20 @@ void EditorWindow::operateOnTile(QPoint tile)
     switch(mode)
     {
     case SET_TYPE:
-        map->setTile(tile.x(), tile.y(), selectedTileType);
+        _map->setTile(tile.x(), tile.y(), selectedTileType);
         break;
     case ADD_FLAG:
-        if(map->tileIsWalkable(tile.x(), tile.y()))
+        if(_map->tileIsWalkable(tile.x(), tile.y()))
         {
-            map->addTileFlag(tile.x(), tile.y(), selectedFlag);
+            _map->addTileFlag(tile.x(), tile.y(), selectedFlag);
             if(selectedFlag == IS_START)
             {
-                map->setPlayerPosition(tile.x(), tile.y());
+                _map->setPlayerPosition(tile.x(), tile.y());
             }
         }
         break;
     case REMOVE_FLAG:
-        map->removeTileFlag(tile.x(), tile.y(), selectedFlag);
+        _map->removeTileFlag(tile.x(), tile.y(), selectedFlag);
         break;
     }
     this->repaint();
@@ -77,7 +87,7 @@ void EditorWindow::mousePressEvent(QMouseEvent *Event)
     if(Event->buttons() & Qt::LeftButton)
     {
         QPoint mousePosition = Event->pos();
-        QPoint tile = map->pixelToTile(mousePosition.x(), mousePosition.y(), mapArea());
+        QPoint tile = _map->pixelToTile(mousePosition.x(), mousePosition.y(), mapArea());
         operateOnTile(tile);
         lastClickedTile = tile;
     }
@@ -88,7 +98,7 @@ void EditorWindow::mouseMoveEvent(QMouseEvent *Event)
     if(Event->buttons() & Qt::LeftButton)
     {
         QPoint mousePosition = Event->pos();
-        QPoint tile = map->pixelToTile(mousePosition.x(), mousePosition.y(), mapArea());
+        QPoint tile = _map->pixelToTile(mousePosition.x(), mousePosition.y(), mapArea());
         if(tile != lastClickedTile)
         {
             operateOnTile(tile);
@@ -101,7 +111,7 @@ void EditorWindow::mouseMoveEvent(QMouseEvent *Event)
 void EditorWindow::paintEvent(QPaintEvent *Event)
 {
     QPainter painter(this);
-    map->draw(&painter, mapArea());
+    _map->draw(&painter, mapArea());
 }
 
 EditorWindow::~EditorWindow()
@@ -122,7 +132,7 @@ void EditorWindow::on_save_button_clicked(bool checked)
                                                     tr("Save map"),
                                                     appPath + "/../../maps/",
                                                     tr("Friendly Map Language Files (*.fml)"));
-    map->saveMap(filename);
+    _map->saveMap(filename);
 }
 
 void EditorWindow::on_radio_set_type_clicked()
@@ -153,4 +163,51 @@ void EditorWindow::on_list_flags_itemClicked(QListWidgetItem *item)
 void EditorWindow::on_list_tile_types_itemClicked(QListWidgetItem *item)
 {
     if(mode != SET_TYPE) ui->radio_set_type->click();
+}
+
+void EditorWindow::on_button_update_size_clicked()
+{
+    _map->setSize(QSize(ui->slider_width->value(), ui->slider_height->value()));
+    repaint();
+}
+
+void EditorWindow::updateUI()
+{
+    ui->slider_width->setValue(_map->width());
+    ui->slider_height->setValue(_map->height());
+}
+
+
+void EditorWindow::on_slider_height_valueChanged(int value)
+{
+    ui->label_height->setText(QString::number(value));
+}
+
+void EditorWindow::on_slider_width_valueChanged(int value)
+{
+    ui->label_width->setText(QString::number(value));
+}
+
+void EditorWindow::on_button_shift_up_clicked()
+{
+    _map->shiftTiles(Map::UP);
+    repaint();
+}
+
+void EditorWindow::on_button_shift_left_clicked()
+{
+    _map->shiftTiles(Map::LEFT);
+    repaint();
+}
+
+void EditorWindow::on_button_shift_down_clicked()
+{
+    _map->shiftTiles(Map::DOWN);
+    repaint();
+}
+
+void EditorWindow::on_button_shift_right_clicked()
+{
+    _map->shiftTiles(Map::RIGHT);
+    repaint();
 }

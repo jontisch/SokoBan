@@ -18,6 +18,7 @@ void InitPixmaps()
     PIXMAPS[PIXMAP_TARGET] = new QPixmap(":/images/targettile.png");
 
     PIXMAPS[PIXMAP_SNOW] = new QPixmap(":/images/snowtile.png");
+    PIXMAPS[PIXMAP_LAVA] = new QPixmap(":/images/lavatile.png");
 
 }
 
@@ -31,5 +32,15 @@ void *EnlargeMemory(int currentSize, int newSize, void *pointer){
     memcpy(temp, pointer, currentSize);
     free(pointer);
     return temp;
+}
+
+
+char *DuplicateString(char *string)
+{
+    long length = strlen(string);
+    char *result = (char *)malloc(sizeof(char)*(length+1));
+    memcpy(result, string, sizeof(char)*length);
+    result[length] = 0;
+    return result;
 }
 

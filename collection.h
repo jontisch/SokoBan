@@ -78,7 +78,7 @@ void Collection<T>::remove(int index){
 
 template <typename T>
 bool Collection<T>::isValid(int index){
-    if(index < _size)
+    if(index < _size && index >= 0)
         return elements[index].valid;
     else
         return false;

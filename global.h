@@ -4,7 +4,7 @@
 #include <QPixmap>
 #include <QBrush>
 
-#define MAP_DIR "/../../SokoBan/SokoBan/maps"
+#define MAP_DIR "/../../SokoBan/maps"
 
 enum PixmapIdentifier
 {
@@ -13,9 +13,10 @@ enum PixmapIdentifier
     PIXMAP_WALL,
     PIXMAP_TARGET,
     PIXMAP_WATER,
-    PIXMAP_SNOW
+    PIXMAP_SNOW,
+    PIXMAP_LAVA
 };
-#define N_PIXMAPS 6
+#define N_PIXMAPS 7
 
 
 void InitPixmaps();
@@ -23,5 +24,7 @@ void InitPixmaps();
 QPixmap *Pixmap(PixmapIdentifier index);
 
 void *EnlargeMemory(int currentSize, int newSize, void *pointer);
+
+char *DuplicateString(char *string);
 
 #endif // GLOBAL_H

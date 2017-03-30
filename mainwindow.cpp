@@ -6,7 +6,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    _mapNames(32)
 {
     ui->setupUi(this);
 
@@ -19,6 +20,36 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
+void MainWindow::executeMenuAction(int action)
+{
+    if(_activeMenu == _mainMenu){
+        switch(action){
+        case RESUME_GAME:
+            _menuVisible = false;
+            _activeMenu = _mainMenu;
+            break;
+        case QUIT_GAME:
+            QApplication::quit();
+            break;
+        default:
+            break;
+        }
+    }
+    else if(_activeMenu == _playMenu)
+    {
+        QString appPath = QCoreApplication::applicationDirPath() + MAP_DIR;
+        char *mapName;
+        if(_mapNames.get(action, &mapName))
+        {
+            if(_game->loadMap(appPath + "/" + mapName))
+            {
+                _menuVisible = false;
+                _activeMenu = _mainMenu;
+            }
+        }
+    }
+}
+
 
 MainWindow::~MainWindow()
 {
@@ -28,8 +59,12 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 {
 
     if(!_menuVisible && event->key() == Qt::Key_Escape){
+
+        _resumeItem->setVisible(_game->hasMap());
         _menuVisible = true;
         _activeMenu = _mainMenu;
+        _mainMenu->setPos(0);
+
         this->repaint();
         return;
     }
@@ -58,7 +93,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Escape:
 
             Menu *owner = _activeMenu->getOwner();
-            if(owner != NULL || _game != NULL)
+            if(owner != NULL || _game->hasMap())
             {
                 _menuVisible = (owner != NULL);
                 _activeMenu = owner;
@@ -79,12 +114,14 @@ void MainWindow::initMenus()
 {
     _mainMenu = new Menu("Main Menu");
 
-    _mainMenu->addMenuItem(new MenuAction("Resume", _mainMenu,NULL, true));
+    _resumeItem = new MenuAction("Resume", _mainMenu, RESUME_GAME, this, false);
 
-    Menu *playMenu = new Menu("Play Game", _mainMenu, "Play game");
-    _mainMenu->addMenuItem(playMenu);
+    _mainMenu->addMenuItem(_resumeItem);
 
-    MenuAction *exitMenu = new MenuAction("Exit", _mainMenu, &QApplication::quit);
+    _playMenu = new Menu("Play Game", _mainMenu, "Play game");
+    _mainMenu->addMenuItem(_playMenu);
+
+    MenuAction *exitMenu = new MenuAction("Exit", _mainMenu, QUIT_GAME, this, true);
     _mainMenu->addMenuItem(exitMenu);
 
     DIR *dir;
@@ -94,10 +131,12 @@ void MainWindow::initMenus()
         int counter = 0;
         while ((ent = readdir(dir)) != NULL){
             if(ent->d_name[0] != '.'){
-
-                playMenu->addMenuItem(new LoadMapMenuAction(QString(ent->d_name), playMenu, _game, appPath + "/" + QString(ent->d_name)));
+                char *curMap = DuplicateString(ent->d_name);
+                _mapNames.add(curMap);
+                _playMenu->addMenuItem(new MenuAction(QString(curMap), _playMenu, counter, this, true));
+                counter++;
             }
-            counter++;
+
         }
         closedir(dir);
     }else{

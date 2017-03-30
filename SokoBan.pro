@@ -30,7 +30,8 @@ SOURCES += global.cpp \
     map.cpp \
     move_stack.cpp \
     menuitem.cpp \
-    tile.cpp
+    tile.cpp \
+    menuactiondelegate.cpp
 
 HEADERS  += game.h \
     mainwindow.h \
@@ -39,7 +40,8 @@ HEADERS  += game.h \
     global.h \
     menuitem.h \
     collection.h \
-    tile.h
+    tile.h \
+    menuactiondelegate.h
 
 FORMS    += mainwindow.ui
 

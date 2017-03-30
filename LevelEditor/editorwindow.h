@@ -48,13 +48,29 @@ private slots:
 
     void on_list_tile_types_itemClicked(QListWidgetItem *item);
 
+    void on_button_update_size_clicked();
+
+    void on_slider_height_valueChanged(int value);
+
+    void on_slider_width_valueChanged(int value);
+
+    void on_button_shift_up_clicked();
+
+    void on_button_shift_left_clicked();
+
+    void on_button_shift_down_clicked();
+
+    void on_button_shift_right_clicked();
+
 private:
     Ui::EditorWindow *ui;
-    Map *map;
+    Map *_map;
 
     QPoint lastClickedTile;
     TileFlag selectedFlag;
     TileType selectedTileType;
+
+    void updateUI();
 
     void operateOnTile(QPoint tile);
 
