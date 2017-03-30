@@ -293,7 +293,7 @@ void Map::setPlayerVisible(bool value)
     _playerVisible = value;
 }
 
-void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x, int y, QPoint pixelOffset, int tileSize)
+void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x, int y, QPoint pixelOffset, int tileSize, int zOffset, PixmapIdentifier overlay)
 {
     int size = 0;
     QBrush brush;
@@ -310,18 +310,26 @@ void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x,
         break;
     }
 
+    int depth = (size * tileSize / 32.0);
+    int renderX = pixelOffset.x() + x * tileSize - depth - zOffset;
+    int renderY = pixelOffset.y() + y * tileSize - depth - zOffset;
+
     if(pixmap == NULL)
     {
-        qp->fillRect(pixelOffset.x() + x * tileSize,
-                     pixelOffset.y() + y * tileSize,
+        qp->fillRect(renderX,
+                     renderY,
                      tileSize, tileSize, brush);
     }
     else
     {
-        int depth = (size * tileSize / 32.0);
-        qp->drawPixmap(pixelOffset.x() + x * tileSize - depth,
-                       pixelOffset.y() + y * tileSize - depth,
+        qp->drawPixmap(renderX,
+                       renderY,
                        tileSize + depth, tileSize + depth, *pixmap);
+    }
+
+    if(overlay != NO_PIXMAP)
+    {
+        drawTilePixmap(qp, overlay, x, y, pixelOffset, tileSize, depth);
     }
 
 }
@@ -335,14 +343,22 @@ void Map::draw(QPainter *qp, QRect rect)
     for(int x = 0; x < _width;x++){
         for(int y = 0; y < _height; y++){
 
-            if(tiles[x + _width * y].flags & HAS_BOX)
+            Tile *tile = &tiles[x + _width * y];
+
+            if(tile->flags & HAS_BOX)
             {
                 drawTilePixmap(qp, PIXMAP_BOX, x, y, pixelOffset, tileSize);
             }
             else
             {
-                drawTilePixmap(qp, PixmapForTileType(tiles[x + _width * y].type), x, y, pixelOffset, tileSize);
-                if(tiles[x + _width * y].flags & IS_TARGET)
+
+                PixmapIdentifier overlay = NO_PIXMAP;
+                if(tile->flags & HAS_SNOW) overlay = PIXMAP_SNOW;
+                else if(tile->flags & WAS_SNOW) overlay = PIXMAP_EX_SNOW;
+
+                drawTilePixmap(qp, PixmapForTileType(tile->type), x, y, pixelOffset, tileSize, 0, overlay);
+
+                if(tile->flags & IS_TARGET)
                 {
                     drawTilePixmap(qp, PIXMAP_TARGET, x, y, pixelOffset, tileSize);
                 }

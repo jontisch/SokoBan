@@ -7,7 +7,6 @@ bool IsValidTileType(TileType type)
     case FLOOR:
     case WALL:
     case WATER:
-    case SNOW:
     case LAVA:
         return true;
     default:
@@ -26,8 +25,6 @@ const char *TileTypeName(TileType type)
         return "Wall";
     case WATER:
         return "Water";
-    case SNOW:
-        return "Snow";
     case LAVA:
         return "Lava";
     default:
@@ -43,7 +40,6 @@ PixmapIdentifier PixmapForTileType(TileType type)
     case FLOOR: return PIXMAP_FLOOR; break;
     case WALL: return PIXMAP_WALL; break;
     case WATER: return PIXMAP_WATER; break;
-    case SNOW: return PIXMAP_SNOW; break;
     case LAVA: return PIXMAP_LAVA; break;
     default: return PIXMAP_WATER; break;
     }
@@ -61,6 +57,10 @@ const char *TileFlagName(TileFlag flag)
         return "Target";
     case IS_START:
         return "Start";
+    case HAS_SNOW:
+        return "Snow";
+    case WAS_SNOW:
+        return "Was snow";
     default:
         return "Unknown tile flag";
     }

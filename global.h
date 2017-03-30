@@ -8,15 +8,17 @@
 
 enum PixmapIdentifier
 {
+    NO_PIXMAP,
     PIXMAP_FLOOR,
     PIXMAP_BOX,
     PIXMAP_WALL,
     PIXMAP_TARGET,
     PIXMAP_WATER,
     PIXMAP_SNOW,
-    PIXMAP_LAVA
+    PIXMAP_LAVA,
+    PIXMAP_EX_SNOW
 };
-#define N_PIXMAPS 7
+#define N_PIXMAPS 9
 
 
 void InitPixmaps();

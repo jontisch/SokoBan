@@ -18,6 +18,7 @@ void InitPixmaps()
     PIXMAPS[PIXMAP_TARGET] = new QPixmap(":/images/targettile.png");
 
     PIXMAPS[PIXMAP_SNOW] = new QPixmap(":/images/snowtile.png");
+    PIXMAPS[PIXMAP_EX_SNOW] = new QPixmap(":/images/ex_snow.png");
     PIXMAPS[PIXMAP_LAVA] = new QPixmap(":/images/lavatile.png");
 
 }

@@ -49,7 +49,7 @@ public:
 protected:
 
 private:
-    void drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x, int y, QPoint pixelOffset, int tileSize);
+    void drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x, int y, QPoint pixelOffset, int tileSize, int zOffset = 0, PixmapIdentifier overlay = NO_PIXMAP);
 
     Tile *tiles;
     //TileType *referenceTiles;

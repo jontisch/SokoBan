@@ -7,15 +7,16 @@ enum TileFlag {
     NO_TILE_FLAGS = 0,
     HAS_BOX = 1,
     IS_TARGET = 2,
-    IS_START = 4
+    IS_START = 4,
+    HAS_SNOW = 8,
+    WAS_SNOW = 16
 };
-#define N_TILEFLAGS 3 //Don't count NO_TILE_FLAGS
+#define N_TILEFLAGS 5 //Don't count NO_TILE_FLAGS
 
 enum TileType {
     WATER = 0,
     WALL = 2,
     FLOOR = 5,
-    SNOW = 6,
     LAVA = 7
 };
 #define N_TILETYPES 8
