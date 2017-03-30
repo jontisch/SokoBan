@@ -26,7 +26,6 @@ public:
     Map(int Width, int Height, int playerX, int playerY);
     Map(QString filename);
     ~Map();
-    enum TileShiftDir{UP,DOWN,LEFT,RIGHT};
     void setTile(int x, int y, TileType Type);
     TileType getTileType(int x, int y);
     void draw(QPainter * qp, QRect rect);
@@ -35,7 +34,6 @@ public:
     void revertMove();
     void addTileFlag(int x, int y, TileFlag flag);
     void removeTileFlag(int x, int y, TileFlag flag);
-    bool tileIsWalkable(int x, int y);
     QPoint pixelToTile(int x, int y, QRect renderRect);
     int calculateTileSize(QRect renderRect);
     QPoint calculatePixelOffset(int tileSize, QRect renderRect);
@@ -44,12 +42,20 @@ public:
     int width();
     int height();
     void setSize(QSize size);
-    void shiftTiles(TileShiftDir dir);
+    void shiftTiles(Direction dir);
     void setPlayerVisible(bool value);
+    void setTileFlags(int x, int y, int flags);
+    bool tileInBounds(int x, int y);
+    int tileFlags(int x, int y);
 protected:
 
 private:
     void drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x, int y, QPoint pixelOffset, int tileSize, int zOffset = 0, PixmapIdentifier overlay = NO_PIXMAP);
+
+    bool tileIsWalkable(int x, int y);
+    bool tileHasMovable(int x, int y, TileFlag *outputMovable = NULL);
+    bool tileIsEmptyOrItemCanBePushed(int x, int y, Direction direction, int itemsBetween = 0);
+    void pushMovable(int x, int y, Direction dir, void *move);
 
     Tile *tiles;
     //TileType *referenceTiles;
@@ -65,6 +71,7 @@ private:
 
 
     void setup();
+    Tile *tile(int x, int y);
 };
 
 #endif // MAP_H

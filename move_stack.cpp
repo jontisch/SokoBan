@@ -1,5 +1,14 @@
 #include "move_stack.h"
 
+void MoveStack::addTileChange(Move *move, int x, int y, int previousFlags)
+{
+    move->tilesWithFlagChanges[move->nTilesWithFlagChanges].x = x;
+    move->tilesWithFlagChanges[move->nTilesWithFlagChanges].y = y;
+    move->tilesWithFlagChanges[move->nTilesWithFlagChanges].previousFlags = previousFlags;
+    move->nTilesWithFlagChanges++;
+}
+
+
 MoveStack::MoveStack()
 {
     allocatedMoves = 128;
@@ -34,7 +43,7 @@ void MoveStack::pushMove(int playerDX,
 
     move.playerDX = playerDX;
     move.playerDY = playerDY;
-    move.movedABox = false;
+    move.nTilesWithFlagChanges = 0;
 
     pushMove(move);
 }
@@ -51,10 +60,11 @@ bool MoveStack::revertMove(Map *map)
 
     Move *move = &moves[nMoves-1];
     map->movePlayer(-move->playerDX, -move->playerDY, true);
-    if(move->movedABox)
+
+    for(int i = 0; i < move->nTilesWithFlagChanges; i++)
     {
-        map->removeTileFlag(move->movedBox.toX, move->movedBox.toY, HAS_BOX);
-        map->addTileFlag(move->movedBox.fromX, move->movedBox.fromY, HAS_BOX);
+        auto t = &move->tilesWithFlagChanges[i];
+        map->setTileFlags(t->x, t->y, t->previousFlags);
     }
     nMoves--;
 

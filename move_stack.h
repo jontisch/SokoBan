@@ -18,13 +18,13 @@ public:
 
         struct
         {
-            int fromX;
-            int fromY;
-            int toX;
-            int toY;
-        } movedBox;
-        bool movedABox;
+            int x;
+            int y;
+            int previousFlags;
+        } tilesWithFlagChanges[2];
+        int nTilesWithFlagChanges;
     };
+    static void addTileChange(Move *move, int x, int y, int previousFlags);
 
     void pushMove(Move move);
     void pushMove(int playerDX,

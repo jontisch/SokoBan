@@ -163,6 +163,8 @@ QPoint Map::pixelToTile(int x, int y, QRect renderRect)
     int tileX = (x - minX)/tileSize;
     int tileY = (y - minY)/tileSize;
 
+    if(!tileInBounds(x, y)) return QPoint(-1, -1);
+
     return QPoint(tileX, tileY);
 }
 
@@ -241,7 +243,7 @@ void Map::setSize(QSize size)
     tiles = tmp;
 }
 
-void Map::shiftTiles(Map::TileShiftDir dir)
+void Map::shiftTiles(Direction dir)
 {
     switch(dir){
     case UP:
@@ -370,6 +372,11 @@ void Map::draw(QPainter *qp, QRect rect)
                 }
                 drawTilePixmap(qp, tilePixmap, x, y, pixelOffset, tileSize, 0, overlay);
 
+                if(tile->flags & IS_TARGET)
+                {
+                    drawTilePixmap(qp, PIXMAP_TARGET, x, y, pixelOffset, tileSize);
+                }
+
                 if(tile->flags & HAS_SNOWBALL_SMALL)
                 {
                     drawTilePixmap(qp, PIXMAP_SNOWBALL_SMALL, x, y, pixelOffset, tileSize, 0);
@@ -381,11 +388,6 @@ void Map::draw(QPainter *qp, QRect rect)
                 else if(tile->flags & HAS_SNOWBALL_BIG)
                 {
                     drawTilePixmap(qp, PIXMAP_SNOWBALL_BIG, x, y, pixelOffset, tileSize, 0);
-                }
-
-                if(tile->flags & IS_TARGET)
-                {
-                    drawTilePixmap(qp, PIXMAP_TARGET, x, y, pixelOffset, tileSize);
                 }
             }
 
@@ -401,34 +403,127 @@ void Map::draw(QPainter *qp, QRect rect)
 
 void Map::addTileFlag(int x, int y, TileFlag flag)
 {
-    bool hadBox = tiles[x + _width * y].flags & HAS_BOX;
-
-    if(flag == HAS_BOX && !hadBox && tiles[x + _width * y].flags & IS_TARGET)
-    {
-        targetsLeft--;
-    }
-    else if(flag == IS_START)
-    {
-        removeTileFlag(_startTile.x(), _startTile.y(), IS_START);
-    }
-    tiles[x + _width * y].flags |= flag;
+    setTileFlags(x, y, tileFlags(x,y) | flag);
 }
 
 void Map::removeTileFlag(int x, int y, TileFlag flag)
 {
-    bool hadBox = tiles[x + _width * y].flags & HAS_BOX;
-    if(flag == HAS_BOX && hadBox && tiles[x + _width * y].flags & IS_TARGET)
+    setTileFlags(x, y, tileFlags(x,y) & ~(flag));
+}
+
+void Map::setTileFlags(int x, int y, int flags)
+{
+    Tile *t = tile(x,y);
+    if(t == NULL) return;
+    bool hadMovable = tileHasMovable(x, y);
+    bool wasTarget = t->flags & IS_TARGET;
+    t->flags = flags;
+    bool hasMovable = tileHasMovable(x,y);
+    bool isTarget = t->flags & IS_TARGET;
+    if(wasTarget && (!isTarget || (!hadMovable && hasMovable)))
+    {
+        targetsLeft--;
+    }
+    else if((!wasTarget && isTarget && !hasMovable) || (isTarget && !hasMovable && hadMovable))
     {
         targetsLeft++;
     }
-    tiles[x + _width * y].flags &= ~(flag);
+
+    qDebug() << targetsLeft << "targets left";
 }
 
 bool Map::tileIsWalkable(int x, int y)
 {
-    if(x < 0 || y < 0 || x >= _width || y >= _height) return false;
+    if(!tileInBounds(x,y)) return false;
     TileType type = getTileType(x, y);
     return (type != WALL && type != WATER);
+}
+
+bool Map::tileInBounds(int x, int y)
+{
+    return x >= 0 && y >= 0 && x < _width && y < _height;
+}
+
+bool Map::tileHasMovable(int x, int y, TileFlag *outputMovable)
+{
+    if(!tileInBounds(x,y)) return false;
+
+    TileFlag fake;
+    if(!outputMovable) outputMovable = &fake;
+
+    Tile *t = &tiles[x + _width * y];
+    if(t->flags & HAS_BOX){ *outputMovable = HAS_BOX; return true; }
+    if(t->flags & HAS_SNOWBALL_SMALL){ *outputMovable = HAS_SNOWBALL_SMALL; return true; }
+    if(t->flags & HAS_SNOWBALL_MEDIUM){ *outputMovable = HAS_SNOWBALL_MEDIUM; return true; }
+    if(t->flags & HAS_SNOWBALL_BIG){ *outputMovable = HAS_SNOWBALL_BIG; return true; }
+    return false;
+}
+
+bool Map::tileIsEmptyOrItemCanBePushed(int x, int y, Direction direction, int itemsBetween)
+{
+    if(!tileHasMovable(x, y)) return true;
+
+    Tile *t = &tiles[x + _width * y];
+
+    int nextX = XModifiedByDirection(x, direction);
+    int nextY = YModifiedByDirection(y, direction);
+
+    if(t->flags & HAS_BOX) return (itemsBetween < 1) && tileIsEmptyOrItemCanBePushed(nextX, nextY, direction, itemsBetween+1);
+    if(t->flags & HAS_SNOWBALL_SMALL || t->flags & HAS_SNOWBALL_MEDIUM)
+    {
+        return tileIsEmptyOrItemCanBePushed(nextX, nextY, direction, itemsBetween+1);
+    }
+    if(t->flags & HAS_SNOWBALL_BIG)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+Tile *Map::tile(int x, int y)
+{
+    if(!tileInBounds(x,y)) return NULL;
+    return &tiles[x + _width * y];
+}
+
+int Map::tileFlags(int x, int y)
+{
+    if(!tileInBounds(x,y)) return 0;
+    return tile(x,y)->flags;
+}
+
+void Map::pushMovable(int x, int y, Direction dir, void *move)
+{
+    auto theMove = (MoveStack::Move *)move;
+
+    int nextX = XModifiedByDirection(x, dir);
+    int nextY = YModifiedByDirection(y, dir);
+
+    TileFlag movable;
+    if(!tileHasMovable(x, y, &movable)) return;
+
+    MoveStack::addTileChange(theMove, x, y, tileFlags(x, y));
+
+    bool flagAddedToNext = false;
+    if(!tileInBounds(nextX, nextY))
+    {
+        removeTileFlag(x, y, movable);
+    }
+    else
+    {
+        if(tileHasMovable(nextX, nextY))
+        {
+            pushMovable(nextX, nextY, dir, move);
+        }
+        else
+        {
+            MoveStack::addTileChange(theMove, nextX, nextY, tileFlags(nextX, nextY));
+        }
+
+        addTileFlag(nextX, nextY, movable);
+        removeTileFlag(x, y, movable);
+    }
 }
 
 void Map::movePlayer(int dx, int dy, bool force)
@@ -456,37 +551,37 @@ void Map::movePlayer(int dx, int dy, bool force)
     if(dx > 1 || dx < -1 || dy > 1 || dy < -1 || dx * dy != 0 ||
             (dx == 0 && dy == 0)) return;
 
+    Direction dir;
+    if(dx < 0) dir = LEFT;
+    else if(dx > 0) dir = RIGHT;
+    else if(dy < 0) dir = UP;
+    else if(dy > 0) dir = DOWN;
+
     MoveStack::Move move = {0};
 
     int newX = _player.x()+dx;
     int newY = _player.y()+dy;
-    int nextTile = newX + newY* _width;
     if(tileIsWalkable(newX, newY)){
 
         bool canWalk = true;
 
-        if(tiles[nextTile].flags & HAS_BOX)
+        TileFlag movable;
+        if(tileHasMovable(newX, newY, &movable))
         {
-            int boxX = newX;
-            int boxY = newY;
-            int boxNewX = boxX + dx;
-            int boxNewY = boxY + dy;
+            int movableX = newX;
+            int movableY = newY;
+            int movableNewX = movableX + dx;
+            int movableNewY = movableY + dy;
 
-            if(!tileIsWalkable(boxNewX, boxNewY) ||
-               tiles[boxNewX+_width*boxNewY].flags & HAS_BOX)
+            TileFlag tmp;
+            if(!tileIsWalkable(movableNewX, movableNewY) ||
+               !tileIsEmptyOrItemCanBePushed(movableX, movableY, dir))
             {
                 canWalk = false;
             }
             else
             {
-                move.movedABox = true;
-                move.movedBox.fromX = boxX;
-                move.movedBox.fromY = boxY;
-                move.movedBox.toX = boxNewX;
-                move.movedBox.toY = boxNewY;
-
-                addTileFlag(boxNewX,boxNewY, HAS_BOX);
-                removeTileFlag(boxX, boxY, HAS_BOX);
+                pushMovable(movableX, movableY, dir, &move);
             }
         }
 

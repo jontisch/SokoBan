@@ -5,6 +5,33 @@
 QPixmap **PIXMAPS;
 
 
+int XModifiedByDirection(int x, Direction direction, int delta)
+{
+    switch(direction)
+    {
+    case LEFT:
+        return x - delta;
+    case RIGHT:
+        return x + delta;
+    default:
+        return x;
+    }
+}
+
+int YModifiedByDirection(int y, Direction direction, int delta)
+{
+    switch(direction)
+    {
+    case UP:
+        return y - delta;
+    case DOWN:
+        return y + delta;
+    default:
+        return y;
+    }
+}
+
+
 void InitPixmaps()
 {
     PIXMAPS = (QPixmap **)malloc(sizeof(QPixmap *)*N_PIXMAPS);

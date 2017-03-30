@@ -6,6 +6,18 @@
 
 #define MAP_DIR "/../../SokoBan/maps"
 
+enum Direction
+{
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN
+};
+
+int XModifiedByDirection(int x, Direction direction, int delta = 1);
+int YModifiedByDirection(int y, Direction direction, int delta = 1);
+
+
 enum PixmapIdentifier
 {
     NO_PIXMAP,
