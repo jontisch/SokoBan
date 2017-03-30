@@ -8,5 +8,6 @@
     <file>images/floortile.png</file>
     <file>images/targettile.png</file>
     <file>images/snowtile.png</file>
+    <file>images/lavatile.png</file>
 </qresource>
 </RCC>

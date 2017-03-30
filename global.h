@@ -13,9 +13,10 @@ enum Tiletype {
     TARGET = 3,
     START = 4,
     WATER = 5,
-    SNOW = 6
+    SNOW = 6,
+    LAVA = 7
 };
-#define N_TILETYPES 7
+#define N_TILETYPES 8
 
 void initPixmaps();
 

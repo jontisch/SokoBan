@@ -18,6 +18,7 @@ void initPixmaps()
     PIXMAPS[TARGET] = new QPixmap(":/images/targettile.png");
 
     PIXMAPS[SNOW] = new QPixmap(":/images/snowtile.png");
+    PIXMAPS[LAVA] = new QPixmap(":/images/lavatile.png");
 
 }
 
@@ -49,6 +50,9 @@ const char *tileTypeName(Tiletype type)
         break;
     case SNOW:
         return "Snow";
+        break;
+    case LAVA:
+        return "Lava";
         break;
     default:
         return "Unknown tile type";
