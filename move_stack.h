@@ -21,7 +21,7 @@ public:
             int x;
             int y;
             int previousFlags;
-        } tilesWithFlagChanges[2];
+        } tilesWithFlagChanges[32]; //TODO Make this dynamic
         int nTilesWithFlagChanges;
     };
     static void addTileChange(Move *move, int x, int y, int previousFlags);
