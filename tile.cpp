@@ -61,6 +61,12 @@ const char *TileFlagName(TileFlag flag)
         return "Snow";
     case WAS_SNOW:
         return "Was snow";
+    case HAS_SNOWBALL_SMALL:
+        return "Small snow ball";
+    case HAS_SNOWBALL_MEDIUM:
+        return "Medium snow ball";
+    case HAS_SNOWBALL_BIG:
+        return "Big snow ball";
     default:
         return "Unknown tile flag";
     }

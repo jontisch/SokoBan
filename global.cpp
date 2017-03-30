@@ -21,6 +21,12 @@ void InitPixmaps()
     PIXMAPS[PIXMAP_EX_SNOW] = new QPixmap(":/images/ex_snow.png");
     PIXMAPS[PIXMAP_LAVA] = new QPixmap(":/images/lavatile.png");
 
+    PIXMAPS[PIXMAP_SNOWBALL_SMALL] = new QPixmap(":/images/snowball_small.png");
+    PIXMAPS[PIXMAP_SNOWBALL_MEDIUM] = new QPixmap(":/images/snowball_medium.png");
+    PIXMAPS[PIXMAP_SNOWBALL_BIG] = new QPixmap(":/images/snowball_big.png");
+
+    PIXMAPS[PIXMAP_ICE] = new QPixmap(":/images/icetile.png");
+
 }
 
 QPixmap *Pixmap(PixmapIdentifier ident){

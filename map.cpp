@@ -314,17 +314,21 @@ void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x,
     int renderX = pixelOffset.x() + x * tileSize - depth - zOffset;
     int renderY = pixelOffset.y() + y * tileSize - depth - zOffset;
 
-    if(pixmap == NULL)
+
+    if(overlay == NO_PIXMAP || depth != 0)
     {
-        qp->fillRect(renderX,
-                     renderY,
-                     tileSize, tileSize, brush);
-    }
-    else
-    {
-        qp->drawPixmap(renderX,
-                       renderY,
-                       tileSize + depth, tileSize + depth, *pixmap);
+        if(pixmap == NULL)
+        {
+            qp->fillRect(renderX,
+                         renderY,
+                         tileSize, tileSize, brush);
+        }
+        else
+        {
+            qp->drawPixmap(renderX,
+                           renderY,
+                           tileSize + depth, tileSize + depth, *pixmap);
+        }
     }
 
     if(overlay != NO_PIXMAP)
@@ -351,12 +355,33 @@ void Map::draw(QPainter *qp, QRect rect)
             }
             else
             {
-
                 PixmapIdentifier overlay = NO_PIXMAP;
-                if(tile->flags & HAS_SNOW) overlay = PIXMAP_SNOW;
+
+                if(tile->type != WATER && tile->flags & HAS_SNOW)
+                {
+                    overlay = PIXMAP_SNOW;
+                }
                 else if(tile->flags & WAS_SNOW) overlay = PIXMAP_EX_SNOW;
 
-                drawTilePixmap(qp, PixmapForTileType(tile->type), x, y, pixelOffset, tileSize, 0, overlay);
+                PixmapIdentifier tilePixmap = PixmapForTileType(tile->type);
+                if(tile->type == WATER && tile->flags & HAS_SNOW)
+                {
+                    tilePixmap = PIXMAP_ICE;
+                }
+                drawTilePixmap(qp, tilePixmap, x, y, pixelOffset, tileSize, 0, overlay);
+
+                if(tile->flags & HAS_SNOWBALL_SMALL)
+                {
+                    drawTilePixmap(qp, PIXMAP_SNOWBALL_SMALL, x, y, pixelOffset, tileSize, 0);
+                }
+                else if(tile->flags & HAS_SNOWBALL_MEDIUM)
+                {
+                    drawTilePixmap(qp, PIXMAP_SNOWBALL_MEDIUM, x, y, pixelOffset, tileSize, 0);
+                }
+                else if(tile->flags & HAS_SNOWBALL_BIG)
+                {
+                    drawTilePixmap(qp, PIXMAP_SNOWBALL_BIG, x, y, pixelOffset, tileSize, 0);
+                }
 
                 if(tile->flags & IS_TARGET)
                 {

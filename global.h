@@ -16,9 +16,13 @@ enum PixmapIdentifier
     PIXMAP_WATER,
     PIXMAP_SNOW,
     PIXMAP_LAVA,
-    PIXMAP_EX_SNOW
+    PIXMAP_EX_SNOW,
+    PIXMAP_SNOWBALL_SMALL,
+    PIXMAP_SNOWBALL_MEDIUM,
+    PIXMAP_SNOWBALL_BIG,
+    PIXMAP_ICE
 };
-#define N_PIXMAPS 9
+#define N_PIXMAPS 11
 
 
 void InitPixmaps();
