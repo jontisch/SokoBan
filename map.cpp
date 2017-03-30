@@ -163,7 +163,7 @@ QPoint Map::pixelToTile(int x, int y, QRect renderRect)
     int tileX = (x - minX)/tileSize;
     int tileY = (y - minY)/tileSize;
 
-    if(!tileInBounds(x, y)) return QPoint(-1, -1);
+    if(!tileInBounds(tileX, tileY)) return QPoint(-1, -1);
 
     return QPoint(tileX, tileY);
 }
