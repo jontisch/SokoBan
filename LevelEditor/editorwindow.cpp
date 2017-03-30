@@ -66,7 +66,7 @@ void EditorWindow::operateOnTile(QPoint tile)
         _map->setTile(tile.x(), tile.y(), selectedTileType);
         break;
     case ADD_FLAG:
-        if(_map->tileIsWalkable(tile.x(), tile.y()))
+        if((selectedFlag != HAS_BOX && selectedFlag != IS_TARGET && selectedFlag != IS_START) || _map->tileIsWalkable(tile.x(), tile.y()))
         {
             _map->addTileFlag(tile.x(), tile.y(), selectedFlag);
             if(selectedFlag == IS_START)
@@ -123,6 +123,19 @@ void EditorWindow::on_list_tile_types_itemSelectionChanged()
 {
     int row = ui->list_tile_types->row(ui->list_tile_types->selectedItems().at(0));
     selectedTileType = tileTypeForListRow[row];
+}
+
+
+void EditorWindow::on_load_button_clicked()
+{
+    QString appPath = QCoreApplication::applicationDirPath();
+    QString filename = QFileDialog::getOpenFileName(this,
+                                                    tr("Load map"),
+                                                    appPath + "/../../maps/",
+                                                    tr("Friendly Map Language Files (*.fml)"));
+
+    if(_map) delete _map;
+    _map = new Map(filename);
 }
 
 void EditorWindow::on_save_button_clicked(bool checked)
@@ -190,24 +203,25 @@ void EditorWindow::on_slider_width_valueChanged(int value)
 
 void EditorWindow::on_button_shift_up_clicked()
 {
-    _map->shiftTiles(Map::UP);
+    _map->shiftTiles(UP);
     repaint();
 }
 
 void EditorWindow::on_button_shift_left_clicked()
 {
-    _map->shiftTiles(Map::LEFT);
+    _map->shiftTiles(LEFT);
     repaint();
 }
 
 void EditorWindow::on_button_shift_down_clicked()
 {
-    _map->shiftTiles(Map::DOWN);
+    _map->shiftTiles(DOWN);
     repaint();
 }
 
 void EditorWindow::on_button_shift_right_clicked()
 {
-    _map->shiftTiles(Map::RIGHT);
+    _map->shiftTiles(RIGHT);
     repaint();
 }
+

@@ -47,12 +47,14 @@ public:
     void setTileFlags(int x, int y, int flags);
     bool tileInBounds(int x, int y);
     int tileFlags(int x, int y);
+
+    bool tileIsWalkable(int x, int y);
+
 protected:
 
 private:
     void drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x, int y, QPoint pixelOffset, int tileSize, int zOffset = 0, PixmapIdentifier overlay = NO_PIXMAP);
 
-    bool tileIsWalkable(int x, int y);
     bool tileHasMovable(int x, int y, TileFlag *outputMovable = NULL);
     bool tileIsEmptyOrItemCanBePushed(int x, int y, Direction direction, int itemsBetween = 0);
     void pushMovable(int x, int y, Direction dir, void *move);

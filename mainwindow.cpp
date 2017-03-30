@@ -150,6 +150,7 @@ void MainWindow::initMenus()
 void MainWindow::paintEvent(QPaintEvent *event)
 {
     QPainter qp(this);
+    qp.setOpacity(1.0);
 
     if(_game->hasMap()){
         _game->draw(&qp, this->rect());

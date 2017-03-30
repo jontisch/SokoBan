@@ -317,20 +317,17 @@ void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x,
     int renderY = pixelOffset.y() + y * tileSize - depth - zOffset;
 
 
-    if(overlay == NO_PIXMAP || depth != 0)
+    if(pixmap == NULL)
     {
-        if(pixmap == NULL)
-        {
-            qp->fillRect(renderX,
-                         renderY,
-                         tileSize, tileSize, brush);
-        }
-        else
-        {
-            qp->drawPixmap(renderX,
-                           renderY,
-                           tileSize + depth, tileSize + depth, *pixmap);
-        }
+        qp->fillRect(renderX,
+                     renderY,
+                     tileSize, tileSize, brush);
+    }
+    else
+    {
+        qp->drawPixmap(renderX,
+                       renderY,
+                       tileSize + depth, tileSize + depth, *pixmap);
     }
 
     if(overlay != NO_PIXMAP)
@@ -521,7 +518,15 @@ void Map::pushMovable(int x, int y, Direction dir, void *move)
             MoveStack::addTileChange(theMove, nextX, nextY, tileFlags(nextX, nextY));
         }
 
-        addTileFlag(nextX, nextY, movable);
+        TileFlag newMovable = movable;
+        if(tileFlags(x, y) & HAS_SNOW)
+        {
+            if(movable == HAS_SNOWBALL_SMALL) newMovable = HAS_SNOWBALL_MEDIUM;
+            else if(movable == HAS_SNOWBALL_MEDIUM) newMovable = HAS_SNOWBALL_BIG;
+            removeTileFlag(x, y, HAS_SNOW);
+            addTileFlag(x, y, WAS_SNOW);
+        }
+        addTileFlag(nextX, nextY, newMovable);
         removeTileFlag(x, y, movable);
     }
 }

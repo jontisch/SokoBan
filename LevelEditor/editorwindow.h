@@ -62,6 +62,8 @@ private slots:
 
     void on_button_shift_right_clicked();
 
+    void on_load_button_clicked();
+
 private:
     Ui::EditorWindow *ui;
     Map *_map;
