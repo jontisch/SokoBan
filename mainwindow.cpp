@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
+#include <QDesktopWidget>
 #include <dirent.h>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -13,7 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     _menuVisible = true;
     InitPixmaps();
-    this->setFixedSize(1024,768);
+    QRect screenRect = QApplication::desktop()->screenGeometry();
+    this->setGeometry(screenRect.width()/2 - 1024/2, screenRect.height()/2-768/2, 1024,768);
 
     _game = new Game();
     this->initMenus();

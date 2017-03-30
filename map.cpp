@@ -7,14 +7,26 @@ void Map::setup()
 }
 
 
-Map::Map(int width, int height, int playerX, int playerY): _width(width), _height(height), _player(playerX,playerY), _movesMade(0), _startTile(playerX, playerY), _loaded(true)
+Map::Map(int width, int height, int playerX, int playerY):
+    _width(width),
+    _height(height),
+    _player(playerX,playerY),
+    _movesMade(0),
+    _startTile(playerX, playerY),
+    _loaded(true),
+    _playerVisible(true)
 {
     tiles = (Tile *)malloc(sizeof(Tile)* width * height);
 
     setup();
 }
 
-Map::Map(QString filename): _movesMade(0), _startTile(0, 0), _loaded(false){
+Map::Map(QString filename):
+    _movesMade(0),
+    _startTile(0, 0),
+    _loaded(false),
+    _playerVisible(true)
+{
     QFile mapFile(filename);
 
 
@@ -276,6 +288,11 @@ void Map::shiftTiles(Map::TileShiftDir dir)
     }
 }
 
+void Map::setPlayerVisible(bool value)
+{
+    _playerVisible = value;
+}
+
 void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x, int y, QPoint pixelOffset, int tileSize)
 {
     int size = 0;
@@ -331,7 +348,7 @@ void Map::draw(QPainter *qp, QRect rect)
                 }
             }
 
-            if(x == _player.x() && y == _player.y()){
+            if(_playerVisible && x == _player.x() && y == _player.y()){
                 qp->drawPixmap(pixelOffset.x() + x * tileSize,
                                pixelOffset.y() + y * tileSize,
                                tileSize, tileSize, QPixmap(":/images/playah.png"),0,0,32,32);

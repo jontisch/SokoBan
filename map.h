@@ -45,6 +45,7 @@ public:
     int height();
     void setSize(QSize size);
     void shiftTiles(TileShiftDir dir);
+    void setPlayerVisible(bool value);
 protected:
 
 private:
@@ -55,6 +56,7 @@ private:
     int _width;
     int _height;
     QPoint _startTile;
+    bool _playerVisible;
     QPoint _player;
     MoveStack *_moveStack;
     int targetsLeft;
