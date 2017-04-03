@@ -3,38 +3,6 @@
 
 #include "global.h"
 
-enum EntityColor
-{
-    BLUE = 1,
-    RED = 2,
-    GREEN = 3
-};
-
-class Entity
-{
-
-};
-
-class ColoredEntity
-{
-public:
-    ColoredEntity();
-    EntityColor color();
-    void setColor(EntityColor color);
-private:
-    EntityColor _color;
-};
-
-class Door: ColoredEntity
-{
-    bool isOpen;
-};
-
-class Button: ColoredEntity
-{
-
-};
-
 enum TileFlag {
     NO_TILE_FLAGS = 0,
 
