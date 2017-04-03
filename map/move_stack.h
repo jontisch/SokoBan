@@ -1,7 +1,7 @@
 #ifndef MOVE_STACK_H
 #define MOVE_STACK_H
 
-#include "global.h"
+#include "../global.h"
 #include "map.h"
 
 class Map;

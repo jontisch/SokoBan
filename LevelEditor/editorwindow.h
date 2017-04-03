@@ -1,7 +1,7 @@
 #ifndef EDITORWINDOW_H
 #define EDITORWINDOW_H
 
-#include "../map.h"
+#include "../map/map.h"
 #include <QMainWindow>
 #include <QPaintEvent>
 #include <QMouseEvent>

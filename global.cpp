@@ -36,6 +36,8 @@ void InitPixmaps()
 {
     PIXMAPS = (QPixmap **)malloc(sizeof(QPixmap *)*N_PIXMAPS);
 
+    PIXMAPS[PIXMAP_PLAYER] = new QPixmap(":/images/player.png");
+
     PIXMAPS[PIXMAP_WATER] = new QPixmap(":/images/watertile.png");
 
     PIXMAPS[PIXMAP_FLOOR] = new QPixmap(":/images/floortile.png");
@@ -53,6 +55,9 @@ void InitPixmaps()
     PIXMAPS[PIXMAP_SNOWBALL_BIG] = new QPixmap(":/images/snowball_big.png");
 
     PIXMAPS[PIXMAP_ICE] = new QPixmap(":/images/icetile.png");
+
+    PIXMAPS[PIXMAP_GRASS] = new QPixmap(":/images/grasstile.png");
+    PIXMAPS[PIXMAP_SAND] = new QPixmap(":/images/sandtile.png");
 
 }
 

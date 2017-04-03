@@ -2,7 +2,7 @@
 <qresource>
     <file>maps/map.fml</file>
     <file>maps/map2pointO.fml</file>
-    <file>images/playah.png</file>
+    <file>images/player.png</file>
     <file>images/watertile.png</file>
     <file>images/boxtile.png</file>
     <file>images/walltile.png</file>
@@ -15,5 +15,7 @@
     <file>images/snowball_medium.png</file>
     <file>images/snowball_big.png</file>
     <file>images/icetile.png</file>
+    <file>images/grasstile.png</file>
+    <file>images/sandtile.png</file>
 </qresource>
 </RCC>

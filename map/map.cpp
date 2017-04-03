@@ -302,6 +302,7 @@ void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x,
     QPixmap *pixmap = Pixmap(pixmapIdentifier);
     switch(pixmapIdentifier)
     {
+    case PIXMAP_PLAYER:
     case PIXMAP_BOX:
         size = 4;
         break;
@@ -389,9 +390,7 @@ void Map::draw(QPainter *qp, QRect rect)
             }
 
             if(_playerVisible && x == _player.x() && y == _player.y()){
-                qp->drawPixmap(pixelOffset.x() + x * tileSize,
-                               pixelOffset.y() + y * tileSize,
-                               tileSize, tileSize, QPixmap(":/images/playah.png"),0,0,32,32);
+                drawTilePixmap(qp, PIXMAP_PLAYER, x, y, pixelOffset, tileSize, 0);
             }
 
         }

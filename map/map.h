@@ -4,7 +4,7 @@
 
 #define MAX_MAP_SIZE 128
 
-#include "global.h"
+#include "../global.h"
 #include "move_stack.h"
 #include "tile.h"
 

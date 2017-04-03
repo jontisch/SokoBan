@@ -21,6 +21,7 @@ int YModifiedByDirection(int y, Direction direction, int delta = 1);
 enum PixmapIdentifier
 {
     NO_PIXMAP,
+    PIXMAP_PLAYER,
     PIXMAP_FLOOR,
     PIXMAP_BOX,
     PIXMAP_WALL,
@@ -32,9 +33,11 @@ enum PixmapIdentifier
     PIXMAP_SNOWBALL_SMALL,
     PIXMAP_SNOWBALL_MEDIUM,
     PIXMAP_SNOWBALL_BIG,
-    PIXMAP_ICE
+    PIXMAP_ICE,
+    PIXMAP_GRASS,
+    PIXMAP_SAND,
 };
-#define N_PIXMAPS 11
+#define N_PIXMAPS 16
 
 
 void InitPixmaps();

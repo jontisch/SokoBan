@@ -1,7 +1,7 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include "global.h"
+#include "../global.h"
 
 enum TileFlag {
     NO_TILE_FLAGS = 0,
@@ -21,9 +21,11 @@ enum TileType {
     WATER = 0,
     WALL = 2,
     FLOOR = 5,
-    LAVA = 7
+    LAVA = 7,
+    GRASS = 8,
+    SAND = 9
 };
-#define N_TILETYPES 8
+#define N_TILETYPES 10
 
 
 const char *TileTypeName(TileType type);

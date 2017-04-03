@@ -25,16 +25,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         editorwindow.cpp \
-    ../map.cpp \
+    ../map/map.cpp \
     ../global.cpp \
-    ../move_stack.cpp \
-    ../tile.cpp
+    ../map/move_stack.cpp \
+    ../map/tile.cpp
 
 HEADERS  += editorwindow.h \
-    ../map.h \
+    ../map/map.h \
     ../global.h \
-    ../move_stack.h \
-    ../tile.h
+    ../map/move_stack.h \
+    ../map/tile.h
 
 FORMS    += editorwindow.ui
 
