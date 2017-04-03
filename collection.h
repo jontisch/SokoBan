@@ -16,6 +16,8 @@ public:
 
     bool get(int index, T *output);
 
+    int indexOf(T item);
+
     T *getPointer(int index);
 
     int size();
@@ -41,6 +43,17 @@ Collection<T>::Collection(int n):_allocatedMem(n),_size(0),_nFreeSlots(0), _nEle
     _freeSlots = (int*)malloc(sizeof(int)*n);
 
 
+}
+
+
+template<typename T>
+int Collection<T>::indexOf(T item){
+    for(int i = 0; i < _size; i++)
+    {
+        if(!isValid(i)) continue;
+        if(elements[i].elem == item) return i;
+    }
+    return -1;
 }
 
 template <typename T>

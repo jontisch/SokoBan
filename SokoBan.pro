@@ -32,7 +32,9 @@ SOURCES += global.cpp \
     map/map.cpp \
     map/move_stack.cpp \
     map/tile.cpp \
-    map/entities/entity.cpp
+    map/entities/entity.cpp \
+    map/entities/button.cpp \
+    map/entities/door.cpp
 
 HEADERS  += game.h \
     mainwindow.h \
@@ -43,7 +45,9 @@ HEADERS  += game.h \
     map/map.h \
     map/move_stack.h \
     map/tile.h \
-    map/entities/entity.h
+    map/entities/entity.h \
+    map/entities/button.h \
+    map/entities/door.h
 
 FORMS    += mainwindow.ui
 

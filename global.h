@@ -36,8 +36,12 @@ enum PixmapIdentifier
     PIXMAP_ICE,
     PIXMAP_GRASS,
     PIXMAP_SAND,
+    PIXMAP_DOOR_VERTICAL,
+    PIXMAP_DOOR_HORIZONTAL,
+    PIXMAP_BUTTON_UP,
+    PIXMAP_BUTTON_DOWN
 };
-#define N_PIXMAPS 16
+#define N_PIXMAPS 20
 
 
 void InitPixmaps();

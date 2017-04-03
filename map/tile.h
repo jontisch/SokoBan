@@ -2,6 +2,7 @@
 #define TILE_H
 
 #include "../global.h"
+#include "entities/entity.h"
 
 enum TileFlag {
     NO_TILE_FLAGS = 0,
@@ -36,6 +37,7 @@ struct Tile
 {
     TileType type;
     long flags; //Use TileFlag:s
+    Entity *interactable;
 };
 
 PixmapIdentifier PixmapForTileType(TileType type);
