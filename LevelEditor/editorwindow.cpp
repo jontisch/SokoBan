@@ -137,6 +137,8 @@ void EditorWindow::on_load_button_clicked()
 
     if(_map) delete _map;
     _map = new Map(filename);
+
+    updateUI();
 }
 
 void EditorWindow::on_save_button_clicked(bool checked)

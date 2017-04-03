@@ -7,7 +7,7 @@
 #include "collection.h"
 #include "game.h"
 #include "menuactiondelegate.h"
-#include "tile.h"
+#include "map/tile.h"
 
 class Menu;
 
@@ -16,7 +16,7 @@ class MenuItem
 public:
     MenuItem(QString text, Menu *ownerMenu, bool visible=true);
     QString getText();
-    bool renderMenuItem(QRect renderRect, QRect mapRenderRect, QPainter *qp, bool isCurrent);
+    bool renderMenuItem(QRect renderRect, QPainter *qp, bool isCurrent);
     virtual Menu *select() = 0;
     Menu *getOwner();
     bool isVisible();
@@ -32,6 +32,7 @@ private:
 class Menu: public MenuItem
 {
 public:
+
     Menu(QString title, Menu *ownerMenu = NULL, QString text = NULL, bool visible=true);
     QString getTitle();
     void renderMenu(QRect renderRect, QPainter *qp);

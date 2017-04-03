@@ -2,7 +2,7 @@
 #define GAME_H
 #include "qnamespace.h"
 #include <QPainter>
-#include "map.h"
+#include "map/map.h"
 
 class Game
 {

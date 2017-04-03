@@ -26,22 +26,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += global.cpp \
     game.cpp \
     main.cpp \
-        mainwindow.cpp \
-    map.cpp \
-    move_stack.cpp \
+    mainwindow.cpp \
     menuitem.cpp \
-    tile.cpp \
-    menuactiondelegate.cpp
+    menuactiondelegate.cpp \
+    map/map.cpp \
+    map/move_stack.cpp \
+    map/tile.cpp
 
 HEADERS  += game.h \
     mainwindow.h \
-    map.h \
-    move_stack.h \
     global.h \
     menuitem.h \
     collection.h \
-    tile.h \
-    menuactiondelegate.h
+    menuactiondelegate.h \
+    map/map.h \
+    map/move_stack.h \
+    map/tile.h
 
 FORMS    += mainwindow.ui
 

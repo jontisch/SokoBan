@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QPaintEvent>
-#include "map.h"
+#include "map/map.h"
 #include "menuitem.h"
 #include "game.h"
 #include "global.h"

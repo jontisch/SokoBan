@@ -519,7 +519,7 @@ void Map::pushMovable(int x, int y, Direction dir, void *move)
         }
 
         TileFlag newMovable = movable;
-        if(tileFlags(x, y) & HAS_SNOW)
+        if(tileFlags(x, y) & HAS_SNOW && (movable == HAS_SNOWBALL_SMALL || movable == HAS_SNOWBALL_MEDIUM || movable == HAS_SNOWBALL_BIG))
         {
             if(movable == HAS_SNOWBALL_SMALL) newMovable = HAS_SNOWBALL_MEDIUM;
             else if(movable == HAS_SNOWBALL_MEDIUM) newMovable = HAS_SNOWBALL_BIG;

@@ -11,9 +11,8 @@ QString MenuItem::getText(){
     return _text;
 }
 
-bool MenuItem::renderMenuItem(QRect renderRect, QRect mapRenderRect, QPainter *qp, bool isCurrent)
+bool MenuItem::renderMenuItem(QRect renderRect, QPainter *qp, bool isCurrent)
 {
-
     if(_visible){
         qp->drawText(renderRect, Qt::AlignCenter, _text);
     }
@@ -66,9 +65,7 @@ void Menu::renderMenu(QRect renderRect, QPainter *qp)
 
         assert(_menuItems.isValid(i));
 
-        if((*_menuItems.getPointer(i))->renderMenuItem(calculateItemRenderRect(c, &m), renderRect,
-                                                  qp,
-                                                  (_currentPos==i))){
+        if((*_menuItems.getPointer(i))->renderMenuItem(calculateItemRenderRect(c, &m), qp, (_currentPos==i))){
             c++;
         }
     }

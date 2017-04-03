@@ -71,7 +71,7 @@ void *EnlargeMemory(int currentSize, int newSize, void *pointer){
 
 char *DuplicateString(char *string)
 {
-    long length = strlen(string);
+    long long length = strlen(string);
     char *result = (char *)malloc(sizeof(char)*(length+1));
     memcpy(result, string, sizeof(char)*length);
     result[length] = 0;
