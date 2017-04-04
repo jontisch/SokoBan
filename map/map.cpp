@@ -1,6 +1,7 @@
 #include "map.h"
 #include "entities/button.h"
 #include <QDebug>
+#include "entities/door.h"
 
 void Map::setup()
 {
@@ -12,7 +13,7 @@ void Map::setup()
         _coloredEntities[i] = new Collection<Entity *>(8);
     }
 
-#if 0
+#if 1
     Door *door = new Door(this);
     door->setRotation(LEFT);
     setTileInteractable(12, 11, door);

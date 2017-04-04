@@ -17,6 +17,9 @@ public:
 
     //Called when button states are changed. Value will be true if all buttons with the door's color are down.
     void setToggleValue(bool value);
+
+    bool blocksPlayer();
+
 private:
     bool _isOpen;
 };
