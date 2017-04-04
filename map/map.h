@@ -7,6 +7,8 @@
 #include "../global.h"
 #include "move_stack.h"
 #include "tile.h"
+#include "entities/entity.h"
+#include "../collection.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -21,7 +23,6 @@ class MoveStack;
 class Map
 {
 public:
-
 
     Map(int Width, int Height, int playerX, int playerY);
     Map(QString filename);
@@ -50,6 +51,16 @@ public:
 
     bool tileIsWalkable(int x, int y);
 
+    //If the tile already had an interactable, setTileInteractable returns the old one.
+    Entity *setTileInteractable(int x, int y, Entity *interactable);
+    bool tileHasInteractable(int x, int y, Entity *interactable);
+
+    //These two are called by a ColoredEntity so that map can keep track of them (see ColoredEntity::setColor and ColoredEntity::Colored())
+    void addColoredEntity(ColoredEntity *entity);
+    void updateEntityColor(ColoredEntity *entity, EntityColor oldColor);
+
+    //NOTE: The returned collection is the same as the internal one.
+    Collection<Entity *> *entitiesByColor(EntityColor color);
 protected:
 
 private:
@@ -71,9 +82,14 @@ private:
     int _movesMade;
     bool _loaded;
 
-
     void setup();
     Tile *tile(int x, int y);
+
+    //Calculate the render rect for a tile
+    QRect calculateTileRect(int x, int y, QPoint mapPixelOffset, int tileSize, int depth, int zOffset);
+
+    //This sorts entities by colors
+    Collection<Entity *> *_coloredEntities[N_ENTITY_COLORS];
 };
 
 #endif // MAP_H

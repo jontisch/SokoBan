@@ -17,5 +17,9 @@
     <file>images/icetile.png</file>
     <file>images/grasstile.png</file>
     <file>images/sandtile.png</file>
+    <file>images/door_closed_h.png</file>
+    <file>images/door_closed_v.png</file>
+    <file>images/button_up.png</file>
+    <file>images/button_down.png</file>
 </qresource>
 </RCC>

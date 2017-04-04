@@ -1,9 +1,25 @@
 #include "map.h"
+#include "entities/button.h"
 #include <QDebug>
 
 void Map::setup()
 {
     _moveStack = new MoveStack();
+
+
+    for(int i = 0; i < N_ENTITY_COLORS; i++)
+    {
+        _coloredEntities[i] = new Collection<Entity *>(8);
+    }
+
+#if 0
+    Door *door = new Door(this);
+    door->setRotation(LEFT);
+    setTileInteractable(12, 11, door);
+    setTileInteractable(11, 11, new Button(this));
+    setTileInteractable(12, 9, new Button(this));
+#endif
+
 }
 
 
@@ -17,6 +33,7 @@ Map::Map(int width, int height, int playerX, int playerY):
     _playerVisible(true)
 {
     tiles = (Tile *)malloc(sizeof(Tile)* width * height);
+    memset(tiles, 0, sizeof(Tile)* width * height);
 
     setup();
 }
@@ -38,6 +55,7 @@ Map::Map(QString filename):
     QTextStream in(&mapFile);
 
     Tile *temporaryTiles = (Tile *)malloc(sizeof(Tile)*MAX_MAP_SIZE*MAX_MAP_SIZE);
+    memset(temporaryTiles, 0, sizeof(Tile)*MAX_MAP_SIZE*MAX_MAP_SIZE);
 
     targetsLeft = 0;
 
@@ -141,6 +159,8 @@ int Map::calculateTileSize(QRect renderRect)
     int tileWidth = renderRect.width()/_width;
     int tileHeight = renderRect.height()/_height;
     int tileSize = (tileWidth > tileHeight) ? tileHeight : tileWidth;
+
+    while(tileSize % 4 != 0) tileSize--;
 
     return tileSize;
 }
@@ -295,6 +315,15 @@ void Map::setPlayerVisible(bool value)
     _playerVisible = value;
 }
 
+QRect Map::calculateTileRect(int x, int y, QPoint mapPixelOffset, int tileSize, int depth, int zOffset)
+{
+    int rectX = mapPixelOffset.x() + x * tileSize - zOffset - depth;
+    int rectY = mapPixelOffset.y() + y * tileSize - zOffset - depth;
+    int rectWidth = tileSize + depth;
+    int rectHeight = tileSize + depth;
+    return QRect(rectX, rectY, rectWidth, rectHeight);
+}
+
 void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x, int y, QPoint pixelOffset, int tileSize, int zOffset, PixmapIdentifier overlay)
 {
     int size = 0;
@@ -314,21 +343,16 @@ void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x,
     }
 
     int depth = (size * tileSize / 32.0);
-    int renderX = pixelOffset.x() + x * tileSize - depth - zOffset;
-    int renderY = pixelOffset.y() + y * tileSize - depth - zOffset;
+    QRect renderRect = calculateTileRect(x, y, pixelOffset, tileSize, depth, zOffset);
 
 
     if(pixmap == NULL)
     {
-        qp->fillRect(renderX,
-                     renderY,
-                     tileSize, tileSize, brush);
+        qp->fillRect(renderRect, brush);
     }
     else
     {
-        qp->drawPixmap(renderX,
-                       renderY,
-                       tileSize + depth, tileSize + depth, *pixmap);
+        qp->drawPixmap(renderRect, *pixmap);
     }
 
     if(overlay != NO_PIXMAP)
@@ -387,6 +411,12 @@ void Map::draw(QPainter *qp, QRect rect)
                 {
                     drawTilePixmap(qp, PIXMAP_SNOWBALL_BIG, x, y, pixelOffset, tileSize, 0);
                 }
+
+                if(tile->interactable != NULL)
+                {
+                    qDebug() << calculateTileRect(x, y, pixelOffset, tileSize, tile->interactable->height()*tileSize, 0);
+                    tile->interactable->drawAt(qp, calculateTileRect(x, y, pixelOffset, tileSize, tile->interactable->height()*tileSize, 0));
+                }
             }
 
             if(_playerVisible && x == _player.x() && y == _player.y()){
@@ -425,12 +455,28 @@ void Map::setTileFlags(int x, int y, int flags)
         targetsLeft++;
     }
 
+    if(t->interactable)
+    {
+        //Tell the interactable that a movable has entered or exited
+        if(!hadMovable && hasMovable)
+        {
+            t->interactable->movableEntered(x, y);
+        }
+        else if(hadMovable && !hasMovable)
+        {
+            t->interactable->movableExited(x, y);
+        }
+    }
+
+
     qDebug() << targetsLeft << "targets left";
 }
 
 bool Map::tileIsWalkable(int x, int y)
 {
-    if(!tileInBounds(x,y)) return false;
+    Tile *tile = this->tile(x, y);
+    if(tile == NULL) return false;
+    if(tile->interactable != NULL && tile->interactable->blocksPlayer()) return false;
     TileType type = getTileType(x, y);
     return (type != WALL && type != WATER);
 }
@@ -546,8 +592,8 @@ void Map::movePlayer(int dx, int dy, bool force)
         }else if(newY < 0){
             newY = _height-1;
         }
-        _player.setX(newX);
-        _player.setY(newY);
+
+        setPlayerPosition(newX, newY);
         return;
     }
 
@@ -591,8 +637,7 @@ void Map::movePlayer(int dx, int dy, bool force)
 
         if(canWalk)
         {
-            _player.setX(_player.x()+dx);
-            _player.setY(_player.y()+dy);
+            setPlayerPosition(newX, newY);
             move.playerDX = dx;
             move.playerDY = dy;
             _moveStack->pushMove(move);
@@ -606,9 +651,60 @@ void Map::movePlayer(int dx, int dy, bool force)
     }
 }
 
+bool Map::tileHasInteractable(int x, int y, Entity *interactable)
+{
+    Tile *tile = this->tile(x, y);
+    if(tile == NULL) return false;
+    if(tile->interactable != NULL)
+    {
+        interactable = tile->interactable;
+        return true;
+    }
+    return false;
+}
+
+void Map::addColoredEntity(ColoredEntity *entity)
+{
+    entitiesByColor(entity->color())->add(entity);
+}
+
+//Move the entity to the right collection when it changes color.
+void Map::updateEntityColor(ColoredEntity *entity, EntityColor oldColor)
+{
+    Collection<Entity *> *oldCollection = entitiesByColor(oldColor);
+    int index = oldCollection->indexOf(entity);
+    if(index != -1)
+        oldCollection->remove(index);
+    entitiesByColor(entity->color())->add(entity);
+}
+
+Collection<Entity *> *Map::entitiesByColor(EntityColor color)
+{
+    return _coloredEntities[color];
+}
+
+Entity *Map::setTileInteractable(int x, int y, Entity *interactable)
+{
+    Tile *tile = this->tile(x, y);
+    if(tile == NULL) return NULL;
+    Entity *result = tile->interactable;
+    tile->interactable = interactable;
+    return result;
+}
+
 void Map::setPlayerPosition(int x, int y)
 {
-    _player = QPoint(x, y);
+    Tile *currentTile = tile(_player.x(), _player.y());
+    Tile *newTile = tile(x, y);
+
+    //Tell the interactables that the player has exited/entered their tiles.
+    if(currentTile != NULL && currentTile->interactable != NULL)
+            currentTile->interactable->playerExited(_player.x(), _player.y());
+    if(newTile != NULL && newTile->interactable != NULL)
+            newTile->interactable->playerEntered(x, y);
+
+    _player.setX(x);
+    _player.setY(y);
 }
 
 
@@ -622,4 +718,9 @@ Map::~Map()
     free(tiles);
     //free(referenceTiles);
     delete _moveStack;
+
+    for(int i = 0; i < N_ENTITY_COLORS; i++)
+    {
+        delete _coloredEntities[i];
+    }
 }

@@ -59,6 +59,12 @@ void InitPixmaps()
     PIXMAPS[PIXMAP_GRASS] = new QPixmap(":/images/grasstile.png");
     PIXMAPS[PIXMAP_SAND] = new QPixmap(":/images/sandtile.png");
 
+    PIXMAPS[PIXMAP_DOOR_HORIZONTAL] = new QPixmap(":/images/door_closed_h.png");
+    PIXMAPS[PIXMAP_DOOR_VERTICAL] = new QPixmap(":/images/door_closed_v.png");
+
+    PIXMAPS[PIXMAP_BUTTON_UP] = new QPixmap(":/images/button_up.png");
+    PIXMAPS[PIXMAP_BUTTON_DOWN] = new QPixmap(":/images/button_down.png");
+
 }
 
 QPixmap *Pixmap(PixmapIdentifier ident){
