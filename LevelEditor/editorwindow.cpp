@@ -14,7 +14,12 @@ EditorWindow::EditorWindow(QWidget *parent) :
     QString appPath = QCoreApplication::applicationDirPath();
     qDebug() << appPath;
     _map = new Map(appPath + "/../../maps/menumap.fml");
+    //HMM
+    _tileList = new ListEditorWidget("Tiles");
+    _flagList = new ListEditorWidget("Flags");
 
+
+    //END OF HMM
     selectedFlag = HAS_BOX;
     selectedTileType = FLOOR;
 
@@ -24,6 +29,9 @@ EditorWindow::EditorWindow(QWidget *parent) :
     {
         if(!IsValidTileType((TileType)i)) continue;
         new QListWidgetItem(TileTypeName((TileType)i), ui->list_tile_types);
+
+        _tileList->addItem(new QString(TileTypeName((TileType)i)), Pixmap(PixmapForTileType((TileType)i)));
+
         if(i == selectedTileType) tile_row = c;
         tileTypeForListRow[c] = (TileType)i;
         c++;
@@ -36,6 +44,9 @@ EditorWindow::EditorWindow(QWidget *parent) :
     while(d < N_TILEFLAGS)
     {
         new QListWidgetItem(TileFlagName((TileFlag)f), ui->list_flags);
+
+        _flagList->addItem(new QString(TileFlagName((TileFlag)f)), Pixmap(PixmapForTileType((TileType)f)));
+
         if(f == selectedFlag) flag_row = d;
         f *= 2;
         d++;
@@ -112,6 +123,8 @@ void EditorWindow::paintEvent(QPaintEvent *Event)
 {
     QPainter painter(this);
     _map->draw(&painter, mapArea());
+    _tileList->renderWidget(QRect(200,200,200,400),&painter);
+    _flagList->renderWidget(QRect(700,200,200,400),&painter);
 }
 
 EditorWindow::~EditorWindow()

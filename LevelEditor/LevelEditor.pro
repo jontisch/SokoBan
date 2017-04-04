@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = LevelEditor
 TEMPLATE = app
-
+CONFIG += C++11
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -28,13 +28,16 @@ SOURCES += main.cpp\
     ../map/map.cpp \
     ../global.cpp \
     ../map/move_stack.cpp \
-    ../map/tile.cpp
+    ../map/tile.cpp \
+    editorwidget.cpp
 
 HEADERS  += editorwindow.h \
     ../map/map.h \
     ../global.h \
     ../map/move_stack.h \
-    ../map/tile.h
+    ../map/tile.h \
+    editorwidget.h \
+    ../collection.h
 
 FORMS    += editorwindow.ui
 

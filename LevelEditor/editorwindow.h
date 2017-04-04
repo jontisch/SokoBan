@@ -2,10 +2,12 @@
 #define EDITORWINDOW_H
 
 #include "../map/map.h"
+#include "../map/tile.h"
 #include <QMainWindow>
 #include <QPaintEvent>
 #include <QMouseEvent>
 #include <QListWidgetItem>
+#include "editorwidget.h"
 
 namespace Ui {
 class EditorWindow;
@@ -68,6 +70,9 @@ private:
     Ui::EditorWindow *ui;
     Map *_map;
 
+    ListEditorWidget *_tileList;
+    ListEditorWidget *_flagList;
+
     QPoint lastClickedTile;
     TileFlag selectedFlag;
     TileType selectedTileType;
@@ -78,7 +83,12 @@ private:
 
     TileType tileTypeForListRow[N_TILETYPES];
 
+
+    QRect toolArea();
+
+
     QRect mapArea();
+
 
     EditingMode mode;
 };
