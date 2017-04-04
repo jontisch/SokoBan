@@ -7,10 +7,10 @@
  * Det kommer gå att fråga Map efter alla entities med en viss färg.
  */
 
-Entity::Entity()
-{
+//Entity::Entity()
+//{
 
-}
+//}
 
 
 ColoredEntity::ColoredEntity()
