@@ -10,10 +10,6 @@
  * Det kommer gå att fråga Map efter alla entities med en viss färg.
  */
 
-<<<<<<< HEAD
-//Entity::Entity()
-//{
-=======
 Entity::Entity(Map *map)
 {
     _map = map;
@@ -46,9 +42,8 @@ void Entity::movableEntered(int tileX, int tileY)
 
 void Entity::movableExited(int tileX, int tileY)
 {
->>>>>>> 83c986a722116e726a94c592ff5f61c58a936c34
 
-//}
+}
 
 bool Entity::isToggleable()
 {
