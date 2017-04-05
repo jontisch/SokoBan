@@ -187,7 +187,7 @@ void Menu::updateMap(){
 
 }
 
-MenuAction::MenuAction(QString text, Menu *ownerMenu, int action, MenuActionDelegate *delegate, bool visible):MenuItem(text, ownerMenu, visible),_action(action),_delegate(delegate){
+MenuAction::MenuAction(QString text, Menu *ownerMenu, int action, MenuActionDelegate *delegate, bool visible): MenuItem(text, ownerMenu, visible),_action(action),_delegate(delegate){
 
 
 }
