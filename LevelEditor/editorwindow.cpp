@@ -45,7 +45,7 @@ EditorWindow::EditorWindow(QWidget *parent) :
     {
         new QListWidgetItem(TileFlagName((TileFlag)f), ui->list_flags);
 
-        _flagList->addItem(new QString(TileFlagName((TileFlag)f)), Pixmap(PixmapForTileType((TileType)f)));
+        _flagList->addItem(new QString(TileFlagName((TileFlag)f)), Pixmap(PixmapForTileFlag((TileFlag)f)));
 
         if(f == selectedFlag) flag_row = d;
         f *= 2;
@@ -97,10 +97,23 @@ void EditorWindow::mousePressEvent(QMouseEvent *Event)
 {
     if(Event->buttons() & Qt::LeftButton)
     {
+
         QPoint mousePosition = Event->pos();
-        QPoint tile = _map->pixelToTile(mousePosition.x(), mousePosition.y(), mapArea());
-        operateOnTile(tile);
-        lastClickedTile = tile;
+        if(mapArea().contains(mousePosition)){
+            QPoint tile = _map->pixelToTile(mousePosition.x(), mousePosition.y(), mapArea());
+            operateOnTile(tile);
+            lastClickedTile = tile;
+        }
+
+        else if(_tileList->getArea()->contains(mousePosition)){
+            _tileList->select(this->mapFromGlobal(QCursor::pos()).y());
+            this->repaint();
+        }
+        else if(_flagList->getArea()->contains(mousePosition)){
+            _flagList->select(this->mapFromGlobal(QCursor::pos()).y());
+            selectedFlag = (TileFlag)(int)pow(2, _flagList->getSelected());
+            this->repaint();
+        }
     }
 }
 
@@ -123,8 +136,8 @@ void EditorWindow::paintEvent(QPaintEvent *Event)
 {
     QPainter painter(this);
     _map->draw(&painter, mapArea());
-    _tileList->renderWidget(QRect(200,200,200,400),&painter);
-    _flagList->renderWidget(QRect(700,200,200,400),&painter);
+    _tileList->renderWidget(&painter,QRect(mapArea().right(),0,120,350));
+    _flagList->renderWidget(&painter,QRect(mapArea().right()+120,0,120,350));
 }
 
 EditorWindow::~EditorWindow()
