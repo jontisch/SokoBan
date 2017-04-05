@@ -13,7 +13,7 @@ void Map::setup()
         _coloredEntities[i] = new Collection<Entity *>(8);
     }
 
-#if 1
+#if 0
     Door *door = new Door(this);
     door->setRotation(LEFT);
     setTileInteractable(12, 11, door);

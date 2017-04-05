@@ -49,7 +49,10 @@ SOURCES       = ..\LevelEditor\main.cpp \
 		..\global.cpp \
 		..\map\move_stack.cpp \
 		..\map\tile.cpp \
-		..\LevelEditor\editorwidget.cpp debug\qrc_resources.cpp \
+		..\LevelEditor\editorwidget.cpp \
+		..\map\entities\button.cpp \
+		..\map\entities\door.cpp \
+		..\map\entities\entity.cpp debug\qrc_resources.cpp \
 		debug\moc_editorwindow.cpp
 OBJECTS       = debug\main.obj \
 		debug\editorwindow.obj \
@@ -58,6 +61,9 @@ OBJECTS       = debug\main.obj \
 		debug\move_stack.obj \
 		debug\tile.obj \
 		debug\editorwidget.obj \
+		debug\button.obj \
+		debug\door.obj \
+		debug\entity.obj \
 		debug\qrc_resources.obj \
 		debug\moc_editorwindow.obj
 
@@ -67,13 +73,19 @@ DIST          = ../SokoBan.pro.user.b0363ed ..\LevelEditor\editorwindow.h \
 		..\map\move_stack.h \
 		..\map\tile.h \
 		..\LevelEditor\editorwidget.h \
-		..\collection.h ..\LevelEditor\main.cpp \
+		..\collection.h \
+		..\map\entities\button.h \
+		..\map\entities\door.h \
+		..\map\entities\entity.h ..\LevelEditor\main.cpp \
 		..\LevelEditor\editorwindow.cpp \
 		..\map\map.cpp \
 		..\global.cpp \
 		..\map\move_stack.cpp \
 		..\map\tile.cpp \
-		..\LevelEditor\editorwidget.cpp
+		..\LevelEditor\editorwidget.cpp \
+		..\map\entities\button.cpp \
+		..\map\entities\door.cpp \
+		..\map\entities\entity.cpp
 QMAKE_TARGET  = LevelEditor
 DESTDIR        = debug\ #avoid trailing-slash linebreak
 TARGET         = LevelEditor.exe
@@ -111,10 +123,10 @@ qmake: FORCE
 qmake_all: FORCE
 
 dist:
-	$(ZIP) LevelEditor.zip $(SOURCES) $(DIST) ..\LevelEditor\LevelEditor.pro ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\spec_pre.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\common\angle.conf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\common\msvc-base.conf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\common\msvc-desktop.conf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\qconfig.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dcore.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dcore_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dextras.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dextras_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dinput.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dinput_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dlogic.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dlogic_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquick.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquick_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquickextras.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquickextras_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquickinput.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquickinput_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquickrender.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquickrender_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3drender.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3drender_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_accessibility_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_axbase.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_axbase_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_axcontainer.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_axcontainer_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_axserver.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_axserver_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_bluetooth.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_bluetooth_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_bootstrap_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_charts.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_charts_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_clucene_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_concurrent.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_concurrent_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_core.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_core_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_datavisualization.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_datavisualization_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_dbus.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_dbus_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_designer.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_designer_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_designercomponents_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_devicediscovery_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_egl_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_eventdispatcher_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_fb_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_fontdatabase_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_gamepad.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_gamepad_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_gui.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_gui_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_help.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_help_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_location.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_location_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_multimedia.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_multimedia_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_multimediawidgets.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_multimediawidgets_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_network.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_network_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_networkauth.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_networkauth_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_nfc.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_nfc_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_opengl.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_opengl_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_openglextensions.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_openglextensions_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_packetprotocol_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_platformcompositor_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_positioning.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_positioning_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_printsupport.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_printsupport_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_purchasing.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_purchasing_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_qml.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_qml_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_qmldebug_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_qmldevtools_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_qmltest.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_qmltest_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quick.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quick_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quickcontrols2.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quickcontrols2_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quickparticles_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quicktemplates2_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quickwidgets.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quickwidgets_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_script.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_script_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_scripttools.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_scripttools_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_scxml.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_scxml_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_sensors.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_sensors_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_serialbus.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_serialbus_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_serialport.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_serialport_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_sql.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_sql_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_svg.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_svg_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_testlib.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_testlib_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_texttospeech.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_texttospeech_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_theme_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_uiplugin.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_uitools.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_uitools_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webchannel.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webchannel_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webengine.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webengine_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webenginecore.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webenginecore_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webenginecoreheaders_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webenginewidgets.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webenginewidgets_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_websockets.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_websockets_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webview.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webview_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_widgets.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_widgets_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_winextras.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_winextras_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_xml.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_xml_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_xmlpatterns.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_xmlpatterns_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_zlib_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\qt_functions.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\qt_config.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\win32-msvc2015\qmake.conf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\spec_post.prf .qmake.stash ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\exclusive_builds.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\toolchain.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\default_pre.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\win32\default_pre.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\resolve_config.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\exclusive_builds_post.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\default_post.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\build_pass.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\qml_debug.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\win32\rtti.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\precompile_header.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\warn_on.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\qt.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\resources.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\moc.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\win32\opengl.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\uic.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\qmake_use.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\file_copies.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\win32\windows.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\testcase_targets.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\exceptions.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\yacc.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\lex.prf ..\LevelEditor\LevelEditor.pro ..\resources.qrc ..\..\..\..\Qt\5.8\msvc2015_64\lib\qtmaind.prl ..\..\..\..\Qt\5.8\msvc2015_64\lib\Qt5Widgetsd.prl ..\..\..\..\Qt\5.8\msvc2015_64\lib\Qt5Guid.prl ..\..\..\..\Qt\5.8\msvc2015_64\lib\Qt5Cored.prl   ..\resources.qrc ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\data\dummy.cpp ..\LevelEditor\editorwindow.h ..\map\map.h ..\global.h ..\map\move_stack.h ..\map\tile.h ..\LevelEditor\editorwidget.h ..\collection.h ..\LevelEditor\main.cpp ..\LevelEditor\editorwindow.cpp ..\map\map.cpp ..\global.cpp ..\map\move_stack.cpp ..\map\tile.cpp ..\LevelEditor\editorwidget.cpp ..\LevelEditor\editorwindow.ui    
+	$(ZIP) LevelEditor.zip $(SOURCES) $(DIST) ..\LevelEditor\LevelEditor.pro ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\spec_pre.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\common\angle.conf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\common\msvc-base.conf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\common\msvc-desktop.conf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\qconfig.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dcore.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dcore_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dextras.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dextras_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dinput.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dinput_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dlogic.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dlogic_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquick.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquick_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquickextras.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquickextras_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquickinput.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquickinput_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquickrender.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3dquickrender_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3drender.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_3drender_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_accessibility_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_axbase.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_axbase_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_axcontainer.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_axcontainer_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_axserver.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_axserver_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_bluetooth.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_bluetooth_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_bootstrap_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_charts.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_charts_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_clucene_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_concurrent.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_concurrent_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_core.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_core_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_datavisualization.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_datavisualization_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_dbus.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_dbus_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_designer.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_designer_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_designercomponents_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_devicediscovery_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_egl_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_eventdispatcher_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_fb_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_fontdatabase_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_gamepad.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_gamepad_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_gui.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_gui_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_help.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_help_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_location.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_location_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_multimedia.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_multimedia_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_multimediawidgets.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_multimediawidgets_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_network.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_network_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_networkauth.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_networkauth_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_nfc.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_nfc_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_opengl.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_opengl_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_openglextensions.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_openglextensions_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_packetprotocol_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_platformcompositor_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_positioning.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_positioning_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_printsupport.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_printsupport_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_purchasing.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_purchasing_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_qml.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_qml_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_qmldebug_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_qmldevtools_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_qmltest.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_qmltest_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quick.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quick_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quickcontrols2.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quickcontrols2_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quickparticles_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quicktemplates2_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quickwidgets.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_quickwidgets_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_script.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_script_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_scripttools.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_scripttools_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_scxml.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_scxml_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_sensors.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_sensors_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_serialbus.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_serialbus_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_serialport.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_serialport_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_sql.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_sql_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_svg.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_svg_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_testlib.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_testlib_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_texttospeech.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_texttospeech_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_theme_support_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_uiplugin.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_uitools.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_uitools_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webchannel.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webchannel_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webengine.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webengine_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webenginecore.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webenginecore_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webenginecoreheaders_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webenginewidgets.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webenginewidgets_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_websockets.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_websockets_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webview.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_webview_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_widgets.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_widgets_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_winextras.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_winextras_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_xml.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_xml_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_xmlpatterns.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_xmlpatterns_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\modules\qt_lib_zlib_private.pri ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\qt_functions.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\qt_config.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\win32-msvc2015\qmake.conf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\spec_post.prf .qmake.stash ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\exclusive_builds.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\toolchain.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\default_pre.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\win32\default_pre.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\resolve_config.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\exclusive_builds_post.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\default_post.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\build_pass.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\qml_debug.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\win32\rtti.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\precompile_header.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\warn_on.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\qt.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\resources.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\moc.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\win32\opengl.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\uic.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\qmake_use.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\file_copies.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\win32\windows.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\testcase_targets.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\exceptions.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\yacc.prf ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\lex.prf ..\LevelEditor\LevelEditor.pro ..\resources.qrc ..\..\..\..\Qt\5.8\msvc2015_64\lib\qtmaind.prl ..\..\..\..\Qt\5.8\msvc2015_64\lib\Qt5Widgetsd.prl ..\..\..\..\Qt\5.8\msvc2015_64\lib\Qt5Guid.prl ..\..\..\..\Qt\5.8\msvc2015_64\lib\Qt5Cored.prl   ..\resources.qrc ..\..\..\..\Qt\5.8\msvc2015_64\mkspecs\features\data\dummy.cpp ..\LevelEditor\editorwindow.h ..\map\map.h ..\global.h ..\map\move_stack.h ..\map\tile.h ..\LevelEditor\editorwidget.h ..\collection.h ..\map\entities\button.h ..\map\entities\door.h ..\map\entities\entity.h ..\LevelEditor\main.cpp ..\LevelEditor\editorwindow.cpp ..\map\map.cpp ..\global.cpp ..\map\move_stack.cpp ..\map\tile.cpp ..\LevelEditor\editorwidget.cpp ..\map\entities\button.cpp ..\map\entities\door.cpp ..\map\entities\entity.cpp ..\LevelEditor\editorwindow.ui    
 
 clean: compiler_clean 
-	-$(DEL_FILE) debug\main.obj debug\editorwindow.obj debug\map.obj debug\global.obj debug\move_stack.obj debug\tile.obj debug\editorwidget.obj debug\qrc_resources.obj debug\moc_editorwindow.obj
+	-$(DEL_FILE) debug\main.obj debug\editorwindow.obj debug\map.obj debug\global.obj debug\move_stack.obj debug\tile.obj debug\editorwidget.obj debug\button.obj debug\door.obj debug\entity.obj debug\qrc_resources.obj debug\moc_editorwindow.obj
 	-$(DEL_FILE) debug\LevelEditor.exp debug\LevelEditor.vc.pdb debug\LevelEditor.ilk debug\LevelEditor.idb
 
 distclean: clean 
@@ -316,6 +328,7 @@ debug\moc_editorwindow.cpp: ..\map\map.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qtabbar.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qrubberband.h \
 		..\LevelEditor\editorwidget.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QDebug \
 		..\LevelEditor\editorwindow.h \
 		debug\moc_predefs.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\bin\moc.exe
@@ -425,7 +438,7 @@ debug\main.obj: ..\LevelEditor\main.cpp ../LevelEditor/editorwindow.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qbrush.h \
 		../map/move_stack.h \
 		../map/tile.h \
-		..\map\entities\entity.h \
+		../map/entities/entity.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QPainter \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpainter.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtextoption.h \
@@ -490,6 +503,7 @@ debug\main.obj: ..\LevelEditor\main.cpp ../LevelEditor/editorwindow.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qtabbar.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qrubberband.h \
 		../LevelEditor/editorwidget.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QDebug \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\QApplication \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qapplication.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qdesktopwidget.h \
@@ -580,7 +594,7 @@ debug\editorwindow.obj: ..\LevelEditor\editorwindow.cpp ../LevelEditor/editorwin
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qbrush.h \
 		../map/move_stack.h \
 		../map/tile.h \
-		..\map\entities\entity.h \
+		../map/entities/entity.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QPainter \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpainter.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtextoption.h \
@@ -645,8 +659,8 @@ debug\editorwindow.obj: ..\LevelEditor\editorwindow.cpp ../LevelEditor/editorwin
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qtabbar.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qrubberband.h \
 		../LevelEditor/editorwidget.h \
-		ui_editorwindow.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QDebug \
+		ui_editorwindow.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\QFileDialog \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qfiledialog.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qdir.h \
@@ -735,7 +749,7 @@ debug\map.obj: ..\map\map.cpp ../map/map.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qbrush.h \
 		../map/move_stack.h \
 		../map/tile.h \
-		..\map\entities\entity.h \
+		../map/entities/entity.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QPainter \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpainter.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtextoption.h \
@@ -775,9 +789,9 @@ debug\map.obj: ..\map\map.cpp ../map/map.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QCoreApplication \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qcoreapplication.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qeventloop.h \
-		..\map\entities\button.h \
+		../map/entities/button.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QDebug \
-		..\map\entities\door.h
+		../map/entities/door.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -Fodebug\map.obj ..\map\map.cpp
 
 debug\global.obj: ..\global.cpp ../global.h \
@@ -892,7 +906,7 @@ debug\global.obj: ..\global.cpp ../global.h \
 		../map/map.h \
 		../map/move_stack.h \
 		../map/tile.h \
-		..\map\entities\entity.h \
+		../map/entities/entity.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QPainter \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpainter.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtextoption.h \
@@ -996,7 +1010,7 @@ debug\move_stack.obj: ..\map\move_stack.cpp ../map/move_stack.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qbrush.h \
 		../map/map.h \
 		../map/tile.h \
-		..\map\entities\entity.h \
+		../map/entities/entity.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QPainter \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpainter.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtextoption.h \
@@ -1118,7 +1132,7 @@ debug\tile.obj: ..\map\tile.cpp ../map/tile.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpainterpath.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QBrush \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qbrush.h \
-		..\map\entities\entity.h \
+		../map/entities/entity.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QPainter \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpainter.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtextoption.h \
@@ -1212,7 +1226,7 @@ debug\editorwidget.obj: ..\LevelEditor\editorwidget.cpp ../LevelEditor/editorwid
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QBrush \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qbrush.h \
 		../map/tile.h \
-		..\map\entities\entity.h \
+		../map/entities/entity.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QPainter \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpainter.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtextoption.h \
@@ -1221,8 +1235,360 @@ debug\editorwidget.obj: ..\LevelEditor\editorwidget.cpp ../LevelEditor/editorwid
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qfont.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qfontmetrics.h \
 		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QRect \
-		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QColor
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QColor \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QDebug \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qdebug.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qmap.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qtextstream.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qlocale.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qvariant.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qset.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qcontiguouscache.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -Fodebug\editorwidget.obj ..\LevelEditor\editorwidget.cpp
+
+debug\button.obj: ..\map\entities\button.cpp ../map/entities/button.h \
+		../map/entities/entity.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QPainter \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpainter.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtguiglobal.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qglobal.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qconfig-bootstrapped.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qconfig.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qtcore-config.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qsystemdetection.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qprocessordetection.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qcompilerdetection.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qtypeinfo.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qsysinfo.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qlogging.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qflags.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qtypetraits.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qatomic.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qbasicatomic.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qatomic_bootstrap.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qgenericatomic.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qatomic_cxx11.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qatomic_msvc.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qglobalstatic.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qmutex.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qnumeric.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qversiontagging.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtgui-config.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qnamespace.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qrect.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qmargins.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qsize.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qpoint.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qscopedpointer.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpixmap.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpaintdevice.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qwindowdefs.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qobjectdefs.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qobjectdefs_impl.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qwindowdefs_win.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qcolor.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qrgb.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qstringlist.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qlist.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qalgorithms.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qiterator.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qrefcount.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qarraydata.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qhashfunctions.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qchar.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qpair.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qbytearraylist.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qbytearray.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qstring.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qstringbuilder.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qregexp.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qstringmatcher.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qrgba64.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qsharedpointer.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qshareddata.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qhash.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qsharedpointer_impl.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qobject.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qcoreevent.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qmetatype.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qvarlengtharray.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qcontainerfwd.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qobject_impl.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qimage.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpixelformat.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtransform.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qmatrix.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpolygon.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qvector.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qregion.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qdatastream.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qiodevice.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qline.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpainterpath.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtextoption.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpen.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qbrush.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qfontinfo.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qfont.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qfontmetrics.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QRect \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QColor \
+		../global.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QPixmap \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QBrush \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QDebug \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qdebug.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qmap.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qtextstream.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qlocale.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qvariant.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qset.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qcontiguouscache.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QPainterPath \
+		../collection.h \
+		../map/map.h \
+		../map/move_stack.h \
+		../map/tile.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QPoint \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QFile \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qfile.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qfiledevice.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\QMessageBox \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qmessagebox.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qtwidgetsglobal.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qtwidgets-config.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qdialog.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qwidget.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpalette.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qsizepolicy.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qcursor.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qkeysequence.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qevent.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qurl.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qurlquery.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qvector2d.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtouchdevice.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QCoreApplication \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qcoreapplication.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qeventloop.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -Fodebug\button.obj ..\map\entities\button.cpp
+
+debug\door.obj: ..\map\entities\door.cpp ../map/entities/door.h \
+		../map/entities/entity.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QPainter \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpainter.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtguiglobal.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qglobal.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qconfig-bootstrapped.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qconfig.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qtcore-config.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qsystemdetection.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qprocessordetection.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qcompilerdetection.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qtypeinfo.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qsysinfo.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qlogging.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qflags.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qtypetraits.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qatomic.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qbasicatomic.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qatomic_bootstrap.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qgenericatomic.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qatomic_cxx11.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qatomic_msvc.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qglobalstatic.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qmutex.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qnumeric.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qversiontagging.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtgui-config.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qnamespace.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qrect.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qmargins.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qsize.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qpoint.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qscopedpointer.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpixmap.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpaintdevice.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qwindowdefs.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qobjectdefs.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qobjectdefs_impl.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qwindowdefs_win.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qcolor.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qrgb.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qstringlist.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qlist.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qalgorithms.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qiterator.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qrefcount.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qarraydata.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qhashfunctions.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qchar.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qpair.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qbytearraylist.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qbytearray.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qstring.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qstringbuilder.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qregexp.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qstringmatcher.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qrgba64.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qsharedpointer.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qshareddata.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qhash.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qsharedpointer_impl.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qobject.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qcoreevent.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qmetatype.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qvarlengtharray.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qcontainerfwd.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qobject_impl.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qimage.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpixelformat.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtransform.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qmatrix.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpolygon.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qvector.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qregion.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qdatastream.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qiodevice.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qline.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpainterpath.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtextoption.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpen.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qbrush.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qfontinfo.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qfont.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qfontmetrics.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QRect \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QColor \
+		../global.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QPixmap \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QBrush
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -Fodebug\door.obj ..\map\entities\door.cpp
+
+debug\entity.obj: ..\map\entities\entity.cpp ../map/entities/entity.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QPainter \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpainter.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtguiglobal.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qglobal.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qconfig-bootstrapped.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qconfig.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qtcore-config.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qsystemdetection.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qprocessordetection.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qcompilerdetection.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qtypeinfo.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qsysinfo.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qlogging.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qflags.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qtypetraits.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qatomic.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qbasicatomic.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qatomic_bootstrap.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qgenericatomic.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qatomic_cxx11.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qatomic_msvc.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qglobalstatic.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qmutex.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qnumeric.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qversiontagging.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtgui-config.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qnamespace.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qrect.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qmargins.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qsize.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qpoint.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qscopedpointer.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpixmap.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpaintdevice.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qwindowdefs.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qobjectdefs.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qobjectdefs_impl.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qwindowdefs_win.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qcolor.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qrgb.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qstringlist.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qlist.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qalgorithms.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qiterator.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qrefcount.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qarraydata.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qhashfunctions.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qchar.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qpair.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qbytearraylist.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qbytearray.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qstring.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qstringbuilder.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qregexp.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qstringmatcher.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qrgba64.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qsharedpointer.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qshareddata.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qhash.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qsharedpointer_impl.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qobject.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qcoreevent.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qmetatype.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qvarlengtharray.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qcontainerfwd.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qobject_impl.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qimage.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpixelformat.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtransform.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qmatrix.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpolygon.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qvector.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qregion.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qdatastream.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qiodevice.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qline.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpainterpath.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtextoption.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpen.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qbrush.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qfontinfo.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qfont.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qfontmetrics.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QRect \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QColor \
+		../global.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QPixmap \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\QBrush \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QDebug \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qdebug.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qmap.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qtextstream.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qlocale.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qvariant.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qset.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qcontiguouscache.h \
+		../map/map.h \
+		../map/move_stack.h \
+		../map/tile.h \
+		../collection.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QPoint \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QFile \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qfile.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qfiledevice.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\QMessageBox \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qmessagebox.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qtwidgetsglobal.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qtwidgets-config.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qdialog.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qwidget.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qpalette.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtWidgets\qsizepolicy.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qcursor.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qkeysequence.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qevent.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qurl.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qurlquery.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qvector2d.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtGui\qtouchdevice.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\QCoreApplication \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qcoreapplication.h \
+		..\..\..\..\Qt\5.8\msvc2015_64\include\QtCore\qeventloop.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -Fodebug\entity.obj ..\map\entities\entity.cpp
 
 debug\qrc_resources.obj: debug\qrc_resources.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -Fodebug\qrc_resources.obj debug\qrc_resources.cpp

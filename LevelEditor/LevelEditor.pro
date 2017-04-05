@@ -29,7 +29,10 @@ SOURCES += main.cpp\
     ../global.cpp \
     ../map/move_stack.cpp \
     ../map/tile.cpp \
-    editorwidget.cpp
+    editorwidget.cpp \
+    ../map/entities/button.cpp \
+    ../map/entities/door.cpp \
+    ../map/entities/entity.cpp
 
 HEADERS  += editorwindow.h \
     ../map/map.h \
@@ -37,7 +40,10 @@ HEADERS  += editorwindow.h \
     ../map/move_stack.h \
     ../map/tile.h \
     editorwidget.h \
-    ../collection.h
+    ../collection.h \
+    ../map/entities/button.h \
+    ../map/entities/door.h \
+    ../map/entities/entity.h
 
 FORMS    += editorwindow.ui
 

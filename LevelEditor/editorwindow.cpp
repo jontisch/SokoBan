@@ -136,8 +136,8 @@ void EditorWindow::paintEvent(QPaintEvent *Event)
 {
     QPainter painter(this);
     _map->draw(&painter, mapArea());
-    _tileList->renderWidget(&painter,QRect(mapArea().right(),0,120,350));
-    _flagList->renderWidget(&painter,QRect(mapArea().right()+120,0,120,350));
+    //_tileList->renderWidget(&painter,QRect(mapArea().right(),0,120,350));
+    //_flagList->renderWidget(&painter,QRect(mapArea().right()+120,0,120,350));
 }
 
 EditorWindow::~EditorWindow()

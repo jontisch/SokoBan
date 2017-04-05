@@ -79,3 +79,28 @@ const char *TileFlagName(TileFlag flag)
         return "Unknown tile flag";
     }
 }
+
+PixmapIdentifier PixmapForTileFlag(TileFlag flag)
+{
+    switch(flag)
+    {
+    case HAS_BOX:
+        return PIXMAP_BOX;
+    case IS_TARGET:
+        return PIXMAP_TARGET;
+    case IS_START:
+        return PIXMAP_FLOOR;
+    case HAS_SNOW:
+        return PIXMAP_SNOW;
+    case WAS_SNOW:
+        return PIXMAP_EX_SNOW;
+    case HAS_SNOWBALL_SMALL:
+        return PIXMAP_SNOWBALL_SMALL;
+    case HAS_SNOWBALL_MEDIUM:
+        return PIXMAP_SNOWBALL_MEDIUM;
+    case HAS_SNOWBALL_BIG:
+        return PIXMAP_SNOWBALL_BIG;
+    default:
+        return PIXMAP_WATER;
+    }
+}

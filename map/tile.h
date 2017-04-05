@@ -41,7 +41,7 @@ struct Tile
 };
 
 PixmapIdentifier PixmapForTileType(TileType type);
-
+PixmapIdentifier PixmapForTileFlag(TileFlag flag);
 
 
 #endif // TILE_H
