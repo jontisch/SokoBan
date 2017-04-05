@@ -34,7 +34,8 @@ SOURCES += global.cpp \
     map/tile.cpp \
     map/entities/entity.cpp \
     map/entities/button.cpp \
-    map/entities/door.cpp
+    map/entities/door.cpp \
+    levelgrid.cpp
 
 HEADERS  += game.h \
     mainwindow.h \
@@ -47,7 +48,8 @@ HEADERS  += game.h \
     map/tile.h \
     map/entities/entity.h \
     map/entities/button.h \
-    map/entities/door.h
+    map/entities/door.h \
+    levelgrid.h
 
 FORMS    += mainwindow.ui
 

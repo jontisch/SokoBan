@@ -20,6 +20,10 @@ MainWindow::MainWindow(QWidget *parent) :
     _game = new Game();
     this->initMenus();
 
+    _griiid = new LevelGrid("grid", 3, 2);
+    QString appPath = QCoreApplication::applicationDirPath();
+    LevelGridItem *item = new LevelGridItem(appPath + MAP_DIR + "/frozen_island.fml", "Frozen Island");
+    _griiid->addItem(item);
 }
 
 void MainWindow::executeMenuAction(int action)
@@ -158,4 +162,6 @@ void MainWindow::paintEvent(QPaintEvent *event)
     if(_menuVisible){
         _activeMenu->renderMenu(this->rect(),&qp);
     }
+
+    _griiid->draw(&qp, this->rect());
 }

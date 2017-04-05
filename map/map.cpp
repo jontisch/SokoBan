@@ -325,7 +325,7 @@ QRect Map::calculateTileRect(int x, int y, QPoint mapPixelOffset, int tileSize, 
     return QRect(rectX, rectY, rectWidth, rectHeight);
 }
 
-void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x, int y, QPoint pixelOffset, int tileSize, int zOffset, PixmapIdentifier overlay)
+void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x, int y, QPoint topLeft, int tileSize, int zOffset, PixmapIdentifier overlay)
 {
     int size = 0;
     QBrush brush;
@@ -344,7 +344,7 @@ void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x,
     }
 
     int depth = (size * tileSize / 32.0);
-    QRect renderRect = calculateTileRect(x, y, pixelOffset, tileSize, depth, zOffset);
+    QRect renderRect = calculateTileRect(x, y, topLeft, tileSize, depth, zOffset);
 
 
     if(pixmap == NULL)
@@ -358,7 +358,7 @@ void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x,
 
     if(overlay != NO_PIXMAP)
     {
-        drawTilePixmap(qp, overlay, x, y, pixelOffset, tileSize, depth);
+        drawTilePixmap(qp, overlay, x, y, topLeft, tileSize, depth);
     }
 
 }
@@ -367,8 +367,12 @@ void Map::draw(QPainter *qp, QRect rect)
 {
     if(_width <= 0 || _height <= 0) return;
 
+
     int tileSize = calculateTileSize(rect);
     QPoint pixelOffset = calculatePixelOffset(tileSize, rect);
+
+    QPoint topLeft(rect.x() + pixelOffset.x(), rect.y() + pixelOffset.y());
+
     for(int x = 0; x < _width;x++){
         for(int y = 0; y < _height; y++){
 
@@ -376,7 +380,7 @@ void Map::draw(QPainter *qp, QRect rect)
 
             if(tile->flags & HAS_BOX)
             {
-                drawTilePixmap(qp, PIXMAP_BOX, x, y, pixelOffset, tileSize);
+                drawTilePixmap(qp, PIXMAP_BOX, x, y, topLeft, tileSize);
             }
             else
             {
@@ -393,35 +397,35 @@ void Map::draw(QPainter *qp, QRect rect)
                 {
                     tilePixmap = PIXMAP_ICE;
                 }
-                drawTilePixmap(qp, tilePixmap, x, y, pixelOffset, tileSize, 0, overlay);
+                drawTilePixmap(qp, tilePixmap, x, y, topLeft, tileSize, 0, overlay);
 
                 if(tile->flags & IS_TARGET)
                 {
-                    drawTilePixmap(qp, PIXMAP_TARGET, x, y, pixelOffset, tileSize);
+                    drawTilePixmap(qp, PIXMAP_TARGET, x, y, topLeft, tileSize);
                 }
 
                 if(tile->flags & HAS_SNOWBALL_SMALL)
                 {
-                    drawTilePixmap(qp, PIXMAP_SNOWBALL_SMALL, x, y, pixelOffset, tileSize, 0);
+                    drawTilePixmap(qp, PIXMAP_SNOWBALL_SMALL, x, y, topLeft, tileSize, 0);
                 }
                 else if(tile->flags & HAS_SNOWBALL_MEDIUM)
                 {
-                    drawTilePixmap(qp, PIXMAP_SNOWBALL_MEDIUM, x, y, pixelOffset, tileSize, 0);
+                    drawTilePixmap(qp, PIXMAP_SNOWBALL_MEDIUM, x, y, topLeft, tileSize, 0);
                 }
                 else if(tile->flags & HAS_SNOWBALL_BIG)
                 {
-                    drawTilePixmap(qp, PIXMAP_SNOWBALL_BIG, x, y, pixelOffset, tileSize, 0);
+                    drawTilePixmap(qp, PIXMAP_SNOWBALL_BIG, x, y, topLeft, tileSize, 0);
                 }
 
                 if(tile->interactable != NULL)
                 {
-                    qDebug() << calculateTileRect(x, y, pixelOffset, tileSize, tile->interactable->height()*tileSize, 0);
-                    tile->interactable->drawAt(qp, calculateTileRect(x, y, pixelOffset, tileSize, tile->interactable->height()*tileSize, 0));
+                    qDebug() << calculateTileRect(x, y, topLeft, tileSize, tile->interactable->height()*tileSize, 0);
+                    tile->interactable->drawAt(qp, calculateTileRect(x, y, topLeft, tileSize, tile->interactable->height()*tileSize, 0));
                 }
             }
 
             if(_playerVisible && x == _player.x() && y == _player.y()){
-                drawTilePixmap(qp, PIXMAP_PLAYER, x, y, pixelOffset, tileSize, 0);
+                drawTilePixmap(qp, PIXMAP_PLAYER, x, y, topLeft, tileSize, 0);
             }
 
         }

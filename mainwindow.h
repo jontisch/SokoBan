@@ -7,6 +7,7 @@
 #include "menuitem.h"
 #include "game.h"
 #include "global.h"
+#include "levelgrid.h"
 
 namespace Ui {
 class MainWindow;
@@ -40,6 +41,9 @@ private:
     MenuItem *_resumeItem;
     Menu *_playMenu;
     bool _menuVisible;
+
+
+    LevelGrid *_griiid;
 };
 
 #endif // MAINWINDOW_H
