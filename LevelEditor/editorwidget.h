@@ -9,15 +9,42 @@
 class EditorWidget
 {
 public:
-    EditorWidget();
+    EditorWidget(QString title);
+    QRect *getArea();
+
+protected:
+    QString _title;
+    QRect _area;
+
 };
 
+class RadioEditorWidget: public EditorWidget
+{
+public:
+    RadioEditorWidget(QString title, bool state);
+    void renderWidget(QPainter *painter, QRect renderRect);
+    bool getState();
+    void setState(bool newState);
+
+private:
+    QString _text;
+    bool _state;
+
+};
+
+class LabelEditorWidget: public EditorWidget{
+public:
+    LabelEditorWidget(QString title, QString text);
+    void setText(QString newText);
+    void renderWidget(QPainter *painter, QRect renderRect);
+private:
+    QString _text;
+};
 
 class ListEditorWidget: public EditorWidget
 {
 public:
     ListEditorWidget(QString title);
-    QRect *getArea();
     void addItem(QString *item, QPixmap *pixmap);
     void renderWidget(QPainter *painter, QRect renderRect);
     void select(int height);
@@ -40,11 +67,9 @@ private:
     ListEditorWidget::ListRenderingMeasurements calculateRenderingMeasurements(QRect renderRect);
 
 
-    QString _title;
     Collection<QString*> _listNames;
     Collection<QPixmap*> _listThumbs;
 
-    QRect _area;
     int _selected;
 
     int heightToIndex(int height);

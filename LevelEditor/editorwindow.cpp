@@ -11,13 +11,16 @@ EditorWindow::EditorWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     InitPixmaps();
+    centralWidget()->setAttribute(Qt::WA_TransparentForMouseEvents);
+    setMouseTracking(true);
     QString appPath = QCoreApplication::applicationDirPath();
+
     qDebug() << appPath;
     _map = new Map(appPath + "/../../maps/menumap.fml");
     //HMM
     _tileList = new ListEditorWidget("Tiles");
     _flagList = new ListEditorWidget("Flags");
-
+    _gridPosLabel = new LabelEditorWidget("Position", "X:0\tY:0");
 
     //END OF HMM
     selectedFlag = HAS_BOX;
@@ -119,16 +122,20 @@ void EditorWindow::mousePressEvent(QMouseEvent *Event)
 
 void EditorWindow::mouseMoveEvent(QMouseEvent *Event)
 {
+    QPoint mousePosition = Event->pos();
+    QPoint tile = _map->pixelToTile(mousePosition.x(), mousePosition.y(), mapArea());
     if(Event->buttons() & Qt::LeftButton)
     {
-        QPoint mousePosition = Event->pos();
-        QPoint tile = _map->pixelToTile(mousePosition.x(), mousePosition.y(), mapArea());
         if(tile != lastClickedTile)
         {
             operateOnTile(tile);
             lastClickedTile = tile;
         }
     }
+    _gridPosLabel->setText(QString("X:" + QString::number(tile.x()) + "\tY:" + QString::number(tile.y())));
+    qDebug() << tile;
+    this->repaint();
+
 
 }
 
@@ -136,8 +143,9 @@ void EditorWindow::paintEvent(QPaintEvent *Event)
 {
     QPainter painter(this);
     _map->draw(&painter, mapArea());
-    //_tileList->renderWidget(&painter,QRect(mapArea().right(),0,120,350));
-    //_flagList->renderWidget(&painter,QRect(mapArea().right()+120,0,120,350));
+    _tileList->renderWidget(&painter,QRect(mapArea().right(),0,120,350));
+    _flagList->renderWidget(&painter,QRect(mapArea().right()+120,0,120,350));
+    _gridPosLabel->renderWidget(&painter, QRect(mapArea().right(), 360, 240, 50));
 }
 
 EditorWindow::~EditorWindow()

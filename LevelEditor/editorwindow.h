@@ -72,6 +72,7 @@ private:
 
     ListEditorWidget *_tileList;
     ListEditorWidget *_flagList;
+    LabelEditorWidget *_gridPosLabel;
 
     QPoint lastClickedTile;
     TileFlag selectedFlag;

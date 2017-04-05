@@ -44,6 +44,7 @@ public:
     QPushButton *button_shift_down;
     QPushButton *button_shift_right;
     QPushButton *button_shift_left;
+    QPushButton *load_button;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *EditorWindow)
@@ -101,6 +102,9 @@ public:
         button_shift_left = new QPushButton(centralWidget);
         button_shift_left->setObjectName(QStringLiteral("button_shift_left"));
         button_shift_left->setGeometry(QRect(900, 510, 41, 31));
+        load_button = new QPushButton(centralWidget);
+        load_button->setObjectName(QStringLiteral("load_button"));
+        load_button->setGeometry(QRect(990, 270, 80, 21));
         EditorWindow->setCentralWidget(centralWidget);
         statusBar = new QStatusBar(EditorWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
@@ -125,6 +129,7 @@ public:
         button_shift_down->setText(QApplication::translate("EditorWindow", "Down", 0));
         button_shift_right->setText(QApplication::translate("EditorWindow", "Right", 0));
         button_shift_left->setText(QApplication::translate("EditorWindow", "Left", 0));
+        load_button->setText(QApplication::translate("EditorWindow", "Load map", 0));
     } // retranslateUi
 
 };

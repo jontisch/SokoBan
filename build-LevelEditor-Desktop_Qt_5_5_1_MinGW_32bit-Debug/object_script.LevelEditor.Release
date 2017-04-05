@@ -1,0 +1,14 @@
+INPUT(
+./release\main.o
+./release\editorwindow.o
+./release\map.o
+./release\global.o
+./release\move_stack.o
+./release\tile.o
+./release\editorwidget.o
+./release\button.o
+./release\door.o
+./release\entity.o
+./release\qrc_resources.o
+./release\moc_editorwindow.o
+);

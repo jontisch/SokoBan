@@ -1,0 +1,14 @@
+INPUT(
+./debug\main.o
+./debug\editorwindow.o
+./debug\map.o
+./debug\global.o
+./debug\move_stack.o
+./debug\tile.o
+./debug\editorwidget.o
+./debug\button.o
+./debug\door.o
+./debug\entity.o
+./debug\qrc_resources.o
+./debug\moc_editorwindow.o
+);

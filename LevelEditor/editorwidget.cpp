@@ -1,19 +1,22 @@
 #include "editorwidget.h"
 
-EditorWidget::EditorWidget()
+EditorWidget::EditorWidget(QString title):_title(title), _area()
 {
 
 }
 
-ListEditorWidget::ListEditorWidget(QString title):_title(title), _area(), _listNames(32), _listThumbs(32)
-{
 
-}
-
-QRect *ListEditorWidget::getArea()
+QRect *EditorWidget::getArea()
 {
     return &_area;
 }
+
+
+ListEditorWidget::ListEditorWidget(QString title):EditorWidget(title), _listNames(32), _listThumbs(32)
+{
+
+}
+
 
 void ListEditorWidget::addItem(QString *item, QPixmap *pixmap)
 {
@@ -28,7 +31,6 @@ void ListEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
     ListRenderingMeasurements m = calculateRenderingMeasurements(renderRect);
 
     _area = renderRect;
-
     painter->fillRect(_area, Qt::black);
     painter->setPen(Qt::white);
     painter->setFont(QFont(QString("sans serif"), m.headerFontSize, 10));
@@ -88,4 +90,46 @@ ListEditorWidget::ListRenderingMeasurements ListEditorWidget::calculateRendering
 
 int ListEditorWidget::heightToIndex(int height){
     return height / 30;
+}
+
+LabelEditorWidget::LabelEditorWidget(QString title, QString text):EditorWidget(title), _text(text)
+{
+
+}
+
+void LabelEditorWidget::setText(QString newText)
+{
+    _text = newText;
+}
+
+void LabelEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
+{
+    painter->fillRect(renderRect, Qt::black);
+    painter->setPen(Qt::white);
+    painter->setFont(QFont(QString("sans serif"), 12, 10));
+    painter->drawText(renderRect, _text);
+}
+
+RadioEditorWidget::RadioEditorWidget(QString title, bool state):EditorWidget(title), _state(state)
+{
+
+}
+
+void RadioEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
+{
+    painter->fillRect(renderRect, Qt::black);
+    painter->setPen(Qt::white);
+    painter->setFont(QFont(QString("sans serif"), 12, 10));
+    painter->drawText(renderRect, _title);
+
+}
+
+bool RadioEditorWidget::getState()
+{
+    return _state;
+}
+
+void RadioEditorWidget::setState(bool newState)
+{
+
 }
