@@ -11,7 +11,8 @@ EditorWindow::EditorWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     InitPixmaps();
-    centralWidget()->setAttribute(Qt::WA_TransparentForMouseEvents);
+    qDebug() << centralWidget();
+    //centralWidget()->setAttribute(Qt::WA_TransparentForMouseEvents);
     setMouseTracking(true);
     QString appPath = QCoreApplication::applicationDirPath();
 
@@ -21,6 +22,10 @@ EditorWindow::EditorWindow(QWidget *parent) :
     _tileList = new ListEditorWidget("Tiles");
     _flagList = new ListEditorWidget("Flags");
     _gridPosLabel = new LabelEditorWidget("Position", "X:0\tY:0");
+    _setTypeRadio = new RadioEditorWidget("Set type", true);
+    _addFlagRadio = new RadioEditorWidget("Add flag", false);
+    _removeFlagRadio = new RadioEditorWidget("Remove flag", false);
+
 
     //END OF HMM
     selectedFlag = HAS_BOX;
@@ -109,12 +114,30 @@ void EditorWindow::mousePressEvent(QMouseEvent *Event)
         }
 
         else if(_tileList->getArea()->contains(mousePosition)){
+            qDebug() << "tilelist";
             _tileList->select(this->mapFromGlobal(QCursor::pos()).y());
+            selectedTileType = tileTypeForListRow[_tileList->getSelected()];
             this->repaint();
         }
         else if(_flagList->getArea()->contains(mousePosition)){
+            qDebug() << "flaglist";
             _flagList->select(this->mapFromGlobal(QCursor::pos()).y());
             selectedFlag = (TileFlag)(int)pow(2, _flagList->getSelected());
+            this->repaint();
+        }
+        else if(_setTypeRadio->getArea()->contains(mousePosition)){
+            qDebug() << "type";
+            _setTypeRadio->toggleState();
+            this->repaint();
+        }
+        else if(_addFlagRadio->getArea()->contains(mousePosition)){
+            qDebug() << "addflag";
+            _addFlagRadio->toggleState();
+            this->repaint();
+        }
+        else if(_removeFlagRadio->getArea()->contains(mousePosition)){
+            qDebug() << "removeflag";
+            _removeFlagRadio->toggleState();
             this->repaint();
         }
     }
@@ -133,7 +156,6 @@ void EditorWindow::mouseMoveEvent(QMouseEvent *Event)
         }
     }
     _gridPosLabel->setText(QString("X:" + QString::number(tile.x()) + "\tY:" + QString::number(tile.y())));
-    qDebug() << tile;
     this->repaint();
 
 
@@ -143,9 +165,13 @@ void EditorWindow::paintEvent(QPaintEvent *Event)
 {
     QPainter painter(this);
     _map->draw(&painter, mapArea());
-    _tileList->renderWidget(&painter,QRect(mapArea().right(),0,120,350));
-    _flagList->renderWidget(&painter,QRect(mapArea().right()+120,0,120,350));
-    _gridPosLabel->renderWidget(&painter, QRect(mapArea().right(), 360, 240, 50));
+    _setTypeRadio->renderWidget(&painter, QRect(mapArea().right(),0,80,50));
+    _addFlagRadio->renderWidget(&painter, QRect(mapArea().right()+80,0,80,50));
+    _removeFlagRadio->renderWidget(&painter, QRect(mapArea().right()+160,0,80,50));
+    _tileList->renderWidget(&painter,QRect(mapArea().right(),50,120,350));
+    _flagList->renderWidget(&painter,QRect(mapArea().right()+120,50,120,350));
+    _gridPosLabel->renderWidget(&painter, QRect(mapArea().right(), 360, 290, 50));
+
 }
 
 EditorWindow::~EditorWindow()

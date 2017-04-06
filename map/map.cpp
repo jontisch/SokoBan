@@ -43,8 +43,10 @@ Map::Map(QString filename):
     _movesMade(0),
     _startTile(0, 0),
     _loaded(false),
-    _playerVisible(true)
+    _playerVisible(true),
+    _filename(filename)
 {
+
     QFile mapFile(filename);
 
 
@@ -155,6 +157,54 @@ TileType Map::getTileType(int x, int y)
     return tiles[ x + _width * y ].type;
 }
 
+void Map::addTileFlagToRect(QRect rect, TileFlag flag)
+{
+    if(!tileInBounds(rect.x(), rect.y()) || !tileInBounds(rect.x() + rect.width() - 1, rect.y() + rect.height()-1))
+        return;
+
+    for(int x = rect.x(); x < rect.x() + rect.width(); x++)
+    {
+        for(int y = rect.y(); y < rect.y() + rect.height(); y++)
+        {
+            addTileFlag(x, y, flag);
+        }
+    }
+}
+
+void Map::removeTileFlagFromRect(QRect rect, TileFlag flag)
+{
+    for(int x = rect.x(); x < rect.x() + rect.width(); x++)
+    {
+        for(int y = rect.y(); y < rect.y() + rect.height(); y++)
+        {
+            removeTileFlag(x, y, flag);
+        }
+    }
+}
+
+
+void Map::setTileFlagsInRect(QRect rect, int flags)
+{
+    for(int x = rect.x(); x < rect.width(); x++)
+    {
+        for(int y = rect.y(); y < rect.height(); y++)
+        {
+            setTileFlags(x, y, flags);
+        }
+    }
+}
+
+void Map::setTilesInRect(QRect rect, TileType type)
+{
+    for(int x = rect.x(); x < rect.width(); x++)
+    {
+        for(int y = rect.y(); y < rect.height(); y++)
+        {
+            setTile(x, y, type);
+        }
+    }
+}
+
 int Map::calculateTileSize(QRect renderRect)
 {
     int tileWidth = renderRect.width()/_width;
@@ -223,6 +273,11 @@ void Map::saveMap(QString filename)
 bool Map::loaded()
 {
     return _loaded;
+}
+
+QString Map::filename()
+{
+    return _filename;
 }
 
 int Map::width()

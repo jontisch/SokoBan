@@ -2,6 +2,7 @@
 #define EDITORWIDGET_H
 #include "../collection.h"
 #include "../map/tile.h"
+#include "../global.h"
 #include <QPainter>
 #include <QPixmap>
 #include <QDebug>
@@ -24,7 +25,7 @@ public:
     RadioEditorWidget(QString title, bool state);
     void renderWidget(QPainter *painter, QRect renderRect);
     bool getState();
-    void setState(bool newState);
+    void toggleState();
 
 private:
     QString _text;

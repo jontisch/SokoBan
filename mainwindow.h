@@ -9,6 +9,13 @@
 #include "global.h"
 #include "levelgrid.h"
 
+enum AppState
+{
+    STATE_MENU,
+    STATE_GAME,
+    STATE_LEVEL_SELECT
+};
+
 namespace Ui {
 class MainWindow;
 }
@@ -29,8 +36,11 @@ protected:
 private:
     enum ACTION_TYPES{
         RESUME_GAME,
-        QUIT_GAME
+        QUIT_GAME,
+        PLAY_LEVEL
     };
+
+    AppState _state;
 
     void initMenus();
     Game *_game;
@@ -39,11 +49,9 @@ private:
     Menu *_mainMenu;
     Menu *_activeMenu;
     MenuItem *_resumeItem;
-    Menu *_playMenu;
-    bool _menuVisible;
 
 
-    LevelGrid *_griiid;
+    LevelGrid *_levelSelectGrid;
 };
 
 #endif // MAINWINDOW_H

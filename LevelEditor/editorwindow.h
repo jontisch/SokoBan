@@ -73,6 +73,10 @@ private:
     ListEditorWidget *_tileList;
     ListEditorWidget *_flagList;
     LabelEditorWidget *_gridPosLabel;
+    RadioEditorWidget *_setTypeRadio;
+    RadioEditorWidget *_addFlagRadio;
+    RadioEditorWidget *_removeFlagRadio;
+
 
     QPoint lastClickedTile;
     TileFlag selectedFlag;

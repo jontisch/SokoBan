@@ -56,13 +56,13 @@ public:
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         list_tile_types = new QListWidget(centralWidget);
         list_tile_types->setObjectName(QStringLiteral("list_tile_types"));
-        list_tile_types->setGeometry(QRect(840, 50, 131, 192));
+        list_tile_types->setGeometry(QRect(880, 560, 20, 20));
         save_button = new QPushButton(centralWidget);
         save_button->setObjectName(QStringLiteral("save_button"));
         save_button->setGeometry(QRect(860, 270, 80, 21));
         list_flags = new QListWidget(centralWidget);
         list_flags->setObjectName(QStringLiteral("list_flags"));
-        list_flags->setGeometry(QRect(980, 50, 111, 191));
+        list_flags->setGeometry(QRect(1050, 560, 20, 20));
         radio_add_flag = new QRadioButton(centralWidget);
         radio_add_flag->setObjectName(QStringLiteral("radio_add_flag"));
         radio_add_flag->setGeometry(QRect(940, 20, 82, 17));

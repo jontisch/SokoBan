@@ -54,9 +54,8 @@ bool Game::hasMap()
     return(_map);
 }
 
-bool Game::loadMap(QString mapFilename)
+void Game::setMap(Map *map)
 {
     if(_map) delete _map;
-    _map = new Map(mapFilename);
-    return _map->loaded();
+    _map = map;
 }

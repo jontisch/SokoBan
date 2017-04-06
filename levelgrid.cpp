@@ -6,9 +6,6 @@ LevelGrid::LevelGrid(QString text, int width, int height)
     _width = width;
     _height = height;
 
-    _currentX = 0;
-    _currentY = 0;
-
     _nItems = 0;
     _items = (LevelGridItem **)malloc(sizeof(LevelGridItem *)*_width*_height);
 
@@ -16,6 +13,8 @@ LevelGrid::LevelGrid(QString text, int width, int height)
     QString appPath = QCoreApplication::applicationDirPath() + MAP_DIR;
     _backgroundMap = new Map(QString(appPath + "/level_select.fml"));
     _backgroundMap->setPlayerVisible(false);
+
+    setCurrent(0, 0);
 }
 
 LevelGrid::~LevelGrid()
@@ -52,29 +51,64 @@ void LevelGrid::draw(QPainter *painter, QRect renderRect)
             if(index >= _nItems) break;
             QRect rect(topLeft.x() + tileSize * (5+11) * x,
                        topLeft.y() + tileSize * (5+7) * y,
-                       tileSize*11, tileSize*7);
+                       tileSize * 11, tileSize * 7);
             _items[index]->drawPreview(painter, rect);
             _items[index]->drawText(painter, QRect(rect.x(), rect.y() + rect.height(), tileSize * 11, tileSize *1.8));
         }
     }
 }
 
+Map *LevelGrid::selectCurrent()
+{
+    return _items[_currentX + _width * _currentY]->select();
+}
+
 bool LevelGrid::move(Direction direction)
 {
     int newCurrentX = XModifiedByDirection(_currentX, direction);
-    int newCurrentY = XModifiedByDirection(_currentX, direction);
-    if(newCurrentX < 0 || newCurrentX >= _width || newCurrentY < 0 || newCurrentY >= _height)
+    int newCurrentY = YModifiedByDirection(_currentY, direction);
+    if(newCurrentX < 0 || newCurrentX >= _nItems % _width || newCurrentY < 0 || newCurrentY > _nItems/_width)
         return false;
 
-    _currentX = newCurrentX;
-    _currentY = newCurrentY;
+    setCurrent(newCurrentX, newCurrentY);
     return true;
+}
+
+
+void LevelGrid::setCurrent(int x, int y)
+{
+    setSelectionVisualsVisible(false);
+    _currentX = x;
+    _currentY = y;
+    setSelectionVisualsVisible(true);
+}
+
+void LevelGrid::setSelectionVisualsVisible(bool visible)
+{
+    for(int y = 0; y < _width; y++)
+    {
+        for(int x = 0; x < _height; x++)
+        {
+            if(x != _currentX || y != _currentY) continue;
+
+            QRect rect(2 + (3+13) * x,
+                       9 + (3+9) * y,
+                       13, 10);
+            TileFlag flag = HAS_SNOW;
+            if(visible)
+            {
+                _backgroundMap->addTileFlagToRect(rect, flag);
+                _backgroundMap->removeTileFlagFromRect(rect.marginsRemoved(QMargins(1,1,1,2)), flag);
+            }
+            else
+                _backgroundMap->removeTileFlagFromRect(rect, flag);
+        }
+    }
 }
 
 LevelGridItem::LevelGridItem(QString mapFilename, QString text)
 {
     _mapFilename = mapFilename;
-    _wasSelected = false;
     _text = text;
 
     _map = new Map(mapFilename);
@@ -82,7 +116,6 @@ LevelGridItem::LevelGridItem(QString mapFilename, QString text)
 
 Map *LevelGridItem::select()
 {
-    _wasSelected = true;
     return _map;
 }
 
@@ -99,5 +132,5 @@ void LevelGridItem::drawText(QPainter *painter, QRect rect)
 
 LevelGridItem::~LevelGridItem()
 {
-    if(!_wasSelected) delete _map;
+    delete _map;
 }

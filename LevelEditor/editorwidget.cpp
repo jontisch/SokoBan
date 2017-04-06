@@ -56,8 +56,9 @@ void ListEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
 }
 
 void ListEditorWidget::select(int height){
-    if(heightToIndex(height) < _listNames.count()){
-        _selected = heightToIndex(height);
+    int index = heightToIndex(height);
+    if(index < _listNames.count() && index >= 0){
+        _selected = index;
     }
 
 }
@@ -89,7 +90,9 @@ ListEditorWidget::ListRenderingMeasurements ListEditorWidget::calculateRendering
 }
 
 int ListEditorWidget::heightToIndex(int height){
-    return height / 30;
+    ListRenderingMeasurements m = calculateRenderingMeasurements(_area);
+
+    return (height - (_area.top() + m.padding + m.headerHeight)) / (m.itemHeight+m.itemOffset);
 }
 
 LabelEditorWidget::LabelEditorWidget(QString title, QString text):EditorWidget(title), _text(text)
@@ -104,10 +107,12 @@ void LabelEditorWidget::setText(QString newText)
 
 void LabelEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
 {
+    _area = renderRect;
     painter->fillRect(renderRect, Qt::black);
     painter->setPen(Qt::white);
-    painter->setFont(QFont(QString("sans serif"), 12, 10));
+    painter->setFont(QFont(QString("sans serif"), 10, 10));
     painter->drawText(renderRect, _text);
+
 }
 
 RadioEditorWidget::RadioEditorWidget(QString title, bool state):EditorWidget(title), _state(state)
@@ -117,11 +122,12 @@ RadioEditorWidget::RadioEditorWidget(QString title, bool state):EditorWidget(tit
 
 void RadioEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
 {
+    _area = renderRect;
     painter->fillRect(renderRect, Qt::black);
     painter->setPen(Qt::white);
-    painter->setFont(QFont(QString("sans serif"), 12, 10));
+    painter->setFont(QFont(QString("sans serif"), 10, 10));
     painter->drawText(renderRect, _title);
-
+    painter->drawPixmap(renderRect.left()+10,renderRect.bottom()-34,24,24,(_state)?*Pixmap(PIXMAP_BOX):*Pixmap(PIXMAP_FLOOR));
 }
 
 bool RadioEditorWidget::getState()
@@ -129,7 +135,7 @@ bool RadioEditorWidget::getState()
     return _state;
 }
 
-void RadioEditorWidget::setState(bool newState)
+void RadioEditorWidget::toggleState()
 {
-
+    _state = !_state;
 }

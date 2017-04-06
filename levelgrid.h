@@ -17,7 +17,6 @@ public:
 private:
     QString _mapFilename;
     QString _text;
-    bool _wasSelected;
     Map *_map;
 };
 
@@ -36,6 +35,10 @@ public:
     bool move(Direction direction);
 
 private:
+    void setCurrent(int x, int y);
+
+    void setSelectionVisualsVisible(bool visible);
+
     int _currentX;
     int _currentY;
     int _width;
