@@ -15,9 +15,9 @@ class EditorWindow;
 
 enum EditingMode
 {
-    SET_TYPE,
-    ADD_FLAG,
-    REMOVE_FLAG
+    SET_TYPE = 0,
+    ADD_FLAG = 1,
+    REMOVE_FLAG = 2
 };
 
 
@@ -34,21 +34,7 @@ public:
     void paintEvent(QPaintEvent *Event);
 
 private slots:
-    void on_list_tile_types_itemSelectionChanged();
-
     void on_save_button_clicked(bool checked);
-
-    void on_radio_set_type_clicked();
-
-    void on_radio_add_flag_clicked();
-
-    void on_radio_remove_flag_clicked();
-
-    void on_list_flags_currentRowChanged(int currentRow);
-
-    void on_list_flags_itemClicked(QListWidgetItem *item);
-
-    void on_list_tile_types_itemClicked(QListWidgetItem *item);
 
     void on_button_update_size_clicked();
 
@@ -73,10 +59,7 @@ private:
     ListEditorWidget *_tileList;
     ListEditorWidget *_flagList;
     LabelEditorWidget *_gridPosLabel;
-    RadioEditorWidget *_setTypeRadio;
-    RadioEditorWidget *_addFlagRadio;
-    RadioEditorWidget *_removeFlagRadio;
-
+    RadioClusterEditorWidget *_radioCluster;
 
     QPoint lastClickedTile;
     TileFlag selectedFlag;

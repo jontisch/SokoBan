@@ -14,16 +14,6 @@
    <string>EditorWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QListWidget" name="list_tile_types">
-    <property name="geometry">
-     <rect>
-      <x>880</x>
-      <y>560</y>
-      <width>20</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="save_button">
     <property name="geometry">
      <rect>
@@ -35,58 +25,6 @@
     </property>
     <property name="text">
      <string>Save map</string>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="list_flags">
-    <property name="geometry">
-     <rect>
-      <x>1050</x>
-      <y>560</y>
-      <width>20</width>
-      <height>20</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="radio_add_flag">
-    <property name="geometry">
-     <rect>
-      <x>940</x>
-      <y>20</y>
-      <width>82</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Add flag</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="radio_remove_flag">
-    <property name="geometry">
-     <rect>
-      <x>1010</x>
-      <y>20</y>
-      <width>82</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Remove flag</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="radio_set_type">
-    <property name="geometry">
-     <rect>
-      <x>850</x>
-      <y>20</y>
-      <width>82</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Set type</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
     </property>
    </widget>
    <widget class="QSlider" name="slider_width">

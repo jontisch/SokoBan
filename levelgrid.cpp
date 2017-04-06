@@ -74,6 +74,7 @@ bool LevelGrid::move(Direction direction)
 
             (_nItems % _width > 0 && newCurrentY == _nItems / _width && newCurrentX >= _nItems % _width) ||
             newCurrentY > _nItems / (_width+1))
+
         return false;
 
     setCurrent(newCurrentX, newCurrentY);

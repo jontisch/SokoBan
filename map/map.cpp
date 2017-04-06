@@ -607,7 +607,6 @@ void Map::setTileFlags(int x, int y, int flags)
     }
 
 
-    qDebug() << targetsLeft << "targets left";
 }
 
 bool Map::tileIsWalkable(int x, int y)

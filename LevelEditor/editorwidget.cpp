@@ -135,7 +135,53 @@ bool RadioEditorWidget::getState()
     return _state;
 }
 
-void RadioEditorWidget::toggleState()
+void RadioEditorWidget::setState(bool state)
 {
-    _state = !_state;
+    _state = state;
+}
+
+RadioClusterEditorWidget::RadioClusterEditorWidget(QString title, int index):EditorWidget(title), _index(index),_radios(4)
+{
+
+}
+
+void RadioClusterEditorWidget::addRadio(RadioEditorWidget *radio)
+{
+    _radios.add(radio);
+}
+
+RadioEditorWidget *RadioClusterEditorWidget::getPointer(int index)
+{
+    RadioEditorWidget *result = NULL;
+    return (_radios.get(index, &result)?result:NULL);
+}
+
+
+
+void RadioClusterEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
+{
+    _area = renderRect;
+    int count = _radios.count();
+    painter->fillRect(renderRect, Qt::black);
+    for(int i = 0; i < count; i++){
+        RadioEditorWidget *radio;
+        _radios.get(i, &radio);
+        radio->renderWidget(painter, QRect(renderRect.left()+i*renderRect.width()/count, renderRect.top(), renderRect.width()/count, renderRect.height()));
+    }
+}
+
+int RadioClusterEditorWidget::select(int x, int y, int index)
+{
+    if(index > -1){
+        _index = index;
+
+    }else {
+        _index = x/(_area.width()/_radios.count());
+    }
+    for(int i = 0; i < _radios.count(); i++ ){
+        RadioEditorWidget *radio;
+        _radios.get(i, &radio);
+        radio->setState(_index == i);
+    }
+    return _index;
 }
