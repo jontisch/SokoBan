@@ -15,18 +15,24 @@ MainWindow::MainWindow(QWidget *parent) :
     _state = STATE_MENU;
 
     InitPixmaps();
-    QRect screenRect = QApplication::desktop()->screenGeometry();
-    this->setGeometry(screenRect.width()/2 - 1024/2, screenRect.height()/2-768/2, 1024,768);
+    //QRect screenRect = QApplication::desktop()->screenGeometry();
+    //this->setGeometry(screenRect.width()/2 - 1024/2, screenRect.height()/2-768/2, 1024,768);
 
     _game = new Game();
     this->initMenus();
 
     _levelSelectGrid = new LevelGrid("grid", 3, 2);
     QString appPath = QCoreApplication::applicationDirPath();
+    LevelGridItem *potato_power = new LevelGridItem(appPath + MAP_DIR + "/potato_power.fml", "Potato Power");
+    LevelGridItem *feel_rect = new LevelGridItem(appPath + MAP_DIR + "/feel_rect.fml", "Feel Rect");
     LevelGridItem *simplex = new LevelGridItem(appPath + MAP_DIR + "/map.fml", "Simplex");
     LevelGridItem *frozen_island = new LevelGridItem(appPath + MAP_DIR + "/frozen_island.fml", "Frozen Island");
+
+    _levelSelectGrid->addItem(potato_power);
+    _levelSelectGrid->addItem(feel_rect);
     _levelSelectGrid->addItem(simplex);
     _levelSelectGrid->addItem(frozen_island);
+
 }
 
 void MainWindow::executeMenuAction(int action)
@@ -121,6 +127,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             _levelSelectGrid->move(RIGHT);
             break;
         case Qt::Key_Return:
+        {
             Map *levelMap = _levelSelectGrid->selectCurrent();
             if(levelMap)
             {
@@ -130,6 +137,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
                 qDebug() << _game->hasMap();
             }
             break;
+        }
         case Qt::Key_Escape:
             _state = STATE_MENU;
             break;

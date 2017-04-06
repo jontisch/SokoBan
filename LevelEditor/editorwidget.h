@@ -19,19 +19,35 @@ protected:
 
 };
 
+
 class RadioEditorWidget: public EditorWidget
 {
 public:
     RadioEditorWidget(QString title, bool state);
     void renderWidget(QPainter *painter, QRect renderRect);
     bool getState();
-    void toggleState();
+    void setState(bool state);
 
 private:
     QString _text;
     bool _state;
 
 };
+
+class RadioClusterEditorWidget: public EditorWidget
+{
+
+public:
+    RadioClusterEditorWidget(QString title, int index);
+    void addRadio(RadioEditorWidget *radio);
+    RadioEditorWidget* getPointer(int index);
+    void renderWidget(QPainter *painter, QRect renderRect);
+    int select(int x, int y, int index = -1);
+private:
+    int _index;
+    Collection<RadioEditorWidget*> _radios;
+};
+
 
 class LabelEditorWidget: public EditorWidget{
 public:

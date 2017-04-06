@@ -15,10 +15,8 @@
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
-#include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QRadioButton>
 #include <QtWidgets/QSlider>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
@@ -29,12 +27,7 @@ class Ui_EditorWindow
 {
 public:
     QWidget *centralWidget;
-    QListWidget *list_tile_types;
     QPushButton *save_button;
-    QListWidget *list_flags;
-    QRadioButton *radio_add_flag;
-    QRadioButton *radio_remove_flag;
-    QRadioButton *radio_set_type;
     QSlider *slider_width;
     QSlider *slider_height;
     QPushButton *button_update_size;
@@ -54,25 +47,9 @@ public:
         EditorWindow->resize(1109, 631);
         centralWidget = new QWidget(EditorWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        list_tile_types = new QListWidget(centralWidget);
-        list_tile_types->setObjectName(QStringLiteral("list_tile_types"));
-        list_tile_types->setGeometry(QRect(880, 560, 20, 20));
         save_button = new QPushButton(centralWidget);
         save_button->setObjectName(QStringLiteral("save_button"));
         save_button->setGeometry(QRect(860, 270, 80, 21));
-        list_flags = new QListWidget(centralWidget);
-        list_flags->setObjectName(QStringLiteral("list_flags"));
-        list_flags->setGeometry(QRect(1050, 560, 20, 20));
-        radio_add_flag = new QRadioButton(centralWidget);
-        radio_add_flag->setObjectName(QStringLiteral("radio_add_flag"));
-        radio_add_flag->setGeometry(QRect(940, 20, 82, 17));
-        radio_remove_flag = new QRadioButton(centralWidget);
-        radio_remove_flag->setObjectName(QStringLiteral("radio_remove_flag"));
-        radio_remove_flag->setGeometry(QRect(1010, 20, 82, 17));
-        radio_set_type = new QRadioButton(centralWidget);
-        radio_set_type->setObjectName(QStringLiteral("radio_set_type"));
-        radio_set_type->setGeometry(QRect(850, 20, 82, 17));
-        radio_set_type->setChecked(true);
         slider_width = new QSlider(centralWidget);
         slider_width->setObjectName(QStringLiteral("slider_width"));
         slider_width->setGeometry(QRect(900, 310, 160, 16));
@@ -119,9 +96,6 @@ public:
     {
         EditorWindow->setWindowTitle(QApplication::translate("EditorWindow", "EditorWindow", 0));
         save_button->setText(QApplication::translate("EditorWindow", "Save map", 0));
-        radio_add_flag->setText(QApplication::translate("EditorWindow", "Add flag", 0));
-        radio_remove_flag->setText(QApplication::translate("EditorWindow", "Remove flag", 0));
-        radio_set_type->setText(QApplication::translate("EditorWindow", "Set type", 0));
         button_update_size->setText(QApplication::translate("EditorWindow", "Update size", 0));
         label_width->setText(QApplication::translate("EditorWindow", "0", 0));
         label_height->setText(QApplication::translate("EditorWindow", "0", 0));

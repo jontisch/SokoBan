@@ -22,10 +22,14 @@ EditorWindow::EditorWindow(QWidget *parent) :
     _tileList = new ListEditorWidget("Tiles");
     _flagList = new ListEditorWidget("Flags");
     _gridPosLabel = new LabelEditorWidget("Position", "X:0\tY:0");
-    _setTypeRadio = new RadioEditorWidget("Set type", true);
-    _addFlagRadio = new RadioEditorWidget("Add flag", false);
-    _removeFlagRadio = new RadioEditorWidget("Remove flag", false);
 
+    _radioCluster = new RadioClusterEditorWidget("Tiles", 0);
+    RadioEditorWidget *_setTypeRadio = new RadioEditorWidget("Set type", true);
+    RadioEditorWidget *_addFlagRadio = new RadioEditorWidget("Add flag", false);
+    RadioEditorWidget *_removeFlagRadio = new RadioEditorWidget("Remove flag", false);
+    _radioCluster->addRadio(_setTypeRadio);
+    _radioCluster->addRadio(_addFlagRadio);
+    _radioCluster->addRadio(_removeFlagRadio);
 
     //END OF HMM
     selectedFlag = HAS_BOX;
@@ -36,7 +40,6 @@ EditorWindow::EditorWindow(QWidget *parent) :
     for(int i = 0; i < N_TILETYPES; i++)
     {
         if(!IsValidTileType((TileType)i)) continue;
-        new QListWidgetItem(TileTypeName((TileType)i), ui->list_tile_types);
 
         _tileList->addItem(new QString(TileTypeName((TileType)i)), Pixmap(PixmapForTileType((TileType)i)));
 
@@ -44,14 +47,12 @@ EditorWindow::EditorWindow(QWidget *parent) :
         tileTypeForListRow[c] = (TileType)i;
         c++;
     }
-    ui->list_flags->setCurrentRow(tile_row);
 
     int f = 1;
     int flag_row = -1;
     int d = 0;
     while(d < N_TILEFLAGS)
     {
-        new QListWidgetItem(TileFlagName((TileFlag)f), ui->list_flags);
 
         _flagList->addItem(new QString(TileFlagName((TileFlag)f)), Pixmap(PixmapForTileFlag((TileFlag)f)));
 
@@ -59,7 +60,6 @@ EditorWindow::EditorWindow(QWidget *parent) :
         f *= 2;
         d++;
     }
-    ui->list_flags->setCurrentRow(flag_row);
 
     mode = SET_TYPE;
 
@@ -117,27 +117,19 @@ void EditorWindow::mousePressEvent(QMouseEvent *Event)
             qDebug() << "tilelist";
             _tileList->select(this->mapFromGlobal(QCursor::pos()).y());
             selectedTileType = tileTypeForListRow[_tileList->getSelected()];
+            mode = (EditingMode)_radioCluster->select(0,0,0);
             this->repaint();
         }
         else if(_flagList->getArea()->contains(mousePosition)){
             qDebug() << "flaglist";
             _flagList->select(this->mapFromGlobal(QCursor::pos()).y());
             selectedFlag = (TileFlag)(int)pow(2, _flagList->getSelected());
+            mode = (EditingMode)_radioCluster->select(0,0,1);
             this->repaint();
+
         }
-        else if(_setTypeRadio->getArea()->contains(mousePosition)){
-            qDebug() << "type";
-            _setTypeRadio->toggleState();
-            this->repaint();
-        }
-        else if(_addFlagRadio->getArea()->contains(mousePosition)){
-            qDebug() << "addflag";
-            _addFlagRadio->toggleState();
-            this->repaint();
-        }
-        else if(_removeFlagRadio->getArea()->contains(mousePosition)){
-            qDebug() << "removeflag";
-            _removeFlagRadio->toggleState();
+        else if(_radioCluster->getArea()->contains(mousePosition)){
+            mode = (EditingMode)_radioCluster->select(mousePosition.x() - _radioCluster->getArea()->left(), mousePosition.y() - _radioCluster->getArea()->top());
             this->repaint();
         }
     }
@@ -165,9 +157,7 @@ void EditorWindow::paintEvent(QPaintEvent *Event)
 {
     QPainter painter(this);
     _map->draw(&painter, mapArea());
-    _setTypeRadio->renderWidget(&painter, QRect(mapArea().right(),0,80,50));
-    _addFlagRadio->renderWidget(&painter, QRect(mapArea().right()+80,0,80,50));
-    _removeFlagRadio->renderWidget(&painter, QRect(mapArea().right()+160,0,80,50));
+    _radioCluster->renderWidget(&painter, QRect(mapArea().right(),0,240,50));
     _tileList->renderWidget(&painter,QRect(mapArea().right(),50,120,350));
     _flagList->renderWidget(&painter,QRect(mapArea().right()+120,50,120,350));
     _gridPosLabel->renderWidget(&painter, QRect(mapArea().right(), 360, 290, 50));
@@ -179,11 +169,6 @@ EditorWindow::~EditorWindow()
     delete ui;
 }
 
-void EditorWindow::on_list_tile_types_itemSelectionChanged()
-{
-    int row = ui->list_tile_types->row(ui->list_tile_types->selectedItems().at(0));
-    selectedTileType = tileTypeForListRow[row];
-}
 
 
 void EditorWindow::on_load_button_clicked()
@@ -209,36 +194,6 @@ void EditorWindow::on_save_button_clicked(bool checked)
                                                     appPath + "/../../maps/",
                                                     tr("Friendly Map Language Files (*.fml)"));
     _map->saveMap(filename);
-}
-
-void EditorWindow::on_radio_set_type_clicked()
-{
-    mode = SET_TYPE;
-}
-
-void EditorWindow::on_radio_add_flag_clicked()
-{
-    mode = ADD_FLAG;
-}
-
-void EditorWindow::on_radio_remove_flag_clicked()
-{
-    mode = REMOVE_FLAG;
-}
-
-void EditorWindow::on_list_flags_currentRowChanged(int currentRow)
-{
-    selectedFlag = (TileFlag)(int)pow(2, currentRow);
-}
-
-void EditorWindow::on_list_flags_itemClicked(QListWidgetItem *item)
-{
-    if(mode == SET_TYPE) ui->radio_add_flag->click();
-}
-
-void EditorWindow::on_list_tile_types_itemClicked(QListWidgetItem *item)
-{
-    if(mode != SET_TYPE) ui->radio_set_type->click();
 }
 
 void EditorWindow::on_button_update_size_clicked()

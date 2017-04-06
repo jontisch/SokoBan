@@ -43,9 +43,9 @@ void LevelGrid::draw(QPainter *painter, QRect renderRect)
     QPoint topLeft(renderRect.x() + pixelOffset.x() + tileSize * 2.8,
                     renderRect.y() + pixelOffset.y() + tileSize * 9.85);
 
-    for(int y = 0; y < _width; y++)
+    for(int y = 0; y < _height; y++)
     {
-        for(int x = 0; x < _height; x++)
+        for(int x = 0; x < _width; x++)
         {
             int index = x + _width * y;
             if(index >= _nItems) break;
@@ -67,7 +67,13 @@ bool LevelGrid::move(Direction direction)
 {
     int newCurrentX = XModifiedByDirection(_currentX, direction);
     int newCurrentY = YModifiedByDirection(_currentY, direction);
-    if(newCurrentX < 0 || newCurrentX >= _nItems % _width || newCurrentY < 0 || newCurrentY > _nItems/_width)
+    if(     newCurrentX < 0 ||
+            newCurrentY < 0 ||
+            newCurrentX >= _width ||
+            newCurrentY >= _height ||
+           (_nItems % _width > 0 && newCurrentY == _nItems / _width && newCurrentX >= _nItems % _width) ||
+            newCurrentY > _nItems / (_width+1)
+            )
         return false;
 
     setCurrent(newCurrentX, newCurrentY);
@@ -85,9 +91,9 @@ void LevelGrid::setCurrent(int x, int y)
 
 void LevelGrid::setSelectionVisualsVisible(bool visible)
 {
-    for(int y = 0; y < _width; y++)
+    for(int y = 0; y < _height; y++)
     {
-        for(int x = 0; x < _height; x++)
+        for(int x = 0; x < _width; x++)
         {
             if(x != _currentX || y != _currentY) continue;
 
