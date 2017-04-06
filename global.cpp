@@ -89,3 +89,18 @@ char *DuplicateString(char *string)
     return result;
 }
 
+QString SoundFilename(QString filename)
+{
+    return LocalFilename(SOUND_DIR + filename);
+}
+
+QString MapFilename(QString filename)
+{
+    return LocalFilename(MAP_DIR + filename);
+}
+
+QString LocalFilename(QString filename)
+{
+    QString appPath = QCoreApplication::applicationDirPath();
+    return appPath + filename;
+}

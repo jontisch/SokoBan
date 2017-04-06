@@ -31,10 +31,13 @@ public:
     void saveMap(QString mapName);
     bool loaded();
     QString filename();
+    QString name();
 
     void draw(QPainter * qp, QRect rect);
 
     QPoint pixelToTile(int x, int y, QRect renderRect);
+    QPoint tileToPixel(int x, int y, QRect renderRect);
+    QRect tilesToRect(int x1, int y1, int x2, int y2, QRect renderRect);
     int calculateTileSize(QRect renderRect);
     QPoint calculatePixelOffset(int tileSize, QRect renderRect);
 
@@ -94,6 +97,7 @@ private:
     int _movesMade;
     bool _loaded;
     QString _filename;
+    QString _name;
 
     void setup();
     Tile *tile(int x, int y);
@@ -103,6 +107,12 @@ private:
 
     //This sorts entities by colors
     Collection<Entity *> *_coloredEntities[N_ENTITY_COLORS];
+
+    struct {
+        QString name;
+        int moves;
+    } _highscores[10];
+    int _nHighscores;
 };
 
 #endif // MAP_H

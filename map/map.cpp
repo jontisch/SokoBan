@@ -2,6 +2,10 @@
 #include "entities/button.h"
 #include <QDebug>
 #include "entities/door.h"
+#include <stdlib.h>
+#include "../audiolibrary.h"
+
+using namespace std;
 
 void Map::setup()
 {
@@ -62,9 +66,30 @@ Map::Map(QString filename):
 
     targetsLeft = 0;
 
+    if(in.atEnd())
+    {
+        qDebug() << "No map name found";
+        mapFile.close();
+        return;
+    }
+
+    QString nameLine = in.readLine();
+    bool a = nameLine.length() >= 1;
+    bool b = nameLine.at(0) == '$';
+    if(a && b)
+    {
+        _name = nameLine.mid(1, nameLine.length()-1);
+    }
+    else
+    {
+        _name = "no name";
+        in.seek(0);
+    }
+
     int y = 0;
     int c = 0;
     bool metaFound = false;
+    bool highscoresFound = false;
     while(!in.atEnd()) {
         QString line = in.readLine();
         if(y == 0) _width = line.length();
@@ -72,6 +97,11 @@ Map::Map(QString filename):
         if(line.at(0) == '#')
         {
             metaFound = true;
+            break;
+        }
+        if(line.at(0) == '%')
+        {
+            highscoresFound = true;
             break;
         }
         for(int x = 0; x < line.length(); x++)
@@ -93,6 +123,11 @@ Map::Map(QString filename):
         while(!in.atEnd())
         {
             QString line = in.readLine();
+            if(line.at(0) == '%')
+            {
+                highscoresFound = true;
+                break;
+            }
             QStringList xSplit = line.split('x');
             QString xString = xSplit.at(0);
             if(xSplit.count() < 2)
@@ -125,6 +160,23 @@ Map::Map(QString filename):
                 _player = QPoint(x,y);
                 _startTile = QPoint(x, y);
             }
+        }
+    }
+
+    _nHighscores = 0;
+    if(highscoresFound)
+    {
+        while(!in.atEnd())
+        {
+            QString nameLine = in.readLine();
+            if(nameLine.length() < 1) break;
+            if(in.atEnd()) break;
+            QString movesLine = in.readLine();
+            if(movesLine.length() < 1) break;
+            _highscores[_nHighscores].name = nameLine;
+            bool movesParsed = false;
+            _highscores[_nHighscores].moves = movesLine.toInt(&movesParsed);
+            if(movesParsed) _nHighscores++;
         }
     }
 
@@ -239,6 +291,24 @@ QPoint Map::pixelToTile(int x, int y, QRect renderRect)
     return QPoint(tileX, tileY);
 }
 
+QPoint Map::tileToPixel(int x, int y, QRect renderRect)
+{
+    int tileSize = calculateTileSize(renderRect);
+    QPoint pixelOffset = calculatePixelOffset(tileSize, renderRect);
+    return QPoint(x * tileSize + pixelOffset.x(),
+                  y * tileSize + pixelOffset.y());
+}
+
+QRect Map::tilesToRect(int x1, int y1, int x2, int y2, QRect renderRect)
+{
+    int tileSize = calculateTileSize(renderRect);
+    QPoint pixelOffset = calculatePixelOffset(tileSize, renderRect);
+    return QRect(x1 * tileSize + pixelOffset.x(),
+                 y1 * tileSize + pixelOffset.y(),
+                 tileSize * (x2-x1),
+                 tileSize * (y2-y1));
+}
+
 void Map::saveMap(QString filename)
 {
     //QString appPath = QCoreApplication::applicationDirPath();
@@ -251,6 +321,9 @@ void Map::saveMap(QString filename)
         //msgBox.setInformativeText("Do you want to save your changes?");
     }
     QTextStream out(&mapFile);
+
+    out << '$' << _name << "\n";
+
     for(int y = 0; y < _height; y++){
         for(int x = 0; x < _width; x++){
             out << (char)((int)getTileType(x,y) + 48);
@@ -278,6 +351,11 @@ bool Map::loaded()
 QString Map::filename()
 {
     return _filename;
+}
+
+QString Map::name()
+{
+    return _name;
 }
 
 int Map::width()
@@ -633,6 +711,9 @@ void Map::pushMovable(int x, int y, Direction dir, void *move)
         }
         addTileFlag(nextX, nextY, newMovable);
         removeTileFlag(x, y, movable);
+
+        //(movable == HAS_BOX)
+            //AudioLibrary::Instance()->playSound(SOUND_PUSH_BOX);
     }
 }
 

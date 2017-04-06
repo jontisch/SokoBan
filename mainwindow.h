@@ -8,12 +8,14 @@
 #include "game.h"
 #include "global.h"
 #include "levelgrid.h"
+#include "highscorelist.h"
 
 enum AppState
 {
     STATE_MENU,
     STATE_GAME,
-    STATE_LEVEL_SELECT
+    STATE_LEVEL_SELECT,
+    STATE_HIGHSCORE
 };
 
 namespace Ui {
@@ -34,7 +36,7 @@ protected:
 
     void keyPressEvent(QKeyEvent *event);
 private:
-    enum ACTION_TYPES{
+    enum Action{
         RESUME_GAME,
         QUIT_GAME,
         PLAY_LEVEL
@@ -45,11 +47,12 @@ private:
     void initMenus();
     Game *_game;
     Ui::MainWindow *ui;
-    Collection<char*> _mapNames;
+
     Menu *_mainMenu;
     Menu *_activeMenu;
     MenuItem *_resumeItem;
 
+    HighscoreList *_highscores;
 
     LevelGrid *_levelSelectGrid;
 };

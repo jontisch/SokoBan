@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -35,7 +35,9 @@ SOURCES += global.cpp \
     map/entities/entity.cpp \
     map/entities/button.cpp \
     map/entities/door.cpp \
-    levelgrid.cpp
+    levelgrid.cpp \
+    audiolibrary.cpp \
+    highscorelist.cpp
 
 HEADERS  += game.h \
     mainwindow.h \
@@ -49,7 +51,9 @@ HEADERS  += game.h \
     map/entities/entity.h \
     map/entities/button.h \
     map/entities/door.h \
-    levelgrid.h
+    levelgrid.h \
+    audiolibrary.h \
+    highscorelist.h
 
 FORMS    += mainwindow.ui
 

@@ -7,8 +7,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    _mapNames(32)
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -22,11 +21,12 @@ MainWindow::MainWindow(QWidget *parent) :
     this->initMenus();
 
     _levelSelectGrid = new LevelGrid("grid", 3, 2);
-    QString appPath = QCoreApplication::applicationDirPath();
-    LevelGridItem *simplex = new LevelGridItem(appPath + MAP_DIR + "/map.fml", "Simplex");
-    LevelGridItem *frozen_island = new LevelGridItem(appPath + MAP_DIR + "/frozen_island.fml", "Frozen Island");
+    LevelGridItem *simplex = new LevelGridItem(MapFilename("map.fml"));
+    LevelGridItem *frozen_island = new LevelGridItem(MapFilename("frozen_island.fml"));
     _levelSelectGrid->addItem(simplex);
     _levelSelectGrid->addItem(frozen_island);
+
+    _highscores = NULL;
 }
 
 void MainWindow::executeMenuAction(int action)
@@ -87,8 +87,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         {
             _activeMenu = _activeMenu->menuSelect();
             if(_activeMenu == NULL) _state = STATE_GAME;
-            break;
-        }
+        } break;
         case Qt::Key_Escape:
 
             Menu *owner = _activeMenu->getOwner();
@@ -121,15 +120,33 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             _levelSelectGrid->move(RIGHT);
             break;
         case Qt::Key_Return:
+            {
+                Map *levelMap = _levelSelectGrid->selectCurrent();
+                if(levelMap)
+                {
+                    QString mapFilename = levelMap->filename();
+                    _game->setMap(new Map(mapFilename));
+                    _state = STATE_GAME;
+                }
+            }
+            break;
+        case Qt::Key_X:
+        {
             Map *levelMap = _levelSelectGrid->selectCurrent();
             if(levelMap)
             {
-                QString mapFilename = levelMap->filename();
-                _game->setMap(new Map(mapFilename));
-                _state = STATE_GAME;
-                qDebug() << _game->hasMap();
+                bool createNewHighscoreList = !_highscores || _highscores->map() != levelMap;
+                if(_highscores && createNewHighscoreList)
+                {
+                    delete _highscores;
+                }
+                else
+                {
+                    _highscores = new HighscoreList(levelMap);
+                }
+                _state = STATE_HIGHSCORE;
             }
-            break;
+        } break;
         case Qt::Key_Escape:
             _state = STATE_MENU;
             break;
@@ -170,5 +187,9 @@ void MainWindow::paintEvent(QPaintEvent *event)
     else if(_state == STATE_LEVEL_SELECT)
     {
         _levelSelectGrid->draw(&qp, this->rect());
+    }
+    else if(_state == STATE_HIGHSCORE)
+    {
+        _highscores->draw(&qp, this->rect());
     }
 }

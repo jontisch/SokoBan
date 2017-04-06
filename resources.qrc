@@ -21,5 +21,9 @@
     <file>images/door_closed_v.png</file>
     <file>images/button_up.png</file>
     <file>images/button_down.png</file>
+
+
+    <file>sounds/push_box.wav</file>
+    <file>sounds/push_box_new.wav</file>
 </qresource>
 </RCC>

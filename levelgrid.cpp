@@ -10,8 +10,7 @@ LevelGrid::LevelGrid(QString text, int width, int height)
     _items = (LevelGridItem **)malloc(sizeof(LevelGridItem *)*_width*_height);
 
 
-    QString appPath = QCoreApplication::applicationDirPath() + MAP_DIR;
-    _backgroundMap = new Map(QString(appPath + "/level_select.fml"));
+    _backgroundMap = new Map(MapFilename("level_select.fml"));
     _backgroundMap->setPlayerVisible(false);
 
     setCurrent(0, 0);
@@ -38,22 +37,23 @@ bool LevelGrid::addItem(LevelGridItem *item)
 void LevelGrid::draw(QPainter *painter, QRect renderRect)
 {
     _backgroundMap->draw(painter, renderRect);
-    int tileSize = _backgroundMap->calculateTileSize(renderRect);
-    QPoint pixelOffset = _backgroundMap->calculatePixelOffset(tileSize, renderRect);
-    QPoint topLeft(renderRect.x() + pixelOffset.x() + tileSize * 2.8,
-                    renderRect.y() + pixelOffset.y() + tileSize * 9.85);
 
-    for(int y = 0; y < _width; y++)
+    for(int y = 0; y < _height; y++)
     {
-        for(int x = 0; x < _height; x++)
+        for(int x = 0; x < _width; x++)
         {
             int index = x + _width * y;
             if(index >= _nItems) break;
-            QRect rect(topLeft.x() + tileSize * (5+11) * x,
-                       topLeft.y() + tileSize * (5+7) * y,
-                       tileSize * 11, tileSize * 7);
+            int left = 3 + (5+11) * x;
+            int top = 10 + (5+7) * y;
+            int tileSize = _backgroundMap->calculateTileSize(renderRect);
+            QRect rect = _backgroundMap->tilesToRect(left, top, left + 11, top + 7, renderRect);
+            painter->save();
+            painter->setClipRect(rect.marginsRemoved(QMargins(0, 0, tileSize*0.25, tileSize*0.25)));
             _items[index]->drawPreview(painter, rect);
-            _items[index]->drawText(painter, QRect(rect.x(), rect.y() + rect.height(), tileSize * 11, tileSize *1.8));
+            painter->restore();
+            QRect textRect = _backgroundMap->tilesToRect(left, top + 7, left + 11, top + 7 + 2, renderRect);
+            _items[index]->drawText(painter, textRect);
         }
     }
 }
@@ -67,7 +67,13 @@ bool LevelGrid::move(Direction direction)
 {
     int newCurrentX = XModifiedByDirection(_currentX, direction);
     int newCurrentY = YModifiedByDirection(_currentY, direction);
-    if(newCurrentX < 0 || newCurrentX >= _nItems % _width || newCurrentY < 0 || newCurrentY > _nItems/_width)
+    if(newCurrentX < 0 ||
+            newCurrentY < 0 ||
+            newCurrentX >= _width ||
+            newCurrentY >= _height ||
+
+            (_nItems % _width > 0 && newCurrentY == _nItems / _width && newCurrentX >= _nItems % _width) ||
+            newCurrentY > _nItems / (_width+1))
         return false;
 
     setCurrent(newCurrentX, newCurrentY);
@@ -85,9 +91,9 @@ void LevelGrid::setCurrent(int x, int y)
 
 void LevelGrid::setSelectionVisualsVisible(bool visible)
 {
-    for(int y = 0; y < _width; y++)
+    for(int y = 0; y < _height; y++)
     {
-        for(int x = 0; x < _height; x++)
+        for(int x = 0; x < _width; x++)
         {
             if(x != _currentX || y != _currentY) continue;
 
@@ -106,12 +112,15 @@ void LevelGrid::setSelectionVisualsVisible(bool visible)
     }
 }
 
-LevelGridItem::LevelGridItem(QString mapFilename, QString text)
+LevelGridItem::LevelGridItem(QString mapFilename)
 {
     _mapFilename = mapFilename;
-    _text = text;
-
     _map = new Map(mapFilename);
+    if(_map->loaded())
+    {
+        _text = _map->name();
+    }
+    else _text = "";
 }
 
 Map *LevelGridItem::select()

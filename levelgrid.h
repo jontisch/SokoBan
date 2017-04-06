@@ -9,7 +9,7 @@ class LevelGrid;
 class LevelGridItem
 {
 public:
-    LevelGridItem(QString mapFilename, QString text);
+    LevelGridItem(QString mapFilename);
     Map *select();
     void drawPreview(QPainter *painter, QRect rect);
     void drawText(QPainter *painter, QRect rect);

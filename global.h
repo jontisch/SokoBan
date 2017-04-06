@@ -4,7 +4,8 @@
 #include <QPixmap>
 #include <QBrush>
 
-#define MAP_DIR "/../../SokoBan/maps"
+#define MAP_DIR "/../../SokoBan/maps/"
+#define SOUND_DIR "/../../SokoBan/sounds/"
 
 enum Direction
 {
@@ -51,5 +52,9 @@ QPixmap *Pixmap(PixmapIdentifier index);
 void *EnlargeMemory(int currentSize, int newSize, void *pointer);
 
 char *DuplicateString(char *string);
+
+QString LocalFilename(QString filename);
+QString SoundFilename(QString filename);
+QString MapFilename(QString filename);
 
 #endif // GLOBAL_H
