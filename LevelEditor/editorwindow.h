@@ -31,26 +31,8 @@ public:
 
     void mousePressEvent(QMouseEvent *Event);
     void mouseMoveEvent(QMouseEvent *Event);
+    void keyPressEvent(QKeyEvent *Event);
     void paintEvent(QPaintEvent *Event);
-
-private slots:
-    void on_save_button_clicked(bool checked);
-
-    void on_button_update_size_clicked();
-
-    void on_slider_height_valueChanged(int value);
-
-    void on_slider_width_valueChanged(int value);
-
-    void on_button_shift_up_clicked();
-
-    void on_button_shift_left_clicked();
-
-    void on_button_shift_down_clicked();
-
-    void on_button_shift_right_clicked();
-
-    void on_load_button_clicked();
 
 private:
     Ui::EditorWindow *ui;
@@ -59,7 +41,20 @@ private:
     ListEditorWidget *_tileList;
     ListEditorWidget *_flagList;
     LabelEditorWidget *_gridPosLabel;
-    RadioClusterEditorWidget *_radioCluster;
+    RadioClusterEditorWidget *_tileRadioCluster;
+    RadioClusterEditorWidget *_colorRadioCluster;
+    ButtonEditorWidget *_shiftUpButton;
+    ButtonEditorWidget *_shiftDownButton;
+    ButtonEditorWidget *_shiftLeftButton;
+    ButtonEditorWidget *_shiftRightButton;
+    LabelEditorWidget *_shiftLabel;
+    ButtonEditorWidget *_saveMapButton;
+    ButtonEditorWidget *_loadMapButton;
+    ButtonEditorWidget *_updateMapButton;
+    TextfieldEditorWidget *_widthTextfield;
+    TextfieldEditorWidget *_heightTextfield;
+
+
 
     QPoint lastClickedTile;
     TileFlag selectedFlag;
@@ -77,8 +72,11 @@ private:
 
     QRect mapArea();
 
+    TextfieldEditorWidget *_activeTextField;
+    EditorWidget *_hoveredWidget;
 
-    EditingMode mode;
+    EditingMode _mode;
+    EntityColor _entityColor;
 };
 
 #endif // EDITORWINDOW_H
