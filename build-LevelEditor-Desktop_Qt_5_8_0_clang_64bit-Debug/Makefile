@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
 CXX           = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++
-DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_MULTIMEDIA_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk -mmacosx-version-min=10.9 $(EXPORT_QMAKE_XARCH_CFLAGS) -g -Wall -W -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -stdlib=libc++ -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk -mmacosx-version-min=10.9 $(EXPORT_QMAKE_XARCH_CFLAGS) -g -std=gnu++11 -Wall -W -fPIC $(DEFINES)
-INCPATH       = -I../LevelEditor -I. -I../../../Qt/5.8/clang_64/lib/QtWidgets.framework/Headers -I../../../Qt/5.8/clang_64/lib/QtGui.framework/Headers -I../../../Qt/5.8/clang_64/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework/Headers -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AGL.framework/Headers -I. -I../../../Qt/5.8/clang_64/mkspecs/macx-clang -F/Users/edvinholm/Qt/5.8/clang_64/lib
+INCPATH       = -I../LevelEditor -I. -I../../../Qt/5.8/clang_64/lib/QtMultimedia.framework/Headers -I../../../Qt/5.8/clang_64/lib/QtWidgets.framework/Headers -I../../../Qt/5.8/clang_64/lib/QtGui.framework/Headers -I../../../Qt/5.8/clang_64/lib/QtNetwork.framework/Headers -I../../../Qt/5.8/clang_64/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework/Headers -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AGL.framework/Headers -I. -I../../../Qt/5.8/clang_64/mkspecs/macx-clang -F/Users/edvinholm/Qt/5.8/clang_64/lib
 QMAKE         = /Users/edvinholm/Qt/5.8/clang_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -36,7 +36,7 @@ DISTNAME      = LevelEditor1.0.0
 DISTDIR = /Users/edvinholm/Documents/SokoBan/build-LevelEditor-Desktop_Qt_5_8_0_clang_64bit-Debug/.tmp/LevelEditor1.0.0
 LINK          = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++
 LFLAGS        = -headerpad_max_install_names -stdlib=libc++ -Wl,-syslibroot,/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk -mmacosx-version-min=10.9 $(EXPORT_QMAKE_XARCH_LFLAGS) -Wl,-rpath,/Users/edvinholm/Qt/5.8/clang_64/lib
-LIBS          = $(SUBLIBS) -F/Users/edvinholm/Qt/5.8/clang_64/lib -framework QtWidgets -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework OpenGL -framework AGL 
+LIBS          = $(SUBLIBS) -F/Users/edvinholm/Qt/5.8/clang_64/lib -framework QtMultimedia -framework QtNetwork -framework QtCore -framework DiskArbitration -framework IOKit -framework QtGui -framework QtWidgets -framework OpenGL -framework AGL 
 AR            = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar cq
 RANLIB        = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib -s
 SED           = sed
@@ -457,8 +457,10 @@ Makefile: ../LevelEditor/LevelEditor.pro ../../../Qt/5.8/clang_64/mkspecs/macx-c
 		../../../Qt/5.8/clang_64/mkspecs/features/lex.prf \
 		../LevelEditor/LevelEditor.pro \
 		../resources.qrc \
+		../../../Qt/5.8/clang_64/lib/QtMultimedia.framework/QtMultimedia.prl \
 		../../../Qt/5.8/clang_64/lib/QtWidgets.framework/QtWidgets.prl \
 		../../../Qt/5.8/clang_64/lib/QtGui.framework/QtGui.prl \
+		../../../Qt/5.8/clang_64/lib/QtNetwork.framework/QtNetwork.prl \
 		../../../Qt/5.8/clang_64/lib/QtCore.framework/QtCore.prl
 	$(QMAKE) -o Makefile ../LevelEditor/LevelEditor.pro -spec macx-clang CONFIG+=debug CONFIG+=x86_64 CONFIG+=qml_debug
 ../../../Qt/5.8/clang_64/mkspecs/features/spec_pre.prf:
@@ -639,8 +641,10 @@ Makefile: ../LevelEditor/LevelEditor.pro ../../../Qt/5.8/clang_64/mkspecs/macx-c
 ../../../Qt/5.8/clang_64/mkspecs/features/lex.prf:
 ../LevelEditor/LevelEditor.pro:
 ../resources.qrc:
+../../../Qt/5.8/clang_64/lib/QtMultimedia.framework/QtMultimedia.prl:
 ../../../Qt/5.8/clang_64/lib/QtWidgets.framework/QtWidgets.prl:
 ../../../Qt/5.8/clang_64/lib/QtGui.framework/QtGui.prl:
+../../../Qt/5.8/clang_64/lib/QtNetwork.framework/QtNetwork.prl:
 ../../../Qt/5.8/clang_64/lib/QtCore.framework/QtCore.prl:
 qmake: FORCE
 	@$(QMAKE) -o Makefile ../LevelEditor/LevelEditor.pro -spec macx-clang CONFIG+=debug CONFIG+=x86_64 CONFIG+=qml_debug
@@ -775,7 +779,7 @@ moc_editorwindow.cpp: ../map/map.h \
 		../LevelEditor/editorwindow.h \
 		moc_predefs.h \
 		../../../Qt/5.8/clang_64/bin/moc
-	/Users/edvinholm/Qt/5.8/clang_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/Users/edvinholm/Qt/5.8/clang_64/mkspecs/macx-clang -I/Users/edvinholm/Documents/SokoBan/LevelEditor -I/Users/edvinholm/Qt/5.8/clang_64/lib/QtWidgets.framework/Headers -I/Users/edvinholm/Qt/5.8/clang_64/lib/QtGui.framework/Headers -I/Users/edvinholm/Qt/5.8/clang_64/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include -F/Users/edvinholm/Qt/5.8/clang_64/lib ../LevelEditor/editorwindow.h -o moc_editorwindow.cpp
+	/Users/edvinholm/Qt/5.8/clang_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/Users/edvinholm/Qt/5.8/clang_64/mkspecs/macx-clang -I/Users/edvinholm/Documents/SokoBan/LevelEditor -I/Users/edvinholm/Qt/5.8/clang_64/lib/QtMultimedia.framework/Headers -I/Users/edvinholm/Qt/5.8/clang_64/lib/QtWidgets.framework/Headers -I/Users/edvinholm/Qt/5.8/clang_64/lib/QtGui.framework/Headers -I/Users/edvinholm/Qt/5.8/clang_64/lib/QtNetwork.framework/Headers -I/Users/edvinholm/Qt/5.8/clang_64/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/8.0.0/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include -F/Users/edvinholm/Qt/5.8/clang_64/lib ../LevelEditor/editorwindow.h -o moc_editorwindow.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -946,7 +950,9 @@ global.o: ../global.cpp ../global.h \
 		../../../Qt/5.8/clang_64/lib/QtCore.framework/Headers/qnamespace.h \
 		../menuactiondelegate.h \
 		../levelgrid.h \
-		../highscorelist.h
+		../highscorelist.h \
+		../../../Qt/5.8/clang_64/lib/QtCore.framework/Headers/QDebug \
+		../../../Qt/5.8/clang_64/lib/QtCore.framework/Headers/qdebug.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o global.o ../global.cpp
 
 move_stack.o: ../map/move_stack.cpp ../map/move_stack.h \

@@ -22,11 +22,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     _levelSelectGrid = new LevelGrid("grid", 3, 2);
     LevelGridItem *potato_power = new LevelGridItem(MapFilename("potato_power.fml"));
+    LevelGridItem *walk_in_le_park = new LevelGridItem(MapFilename("walk_in_le_park.fml"));
     LevelGridItem *feel_rect = new LevelGridItem(MapFilename("feel_rect.fml"));
     LevelGridItem *simplex = new LevelGridItem(MapFilename("map.fml"));
     LevelGridItem *frozen_island = new LevelGridItem(MapFilename("frozen_island.fml"));
 
     _levelSelectGrid->addItem(potato_power);
+    _levelSelectGrid->addItem(walk_in_le_park);
     _levelSelectGrid->addItem(feel_rect);
     _levelSelectGrid->addItem(simplex);
     _levelSelectGrid->addItem(frozen_island);
