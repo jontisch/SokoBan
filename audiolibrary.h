@@ -1,6 +1,7 @@
+#if 0
+
 #ifndef AUDIOPLAYER_H
 #define AUDIOPLAYER_H
-#include <QSoundEffect>
 #include "global.h"
 
 enum Sound
@@ -17,8 +18,10 @@ public:
 private:
     AudioLibrary();
     ~AudioLibrary();
-    QSoundEffect *_sounds[N_SOUNDS];
 };
 
 
 #endif // AUDIOPLAYER_H
+
+
+#endif
