@@ -28,9 +28,17 @@ enum TileType {
 };
 #define N_TILETYPES 10
 
+enum EntityType {
+    DOOR_V = 0,
+    DOOR_H = 1,
+    BUTTON = 2,
+};
+#define N_ENTITIES 3
 
 const char *TileTypeName(TileType type);
 const char *TileFlagName(TileFlag flag);
+const char *EntityTypeName(EntityType entity);
+
 bool IsValidTileType(TileType type);
 
 struct Tile
@@ -42,6 +50,6 @@ struct Tile
 
 PixmapIdentifier PixmapForTileType(TileType type);
 PixmapIdentifier PixmapForTileFlag(TileFlag flag);
-
+PixmapIdentifier PixmapForEntity(EntityType entity);
 
 #endif // TILE_H

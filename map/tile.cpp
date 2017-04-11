@@ -104,3 +104,33 @@ PixmapIdentifier PixmapForTileFlag(TileFlag flag)
         return PIXMAP_WATER;
     }
 }
+
+const char *EntityTypeName(EntityType entity)
+{
+    switch(entity)
+    {
+    case DOOR_V:
+        return "Vertical door";
+    case DOOR_H:
+        return "Horizontal door";
+    case BUTTON:
+        return "Button";
+    default:
+        return "Unknown entity";
+    }
+}
+
+PixmapIdentifier PixmapForEntity(EntityType entity)
+{
+    switch(entity)
+    {
+    case DOOR_V:
+        return PIXMAP_DOOR_VERTICAL;
+    case DOOR_H:
+        return PIXMAP_DOOR_HORIZONTAL;
+    case BUTTON:
+        return PIXMAP_BUTTON_UP;
+    default:
+        return PIXMAP_FLOOR;
+    }
+}

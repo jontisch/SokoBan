@@ -1,6 +1,6 @@
 #include "editorwidget.h"
 
-EditorWidget::EditorWidget(QString title):_title(title), _area(), _hover(false)
+EditorWidget::EditorWidget(QString title, QSize gridUnits, QPoint gridPos):_title(title), _gridUnits(gridUnits), _gridPos(gridPos), _area(), _hover(false)
 {
 
 }
@@ -11,26 +11,41 @@ QRect *EditorWidget::getArea()
     return &_area;
 }
 
+QSize *EditorWidget::getGridUnits()
+{
+    return &_gridUnits;
+}
+
+QPoint *EditorWidget::getgridPos()
+{
+    return &_gridPos;
+}
+
 void EditorWidget::setHover(bool hover)
 {
     _hover = hover;
 }
 
 
-ListEditorWidget::ListEditorWidget(QString title):EditorWidget(title), _listNames(32), _listThumbs(32)
+
+
+
+
+
+
+
+ListEditorWidget::ListEditorWidget(QString title, QSize gridUnits, QPoint gridPos):EditorWidget(title, gridUnits, gridPos), _listNames(32), _listThumbs(32)
 {
 
 }
-
 
 void ListEditorWidget::addItem(QString *item, QPixmap *pixmap)
 {
     _listNames.add(item);
     _listThumbs.add(pixmap);
-
 }
 
-void ListEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
+void ListEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient)
 {
 
     ListRenderingMeasurements m = calculateRenderingMeasurements(renderRect);
@@ -40,12 +55,23 @@ void ListEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
     painter->setPen(Qt::white);
     painter->drawRect(renderRect);
     painter->setFont(QFont(QString("sans serif"), m.headerFontSize, 75));
-    painter->drawText(QRect(_area.left()+m.padding,
-                            _area.top()+m.padding,
-                            _area.width()-2*m.padding,
-                            m.headerHeight), Qt::AlignHCenter,_title);
+    //HMM
+    QRect headerRect = QRect(_area.left()+m.padding,
+                     _area.top()+m.padding,
+                     _area.width()-2*m.padding,
+                     m.headerHeight);
+
+    gradient->setStart(headerRect.topLeft());
+    gradient->setFinalStop(headerRect.bottomLeft());
+    painter->setPen(QColor(6,28,43));
+    painter->setBrush(*gradient);
 
 
+    painter->drawRoundedRect(headerRect, 10,10);
+    //HMM
+    painter->drawText(headerRect, Qt::AlignCenter,_title);
+    painter->setPen(Qt::white);
+    painter->setBrush(Qt::black);
     for(int i = 0; i < _listNames.count(); i++){
 
         painter->setFont(QFont(QString("sans serif"), m.itemFontSize, (i == _selected)?75:50));
@@ -84,7 +110,7 @@ QRect ListEditorWidget::calculateItemRenderRect(int index, ListEditorWidget::Lis
 ListEditorWidget::ListRenderingMeasurements ListEditorWidget::calculateRenderingMeasurements(QRect renderRect)
 {
     ListRenderingMeasurements result;
-    result.padding = 5;
+    result.padding = 4;
     result.itemOffset = 3;
     result.itemFontSize = 10;
     result.itemHeight = 24;
@@ -101,7 +127,20 @@ int ListEditorWidget::heightToIndex(int height){
     return (height - (_area.top() + m.padding + m.headerHeight)) / (m.itemHeight+m.itemOffset);
 }
 
-LabelEditorWidget::LabelEditorWidget(QString title, QString text):EditorWidget(title), _text(text)
+
+
+
+
+
+
+
+
+
+
+
+
+
+LabelEditorWidget::LabelEditorWidget(QString title, QString text, QSize gridUnits, QPoint gridPos):EditorWidget(title, gridUnits, gridPos), _text(text)
 {
 
 }
@@ -111,11 +150,16 @@ void LabelEditorWidget::setText(QString newText)
     _text = newText;
 }
 
-void LabelEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
+void LabelEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient)
 {
     _area = renderRect;
-    painter->setPen(Qt::white);
-    painter->setBrush(Qt::black);
+    //painter->setPen(Qt::white);
+    //painter->setBrush(Qt::black);
+    //painter->drawRoundedRect(renderRect, 10,10);
+    gradient->setStart(_area.topLeft());
+    gradient->setFinalStop(_area.bottomLeft());
+    painter->setPen(QColor(6,28,43));
+    painter->setBrush(*gradient);
     painter->drawRoundedRect(renderRect, 10,10);
     painter->setFont(QFont(QString("sans serif"), 11, 75));
     painter->drawText(renderRect, (_text == NULL)?Qt::AlignCenter:Qt::AlignHCenter, _title);
@@ -125,12 +169,25 @@ void LabelEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
     }
 }
 
-RadioEditorWidget::RadioEditorWidget(QString title, bool state):EditorWidget(title), _state(state)
+
+
+
+
+
+
+
+
+
+
+
+
+
+RadioEditorWidget::RadioEditorWidget(QString title, bool state, QSize gridUnits, QPoint gridPos):EditorWidget(title, gridUnits, gridPos), _state(state)
 {
 
 }
 
-void RadioEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
+void RadioEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient)
 {
     _area = renderRect;
     painter->fillRect(renderRect, Qt::black);
@@ -151,7 +208,17 @@ void RadioEditorWidget::setState(bool state)
     _state = state;
 }
 
-RadioClusterEditorWidget::RadioClusterEditorWidget(QString title, int index):EditorWidget(title), _index(index),_radios(4)
+
+
+
+
+
+
+
+
+
+
+RadioClusterEditorWidget::RadioClusterEditorWidget(QString title, int index, QSize gridUnits, QPoint gridPos):EditorWidget(title, gridUnits, gridPos), _index(index),_radios(4)
 {
 
 }
@@ -169,7 +236,7 @@ RadioEditorWidget *RadioClusterEditorWidget::getPointer(int index)
 
 
 
-void RadioClusterEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
+void RadioClusterEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient)
 {
     _area = renderRect;
     int count = _radios.count();
@@ -179,7 +246,7 @@ void RadioClusterEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
     for(int i = 0; i < count; i++){
         RadioEditorWidget *radio;
         _radios.get(i, &radio);
-        radio->renderWidget(painter, QRect(renderRect.left()+i*renderRect.width()/count, renderRect.top(), renderRect.width()/count, renderRect.height()));
+        radio->renderWidget(painter, QRect(renderRect.left()+i*renderRect.width()/count, renderRect.top(), renderRect.width()/count, renderRect.height()), gradient);
     }
 }
 
@@ -199,7 +266,16 @@ int RadioClusterEditorWidget::select(int x, int y, int index)
     return _index;
 }
 
-ButtonEditorWidget::ButtonEditorWidget(QString title, bool active):EditorWidget(title), _active(active)
+
+
+
+
+
+
+
+
+
+ButtonEditorWidget::ButtonEditorWidget(QString title, bool active, QSize gridUnits, QPoint gridPos):EditorWidget(title, gridUnits, gridPos), _active(active)
 {
 
 }
@@ -209,20 +285,31 @@ bool ButtonEditorWidget::active()
     return _active;
 }
 
-void ButtonEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
+void ButtonEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient)
 {
     _area = renderRect;
 
 
-    painter->setPen((_hover)?((_active)?Qt::black:Qt::gray):((_active)?Qt::white:Qt::gray));
-    painter->setBrush((_hover)?((_active)?Qt::white:Qt::black):Qt::black);
+    //painter->setPen((_hover)?((_active)?Qt::black:Qt::gray):((_active)?Qt::white:Qt::gray));
+    //painter->setBrush((_hover)?((_active)?Qt::white:Qt::black):Qt::black);
+    gradient->setStart(_area.topLeft());
+    gradient->setFinalStop(_area.bottomLeft());
+    painter->setPen((_hover)?QColor(93,121,138):QColor(6,28,43));
+    painter->setBrush(*gradient);
     painter->drawRoundedRect(renderRect, 10,10);
-
     painter->setFont(QFont(QString("sans serif"), 10, 10));
     painter->drawText(renderRect, Qt::AlignCenter, _title);
 }
 
-TextfieldEditorWidget::TextfieldEditorWidget(QString title, QString text): EditorWidget(title), _text(text), _editActive(false)
+
+
+
+
+
+
+
+
+TextfieldEditorWidget::TextfieldEditorWidget(QString title, QString text, QSize gridUnits, QPoint gridPos):EditorWidget(title, gridUnits, gridPos), _text(text), _editActive(false)
 {
 
 }
@@ -230,11 +317,20 @@ TextfieldEditorWidget::TextfieldEditorWidget(QString title, QString text): Edito
 void TextfieldEditorWidget::addChar(QChar c)
 {
     _text.append(c);
+    if(_text.toInt()>128){
+        _text == "128";
+    }
+    else if(_text.toInt()<0){
+        _text == "0";
+    }
 }
 
 void TextfieldEditorWidget::backSpace()
 {
     _text.truncate(_text.length()-1);
+    if(_text.length() == 0){
+        _text = "0";
+    }
 }
 
 void TextfieldEditorWidget::setText(QString text)
@@ -244,11 +340,15 @@ void TextfieldEditorWidget::setText(QString text)
 
 
 
-void TextfieldEditorWidget::renderWidget(QPainter *painter, QRect renderRect)
+void TextfieldEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient)
 {
     _area = renderRect;
-    painter->setPen((_editActive||_hover)?Qt::black:Qt::white);
-    painter->setBrush((_editActive||_hover)?Qt::white:Qt::black);
+    //painter->setPen((_editActive||_hover)?Qt::black:Qt::white);
+    //painter->setBrush((_editActive||_hover)?Qt::white:Qt::black);
+    gradient->setStart(_area.topLeft());
+    gradient->setFinalStop(_area.bottomLeft());
+    painter->setPen(QColor(6,28,43));
+    painter->setBrush(*gradient);
     painter->drawRoundedRect(renderRect, 10,10);
     painter->setFont(QFont(QString("sans serif"), 10, 10));
     painter->drawText(renderRect, Qt::AlignHCenter, _title);
@@ -263,4 +363,42 @@ void TextfieldEditorWidget::setEdit(bool edit)
 QString TextfieldEditorWidget::getText()
 {
     return _text;
+}
+
+
+
+
+
+
+
+
+
+
+ToolboxEditorWidget::ToolboxEditorWidget(QString title, QSize gridSize, QSize gridUnits, QPoint gridPos):EditorWidget(title, gridUnits, gridPos), _gridSize(gridSize), _widgets(16)
+{
+
+}
+
+void ToolboxEditorWidget::addWidget(EditorWidget *widget)
+{
+    _widgets.add(widget);
+}
+
+void ToolboxEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient)
+{
+    _area = renderRect;
+    QRect widgetRect;
+    painter->fillRect(_area, Qt::black);
+    for(int i = 0; i < _widgets.count(); i++){
+        EditorWidget *w;
+        _widgets.get(i, &w);
+
+        widgetRect = QRect(renderRect.left() + (renderRect.width()/_gridSize.width()) * w->getgridPos()->x(),
+                           renderRect.top() + (renderRect.height()/_gridSize.height()) * w->getgridPos()->y(),
+                           (renderRect.width()/ _gridSize.width()) * w->getGridUnits()->width(),
+                           (renderRect.height()/ _gridSize.height()) * w->getGridUnits()->height()
+                           );
+        w->renderWidget(painter, widgetRect, gradient);
+    }
+
 }

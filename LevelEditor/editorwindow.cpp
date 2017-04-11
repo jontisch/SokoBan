@@ -25,8 +25,18 @@ EditorWindow::EditorWindow(QWidget *parent) :
 
 
     //HMM
+    _toolBox = new ToolboxEditorWidget("Tools", QSize(3,15));
+
+    _toolBox->addWidget(new ButtonEditorWidget("Up",true,QSize(2,1), QPoint(0,0)));
+    _toolBox->addWidget(new ButtonEditorWidget("Down",true,QSize(2,1), QPoint(0,1)));
+    _toolBox->addWidget(new ButtonEditorWidget("Left",true,QSize(2,1), QPoint(0,2)));
+    _toolBox->addWidget(new ButtonEditorWidget("Right",true,QSize(2,1), QPoint(0,3)));
+
+
     _tileList = new ListEditorWidget("Tiles");
     _flagList = new ListEditorWidget("Flags");
+    _entityList = new ListEditorWidget("Entities");
+
     _gridPosLabel = new LabelEditorWidget("Position", "X:0\tY:0");
 
     _tileRadioCluster = new RadioClusterEditorWidget("Tiles", 0);
@@ -58,6 +68,9 @@ EditorWindow::EditorWindow(QWidget *parent) :
     _heightTextfield = new TextfieldEditorWidget("Height", "0");
     _activeTextField = NULL;
     _hoveredWidget = NULL;
+
+    _buttonGradient.setColorAt(0,QColor(59,148,204));
+    _buttonGradient.setColorAt(1,QColor(28,73,102));
     //END OF HMM
     selectedFlag = HAS_BOX;
     selectedTileType = FLOOR;
@@ -86,6 +99,10 @@ EditorWindow::EditorWindow(QWidget *parent) :
         if(f == selectedFlag) flag_row = d;
         f *= 2;
         d++;
+    }
+
+    for(int i = 0; i < N_ENTITIES; i++){
+        _entityList->addItem(new QString(EntityTypeName((EntityType)i)), Pixmap(PixmapForEntity((EntityType)i)));
     }
 
     _mode = SET_TYPE;
@@ -311,24 +328,34 @@ void EditorWindow::paintEvent(QPaintEvent *Event)
     painter.fillRect(this->rect(), Qt::black);
     _map->draw(&painter, mapArea());
 
-    _tileList->renderWidget(&painter,QRect(mapArea().right(),0,120,LIST_HEIGHT));
-    _flagList->renderWidget(&painter,QRect(mapArea().right()+120,0,120,LIST_HEIGHT));
-    _tileRadioCluster->renderWidget(&painter, QRect(mapArea().right(),300,240,WIDGET_HEIGHT+10));
-    _colorRadioCluster->renderWidget(&painter, QRect(mapArea().right(),350, 240, WIDGET_HEIGHT+10));
-    _saveMapButton->renderWidget(&painter,QRect(mapArea().right(),400,120,WIDGET_HEIGHT));
-    _loadMapButton->renderWidget(&painter,QRect(mapArea().right()+120,400,120,WIDGET_HEIGHT));
+    _tileList->renderWidget(&painter,QRect(mapArea().right(),0,120,LIST_HEIGHT), &_buttonGradient);
+    _flagList->renderWidget(&painter,QRect(mapArea().right()+120,0,120,LIST_HEIGHT), &_buttonGradient);
+    _entityList->renderWidget(&painter,QRect(mapArea().right()-240,0,120,LIST_HEIGHT), &_buttonGradient);
 
-    _shiftUpButton->renderWidget(&painter,QRect(mapArea().right()+100,440,WIDGET_HEIGHT,WIDGET_HEIGHT));
-    _shiftLeftButton->renderWidget(&painter,QRect(mapArea().right()+60,480,WIDGET_HEIGHT,WIDGET_HEIGHT));
-    _shiftLabel->renderWidget(&painter, QRect(mapArea().right()+100,480, WIDGET_HEIGHT, WIDGET_HEIGHT));
-    _shiftRightButton->renderWidget(&painter,QRect(mapArea().right()+140,480,WIDGET_HEIGHT,WIDGET_HEIGHT));
-    _shiftDownButton->renderWidget(&painter,QRect(mapArea().right()+100,520,WIDGET_HEIGHT,WIDGET_HEIGHT));
+    //_toolBox->renderWidget(&painter, mapArea(), &_buttonGradient);
+
+    /*
+    _tileList->renderWidget(&painter,QRect(mapArea().right(),0,240,LIST_HEIGHT), &_buttonGradient);
+    _flagList->renderWidget(&painter,QRect(mapArea().right()+80,0,240,LIST_HEIGHT), &_buttonGradient);
+    _entityList->renderWidget(&painter,QRect(mapArea().right()+160,0,240,LIST_HEIGHT), &_buttonGradient);
+*/
+
+    _tileRadioCluster->renderWidget(&painter, QRect(mapArea().right(),300,240,WIDGET_HEIGHT+10), &_buttonGradient);
+    _colorRadioCluster->renderWidget(&painter, QRect(mapArea().right(),350, 240, WIDGET_HEIGHT+10), &_buttonGradient);
+    _saveMapButton->renderWidget(&painter,QRect(mapArea().right(),400,120,WIDGET_HEIGHT), &_buttonGradient);
+    _loadMapButton->renderWidget(&painter,QRect(mapArea().right()+120,400,120,WIDGET_HEIGHT), &_buttonGradient);
+
+    _shiftUpButton->renderWidget(&painter,QRect(mapArea().right()+100,440,WIDGET_HEIGHT,WIDGET_HEIGHT), &_buttonGradient);
+    _shiftLeftButton->renderWidget(&painter,QRect(mapArea().right()+60,480,WIDGET_HEIGHT,WIDGET_HEIGHT), &_buttonGradient);
+    _shiftLabel->renderWidget(&painter, QRect(mapArea().right()+100,480, WIDGET_HEIGHT, WIDGET_HEIGHT), &_buttonGradient);
+    _shiftRightButton->renderWidget(&painter,QRect(mapArea().right()+140,480,WIDGET_HEIGHT,WIDGET_HEIGHT), &_buttonGradient);
+    _shiftDownButton->renderWidget(&painter,QRect(mapArea().right()+100,520,WIDGET_HEIGHT,WIDGET_HEIGHT), &_buttonGradient);
 
 
-    _widthTextfield->renderWidget(&painter, QRect(mapArea().right(),560, 120,WIDGET_HEIGHT));
-    _heightTextfield->renderWidget(&painter, QRect(mapArea().right()+120,560, 120,WIDGET_HEIGHT));
-    _updateMapButton->renderWidget(&painter,QRect(mapArea().right(),600,240,WIDGET_HEIGHT));
-    _gridPosLabel->renderWidget(&painter, QRect(mapArea().right(), 640,240, WIDGET_HEIGHT));
+    _widthTextfield->renderWidget(&painter, QRect(mapArea().right(),560, 120,WIDGET_HEIGHT), &_buttonGradient);
+    _heightTextfield->renderWidget(&painter, QRect(mapArea().right()+120,560, 120,WIDGET_HEIGHT), &_buttonGradient);
+    _updateMapButton->renderWidget(&painter,QRect(mapArea().right(),600,240,WIDGET_HEIGHT), &_buttonGradient);
+    _gridPosLabel->renderWidget(&painter, QRect(mapArea().right(), 640,240, WIDGET_HEIGHT), &_buttonGradient);
 }
 
 EditorWindow::~EditorWindow()

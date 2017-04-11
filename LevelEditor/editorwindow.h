@@ -38,8 +38,12 @@ private:
     Ui::EditorWindow *ui;
     Map *_map;
 
+    ToolboxEditorWidget *_toolBox;
+
     ListEditorWidget *_tileList;
     ListEditorWidget *_flagList;
+    ListEditorWidget *_entityList;
+
     LabelEditorWidget *_gridPosLabel;
     RadioClusterEditorWidget *_tileRadioCluster;
     RadioClusterEditorWidget *_colorRadioCluster;
@@ -54,6 +58,7 @@ private:
     TextfieldEditorWidget *_widthTextfield;
     TextfieldEditorWidget *_heightTextfield;
 
+    QLinearGradient _buttonGradient;
 
 
     QPoint lastClickedTile;
