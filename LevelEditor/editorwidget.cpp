@@ -240,7 +240,7 @@ void RadioClusterEditorWidget::renderWidget(QPainter *painter, QRect renderRect,
 {
     _area = renderRect;
     int count = _radios.count();
-    painter->fillRect(renderRect, Qt::black);
+    painter->setBrush(Qt::black);
     painter->setPen(Qt::white);
     painter->drawRect(renderRect);
     for(int i = 0; i < count; i++){

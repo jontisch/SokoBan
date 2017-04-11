@@ -45,9 +45,13 @@ EditorWindow::EditorWindow(QWidget *parent) :
     RadioEditorWidget *_setTypeRadio = new RadioEditorWidget("Set type", true);
     RadioEditorWidget *_addFlagRadio = new RadioEditorWidget("Add flag", false);
     RadioEditorWidget *_removeFlagRadio = new RadioEditorWidget("Remove flag", false);
+    RadioEditorWidget *_addEntityRadio = new RadioEditorWidget("Add Ent", false);
+    RadioEditorWidget *_removeEntityRadio = new RadioEditorWidget("Remove Ent", false);
     _tileRadioCluster->addRadio(_setTypeRadio);
     _tileRadioCluster->addRadio(_addFlagRadio);
     _tileRadioCluster->addRadio(_removeFlagRadio);
+    _tileRadioCluster->addRadio(_addEntityRadio);
+    _tileRadioCluster->addRadio(_removeEntityRadio);
 
     _colorRadioCluster = new RadioClusterEditorWidget("Colors", 0, QSize(12,1), QPoint(0,11));
     RadioEditorWidget *_blueColorRadio = new RadioEditorWidget("Blue", true);
@@ -110,6 +114,7 @@ EditorWindow::EditorWindow(QWidget *parent) :
     //END OF HMM
     selectedFlag = HAS_BOX;
     selectedTileType = FLOOR;
+    selectedEntityType = DOOR_V;
 
     int tile_row = -1;
     int c = 0;
@@ -139,6 +144,7 @@ EditorWindow::EditorWindow(QWidget *parent) :
 
     for(int i = 0; i < N_ENTITIES; i++){
         _entityList->addItem(new QString(EntityTypeName((EntityType)i)), Pixmap(PixmapForEntity((EntityType)i)));
+
     }
 
     _mode = SET_TYPE;
@@ -222,8 +228,16 @@ void EditorWindow::mousePressEvent(QMouseEvent *Event)
             else if(_flagList->getArea()->contains(mousePosition)){
                 _flagList->select(this->mapFromGlobal(QCursor::pos()).y());
                 selectedFlag = (TileFlag)(int)pow(2, _flagList->getSelected());
-                if(_mode == SET_TYPE)
+                if(_mode != REMOVE_FLAG)
                     _mode = (EditingMode)_tileRadioCluster->select(0,0,1);
+                this->repaint();
+
+            }
+            else if(_entityList->getArea()->contains(mousePosition)){
+                _entityList->select(this->mapFromGlobal(QCursor::pos()).y());
+                selectedFlag = (TileFlag)(int)pow(2, _flagList->getSelected());
+                if(_mode != REMOVE_ENTITY)
+                    _mode = (EditingMode)_tileRadioCluster->select(0,0,3);
                 this->repaint();
 
             }
