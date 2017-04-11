@@ -24,6 +24,12 @@ protected:
     bool _hover;
 };
 
+
+
+
+
+
+
 class ToolboxEditorWidget: public EditorWidget
 {
 public:
@@ -34,6 +40,13 @@ private:
     QSize _gridSize;
     Collection<EditorWidget*> _widgets;
 };
+
+
+
+
+
+
+
 
 
 class RadioEditorWidget: public EditorWidget
@@ -48,6 +61,13 @@ private:
     bool _state;
 };
 
+
+
+
+
+
+
+
 class RadioClusterEditorWidget: public EditorWidget
 {
 public:
@@ -61,6 +81,13 @@ private:
     Collection<RadioEditorWidget*> _radios;
 };
 
+
+
+
+
+
+
+
 class ButtonEditorWidget: public EditorWidget{
 public:
     ButtonEditorWidget(QString title, bool active = true, QSize gridUnits = QSize(1,1), QPoint gridPos = QPoint(0,0));
@@ -70,6 +97,13 @@ private:
     bool _active;
 };
 
+
+
+
+
+
+
+
 class LabelEditorWidget: public EditorWidget{
 public:
     LabelEditorWidget(QString title, QString text = NULL, QSize gridUnits = QSize(1,1), QPoint gridPos = QPoint(0,0));
@@ -78,6 +112,13 @@ public:
 private:
     QString _text;
 };
+
+
+
+
+
+
+
 
 class TextfieldEditorWidget: public EditorWidget{
 public:
@@ -92,6 +133,13 @@ private:
     bool _editActive;
     QString _text;
 };
+
+
+
+
+
+
+
 
 class ListEditorWidget: public EditorWidget
 {

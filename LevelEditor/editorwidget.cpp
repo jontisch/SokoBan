@@ -51,7 +51,7 @@ void ListEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QLinear
     ListRenderingMeasurements m = calculateRenderingMeasurements(renderRect);
 
     _area = renderRect;
-    painter->fillRect(_area, Qt::black);
+    painter->setBrush(Qt::black);
     painter->setPen(Qt::white);
     painter->drawRect(renderRect);
     painter->setFont(QFont(QString("sans serif"), m.headerFontSize, 75));

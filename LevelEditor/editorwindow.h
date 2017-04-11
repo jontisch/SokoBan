@@ -38,7 +38,12 @@ private:
     Ui::EditorWindow *ui;
     Map *_map;
 
-    ToolboxEditorWidget *_toolBox;
+    RadioClusterEditorWidget *_toolboxRadioCluster;
+
+
+    ToolboxEditorWidget *_drawToolBox;
+    ToolboxEditorWidget *_dimensionsToolBox;
+    ToolboxEditorWidget *_visibleToolBox;
 
     ListEditorWidget *_tileList;
     ListEditorWidget *_flagList;
@@ -82,6 +87,7 @@ private:
 
     EditingMode _mode;
     EntityColor _entityColor;
+
 };
 
 #endif // EDITORWINDOW_H

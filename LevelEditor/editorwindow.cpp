@@ -7,8 +7,7 @@
 #include <QFileDialog>
 #include <math.h>
 
-#define WIDGET_HEIGHT 40
-#define LIST_HEIGHT 300
+#define TOOL_AREA_WIDTH 240
 
 EditorWindow::EditorWindow(QWidget *parent) :
     QMainWindow(parent)//,
@@ -17,29 +16,32 @@ EditorWindow::EditorWindow(QWidget *parent) :
     //ui->setupUi(this);
     InitPixmaps();
     QRect screenRect = QApplication::desktop()->screenGeometry();
-    this->setGeometry(screenRect.width()/2 - 1024/2, screenRect.height()/2-768/2, 1024,768);
+    this->setGeometry(screenRect.width()/2 - 1280/2, screenRect.height()/2-720/2, 1280,720);
 
-    //centralWidget()->setAttribute(Qt::WA_TransparentForMouseEvents);
     setMouseTracking(true);
     _map = new Map(LocalFilename("/../../maps/menumap.fml"));
 
 
     //HMM
-    _toolBox = new ToolboxEditorWidget("Tools", QSize(3,15));
-
-    _toolBox->addWidget(new ButtonEditorWidget("Up",true,QSize(2,1), QPoint(0,0)));
-    _toolBox->addWidget(new ButtonEditorWidget("Down",true,QSize(2,1), QPoint(0,1)));
-    _toolBox->addWidget(new ButtonEditorWidget("Left",true,QSize(2,1), QPoint(0,2)));
-    _toolBox->addWidget(new ButtonEditorWidget("Right",true,QSize(2,1), QPoint(0,3)));
+    _toolboxRadioCluster = new RadioClusterEditorWidget("Tools",0);
+    _toolboxRadioCluster->addRadio(new RadioEditorWidget("Draw", true));
+    _toolboxRadioCluster->addRadio(new RadioEditorWidget("Misc", false));
 
 
-    _tileList = new ListEditorWidget("Tiles");
-    _flagList = new ListEditorWidget("Flags");
-    _entityList = new ListEditorWidget("Entities");
+    _drawToolBox = new ToolboxEditorWidget("Draw", QSize(12,15));
+    _dimensionsToolBox = new ToolboxEditorWidget("Dimensions", QSize(12,15));
 
-    _gridPosLabel = new LabelEditorWidget("Position", "X:0\tY:0");
+    _visibleToolBox = _drawToolBox;
 
-    _tileRadioCluster = new RadioClusterEditorWidget("Tiles", 0);
+
+    _tileList = new ListEditorWidget("Tiles",QSize(6,7), QPoint(0,0));
+    _flagList = new ListEditorWidget("Flags", QSize(6,7), QPoint(6,0));
+    _entityList = new ListEditorWidget("Entities", QSize(12,3),QPoint(0,7));
+
+    _gridPosLabel = new LabelEditorWidget("Position", "X:0\tY:0", QSize(12,1), QPoint(0,14));
+
+
+    _tileRadioCluster = new RadioClusterEditorWidget("Tiles", 0, QSize(12,1), QPoint(0,10));
     RadioEditorWidget *_setTypeRadio = new RadioEditorWidget("Set type", true);
     RadioEditorWidget *_addFlagRadio = new RadioEditorWidget("Add flag", false);
     RadioEditorWidget *_removeFlagRadio = new RadioEditorWidget("Remove flag", false);
@@ -47,7 +49,7 @@ EditorWindow::EditorWindow(QWidget *parent) :
     _tileRadioCluster->addRadio(_addFlagRadio);
     _tileRadioCluster->addRadio(_removeFlagRadio);
 
-    _colorRadioCluster = new RadioClusterEditorWidget("Colors", 0);
+    _colorRadioCluster = new RadioClusterEditorWidget("Colors", 0, QSize(12,1), QPoint(0,11));
     RadioEditorWidget *_blueColorRadio = new RadioEditorWidget("Blue", true);
     RadioEditorWidget *_redColorRadio = new RadioEditorWidget("Red", false);
     RadioEditorWidget *_greenColorRadio = new RadioEditorWidget("Green", false);
@@ -55,22 +57,56 @@ EditorWindow::EditorWindow(QWidget *parent) :
     _colorRadioCluster->addRadio(_redColorRadio);
     _colorRadioCluster->addRadio(_greenColorRadio);
 
-    _shiftUpButton = new ButtonEditorWidget("Up");
-    _shiftDownButton = new ButtonEditorWidget("Down");
-    _shiftLeftButton = new ButtonEditorWidget("Left");
-    _shiftRightButton = new ButtonEditorWidget("Right");
-    _shiftLabel = new LabelEditorWidget("Shift");
-    _saveMapButton = new ButtonEditorWidget("Save Map");
-    _loadMapButton = new ButtonEditorWidget("Load Map");
-    _updateMapButton = new ButtonEditorWidget("Update Map");
 
-    _widthTextfield = new TextfieldEditorWidget("Width", "0");
-    _heightTextfield = new TextfieldEditorWidget("Height", "0");
-    _activeTextField = NULL;
+    _shiftUpButton = new ButtonEditorWidget("Up", true, QSize(2,1), QPoint(5,6));
+    _shiftDownButton = new ButtonEditorWidget("Down", true, QSize(2,1), QPoint(5,8));
+    _shiftLeftButton = new ButtonEditorWidget("Left", true, QSize(2,1), QPoint(3,7));
+    _shiftRightButton = new ButtonEditorWidget("Right", true, QSize(2,1), QPoint(7,7));
+    _shiftLabel = new LabelEditorWidget("Shift", NULL, QSize(2,1), QPoint(5,7));
+    _widthTextfield = new TextfieldEditorWidget("Width", "0", QSize(6,1), QPoint(0,10));
+    _heightTextfield = new TextfieldEditorWidget("Height", "0", QSize(6,1), QPoint(6,10));
+
+    _updateMapButton = new ButtonEditorWidget("Update Map", true, QSize(12,1), QPoint(0,12));
+
+    _saveMapButton = new ButtonEditorWidget("Save Map", true, QSize(6,3), QPoint(0,2));
+    _loadMapButton = new ButtonEditorWidget("Load Map", true, QSize(6,3), QPoint(6,2));
+
+   _activeTextField = NULL;
     _hoveredWidget = NULL;
 
+
+
+    //Tools added to the Drawing toolbox
+    _drawToolBox->addWidget(_tileList);
+    _drawToolBox->addWidget(_flagList);
+    _drawToolBox->addWidget(_entityList);
+    _drawToolBox->addWidget(_gridPosLabel);
+    _drawToolBox->addWidget(_tileRadioCluster);
+    _drawToolBox->addWidget(_colorRadioCluster);
+
+
+
+    //Tools added to the Dimensions toolbox
+
+    _dimensionsToolBox->addWidget(_loadMapButton);
+    _dimensionsToolBox->addWidget(_saveMapButton);
+    _dimensionsToolBox->addWidget(_shiftUpButton);
+    _dimensionsToolBox->addWidget(_shiftDownButton);
+    _dimensionsToolBox->addWidget(_shiftLeftButton);
+    _dimensionsToolBox->addWidget(_shiftRightButton);
+    _dimensionsToolBox->addWidget(_shiftLabel);
+    _dimensionsToolBox->addWidget(_widthTextfield);
+    _dimensionsToolBox->addWidget(_heightTextfield);
+    _dimensionsToolBox->addWidget(_updateMapButton);
+    _dimensionsToolBox->addWidget(_gridPosLabel);
+
+
+    //Gradient settings
     _buttonGradient.setColorAt(0,QColor(59,148,204));
     _buttonGradient.setColorAt(1,QColor(28,73,102));
+
+
+
     //END OF HMM
     selectedFlag = HAS_BOX;
     selectedTileType = FLOOR;
@@ -113,8 +149,16 @@ EditorWindow::EditorWindow(QWidget *parent) :
 QRect EditorWindow::mapArea()
 {
     QRect windowArea = this->rect();
-    return QRect(0, 0, windowArea.width() - 240, windowArea.height());
+    return QRect(0, 0, windowArea.width() - TOOL_AREA_WIDTH, windowArea.height());
 }
+
+
+QRect EditorWindow::toolArea()
+{
+   QRect windowArea = this->rect();
+   return QRect(mapArea().right(), 0, windowArea.width() - mapArea().width(), windowArea.height());
+}
+
 
 void EditorWindow::operateOnTile(QPoint tile)
 {
@@ -150,87 +194,105 @@ void EditorWindow::mousePressEvent(QMouseEvent *Event)
             _activeTextField = NULL;
         }
         QPoint mousePosition = Event->pos();
+
         if(mapArea().contains(mousePosition)){
             QPoint tile = _map->pixelToTile(mousePosition.x(), mousePosition.y(), mapArea());
             operateOnTile(tile);
             lastClickedTile = tile;
         }
-        else if(_tileList->getArea()->contains(mousePosition)){
-            _tileList->select(this->mapFromGlobal(QCursor::pos()).y());
-            selectedTileType = tileTypeForListRow[_tileList->getSelected()];
-            _mode = (EditingMode)_tileRadioCluster->select(0,0,0);
-            this->repaint();
-        }
-        else if(_flagList->getArea()->contains(mousePosition)){
-            _flagList->select(this->mapFromGlobal(QCursor::pos()).y());
-            selectedFlag = (TileFlag)(int)pow(2, _flagList->getSelected());
-            if(_mode == SET_TYPE)
-                _mode = (EditingMode)_tileRadioCluster->select(0,0,1);
-            this->repaint();
 
+        else if(_toolboxRadioCluster->getArea()->contains(mousePosition)){
+            int sel = _toolboxRadioCluster->select(mousePosition.x() - _toolboxRadioCluster->getArea()->left(), mousePosition.y() - _toolboxRadioCluster->getArea()->top());
+            if(sel == 0){
+                _visibleToolBox = _drawToolBox;
+            } else{
+                _visibleToolBox = _dimensionsToolBox;
+            }
+            repaint();
         }
-        else if(_tileRadioCluster->getArea()->contains(mousePosition)){
-            _mode = (EditingMode)_tileRadioCluster->select(mousePosition.x() - _tileRadioCluster->getArea()->left(), mousePosition.y() - _tileRadioCluster->getArea()->top());
-            this->repaint();
-        }
-        else if(_colorRadioCluster->getArea()->contains(mousePosition)){
-            _entityColor = (EntityColor)(_colorRadioCluster->select(mousePosition.x() - _colorRadioCluster->getArea()->left(), mousePosition.y() - _colorRadioCluster->getArea()->top())+1);
-            this->repaint();
-            qDebug() << _entityColor;
-        }
-        else if(_saveMapButton->getArea()->contains(mousePosition) && _saveMapButton->active()){
-            QString appPath = QCoreApplication::applicationDirPath();
-            QString filename = QFileDialog::getSaveFileName(this,
-                                                            tr("Save map"),
-                                                            appPath + "/../../maps/",
-                                                            tr("Friendly Map Language Files (*.fml)"));
-            _map->saveMap(filename);
-        }
-        else if(_loadMapButton->getArea()->contains(mousePosition) && _loadMapButton->active()){
-            QString appPath = QCoreApplication::applicationDirPath();
-            QString filename = QFileDialog::getOpenFileName(this,
-                                                            tr("Load map"),
-                                                            appPath + "/../../maps/",
-                                                            tr("Friendly Map Language Files (*.fml)"));
-            if(filename == NULL) return;
 
-            if(_map) delete _map;
-            _map = new Map(filename);
+        if(_visibleToolBox == _drawToolBox){
 
-            updateUI();
-        }
-        else if(_shiftUpButton->getArea()->contains(mousePosition) && _shiftUpButton->active()){
-            _map->shiftTiles(UP);
-            repaint();
-        }
-        else if(_shiftDownButton->getArea()->contains(mousePosition) && _shiftDownButton->active()){
-            _map->shiftTiles(DOWN);
-            repaint();
-        }
-        else if(_shiftLeftButton->getArea()->contains(mousePosition) && _shiftLeftButton->active()){
-            _map->shiftTiles(LEFT);
-            repaint();
-        }
-        else if(_shiftRightButton->getArea()->contains(mousePosition) && _shiftRightButton->active()){
-            _map->shiftTiles(RIGHT);
-            repaint();
-        }
-        else if(_updateMapButton->getArea()->contains(mousePosition) && _updateMapButton->active()){
-            int w =_widthTextfield->getText().toInt();
-            int h =_heightTextfield->getText().toInt();
-            _map->setSize(QSize((w>0)?w:1,(h>0)?h:1));
+            if(_tileList->getArea()->contains(mousePosition)){
+                _tileList->select(this->mapFromGlobal(QCursor::pos()).y());
+                selectedTileType = tileTypeForListRow[_tileList->getSelected()];
+                _mode = (EditingMode)_tileRadioCluster->select(0,0,0);
+                this->repaint();
+            }
+            else if(_flagList->getArea()->contains(mousePosition)){
+                _flagList->select(this->mapFromGlobal(QCursor::pos()).y());
+                selectedFlag = (TileFlag)(int)pow(2, _flagList->getSelected());
+                if(_mode == SET_TYPE)
+                    _mode = (EditingMode)_tileRadioCluster->select(0,0,1);
+                this->repaint();
 
-            repaint();
+            }
+            else if(_tileRadioCluster->getArea()->contains(mousePosition)){
+                _mode = (EditingMode)_tileRadioCluster->select(mousePosition.x() - _tileRadioCluster->getArea()->left(), mousePosition.y() - _tileRadioCluster->getArea()->top());
+                this->repaint();
+            }
+            else if(_colorRadioCluster->getArea()->contains(mousePosition)){
+                _entityColor = (EntityColor)(_colorRadioCluster->select(mousePosition.x() - _colorRadioCluster->getArea()->left(), mousePosition.y() - _colorRadioCluster->getArea()->top())+1);
+                this->repaint();
+            }
         }
-        else if(_widthTextfield->getArea()->contains(mousePosition)){
-            _activeTextField = _widthTextfield;
-            _activeTextField->setEdit(true);
-            repaint();
-        }
-        else if(_heightTextfield->getArea()->contains(mousePosition)){
-            _activeTextField = _heightTextfield;
-            _activeTextField->setEdit(true);
-            repaint();
+
+        else if (_visibleToolBox == _dimensionsToolBox){
+
+            if(_saveMapButton->getArea()->contains(mousePosition) && _saveMapButton->active()){
+                QString appPath = QCoreApplication::applicationDirPath();
+                QString filename = QFileDialog::getSaveFileName(this,
+                                                                tr("Save map"),
+                                                                appPath + "/../../maps/",
+                                                                tr("Friendly Map Language Files (*.fml)"));
+                _map->saveMap(filename);
+            }
+            else if(_loadMapButton->getArea()->contains(mousePosition) && _loadMapButton->active()){
+                QString appPath = QCoreApplication::applicationDirPath();
+                QString filename = QFileDialog::getOpenFileName(this,
+                                                                tr("Load map"),
+                                                                appPath + "/../../maps/",
+                                                                tr("Friendly Map Language Files (*.fml)"));
+                if(filename == NULL) return;
+
+                if(_map) delete _map;
+                _map = new Map(filename);
+
+                updateUI();
+            }
+            else if(_shiftUpButton->getArea()->contains(mousePosition) && _shiftUpButton->active()){
+                _map->shiftTiles(UP);
+                repaint();
+            }
+            else if(_shiftDownButton->getArea()->contains(mousePosition) && _shiftDownButton->active()){
+                _map->shiftTiles(DOWN);
+                repaint();
+            }
+            else if(_shiftLeftButton->getArea()->contains(mousePosition) && _shiftLeftButton->active()){
+                _map->shiftTiles(LEFT);
+                repaint();
+            }
+            else if(_shiftRightButton->getArea()->contains(mousePosition) && _shiftRightButton->active()){
+                _map->shiftTiles(RIGHT);
+                repaint();
+            }
+            else if(_updateMapButton->getArea()->contains(mousePosition) && _updateMapButton->active()){
+                int w =_widthTextfield->getText().toInt();
+                int h =_heightTextfield->getText().toInt();
+                _map->setSize(QSize((w>0)?w:1,(h>0)?h:1));
+
+                repaint();
+            }
+            else if(_widthTextfield->getArea()->contains(mousePosition)){
+                _activeTextField = _widthTextfield;
+                _activeTextField->setEdit(true);
+                repaint();
+            }
+            else if(_heightTextfield->getArea()->contains(mousePosition)){
+                _activeTextField = _heightTextfield;
+                _activeTextField->setEdit(true);
+                repaint();
+            }
         }
     }
 }
@@ -327,35 +389,12 @@ void EditorWindow::paintEvent(QPaintEvent *Event)
     QPainter painter(this);
     painter.fillRect(this->rect(), Qt::black);
     _map->draw(&painter, mapArea());
-
-    _tileList->renderWidget(&painter,QRect(mapArea().right(),0,120,LIST_HEIGHT), &_buttonGradient);
-    _flagList->renderWidget(&painter,QRect(mapArea().right()+120,0,120,LIST_HEIGHT), &_buttonGradient);
-    _entityList->renderWidget(&painter,QRect(mapArea().right()-240,0,120,LIST_HEIGHT), &_buttonGradient);
-
-    //_toolBox->renderWidget(&painter, mapArea(), &_buttonGradient);
-
-    /*
-    _tileList->renderWidget(&painter,QRect(mapArea().right(),0,240,LIST_HEIGHT), &_buttonGradient);
-    _flagList->renderWidget(&painter,QRect(mapArea().right()+80,0,240,LIST_HEIGHT), &_buttonGradient);
-    _entityList->renderWidget(&painter,QRect(mapArea().right()+160,0,240,LIST_HEIGHT), &_buttonGradient);
-*/
-
-    _tileRadioCluster->renderWidget(&painter, QRect(mapArea().right(),300,240,WIDGET_HEIGHT+10), &_buttonGradient);
-    _colorRadioCluster->renderWidget(&painter, QRect(mapArea().right(),350, 240, WIDGET_HEIGHT+10), &_buttonGradient);
-    _saveMapButton->renderWidget(&painter,QRect(mapArea().right(),400,120,WIDGET_HEIGHT), &_buttonGradient);
-    _loadMapButton->renderWidget(&painter,QRect(mapArea().right()+120,400,120,WIDGET_HEIGHT), &_buttonGradient);
-
-    _shiftUpButton->renderWidget(&painter,QRect(mapArea().right()+100,440,WIDGET_HEIGHT,WIDGET_HEIGHT), &_buttonGradient);
-    _shiftLeftButton->renderWidget(&painter,QRect(mapArea().right()+60,480,WIDGET_HEIGHT,WIDGET_HEIGHT), &_buttonGradient);
-    _shiftLabel->renderWidget(&painter, QRect(mapArea().right()+100,480, WIDGET_HEIGHT, WIDGET_HEIGHT), &_buttonGradient);
-    _shiftRightButton->renderWidget(&painter,QRect(mapArea().right()+140,480,WIDGET_HEIGHT,WIDGET_HEIGHT), &_buttonGradient);
-    _shiftDownButton->renderWidget(&painter,QRect(mapArea().right()+100,520,WIDGET_HEIGHT,WIDGET_HEIGHT), &_buttonGradient);
+    _toolboxRadioCluster->renderWidget(&painter, QRect(toolArea().topLeft(), QPoint(toolArea().right(), toolArea().top()+49)), &_buttonGradient);
 
 
-    _widthTextfield->renderWidget(&painter, QRect(mapArea().right(),560, 120,WIDGET_HEIGHT), &_buttonGradient);
-    _heightTextfield->renderWidget(&painter, QRect(mapArea().right()+120,560, 120,WIDGET_HEIGHT), &_buttonGradient);
-    _updateMapButton->renderWidget(&painter,QRect(mapArea().right(),600,240,WIDGET_HEIGHT), &_buttonGradient);
-    _gridPosLabel->renderWidget(&painter, QRect(mapArea().right(), 640,240, WIDGET_HEIGHT), &_buttonGradient);
+    _visibleToolBox->renderWidget(&painter, toolArea().adjusted(0,55,0,0), &_buttonGradient);
+    //_dimensionsToolBox->renderWidget(&painter, toolArea().adjusted(0,50,0,50), &_buttonGradient);
+
 }
 
 EditorWindow::~EditorWindow()
