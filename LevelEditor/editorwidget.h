@@ -10,20 +10,37 @@
 class EditorWidget
 {
 public:
-    EditorWidget(QString title);
+    EditorWidget(QString title, QSize gridUnits = QSize(1,1), QPoint gridPos = QPoint(0,0));
+    virtual void renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient) = 0;
     QRect *getArea();
+    QSize *getGridUnits();
+    QPoint *getgridPos();
     void setHover(bool hover);
 protected:
     QString _title;
     QRect _area;
+    QSize _gridUnits;
+    QPoint _gridPos;
     bool _hover;
 };
+
+class ToolboxEditorWidget: public EditorWidget
+{
+public:
+    ToolboxEditorWidget(QString title, QSize gridSize, QSize gridUnits = QSize(1,1), QPoint gridPos = QPoint(0,0));
+    void addWidget(EditorWidget *widget);
+    void renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient);
+private:
+    QSize _gridSize;
+    Collection<EditorWidget*> _widgets;
+};
+
 
 class RadioEditorWidget: public EditorWidget
 {
 public:
-    RadioEditorWidget(QString title, bool state);
-    void renderWidget(QPainter *painter, QRect renderRect);
+    RadioEditorWidget(QString title, bool state, QSize gridUnits = QSize(1,1), QPoint gridPos = QPoint(0,0));
+    void renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient);
     bool getState();
     void setState(bool state);
 private:
@@ -34,10 +51,10 @@ private:
 class RadioClusterEditorWidget: public EditorWidget
 {
 public:
-    RadioClusterEditorWidget(QString title, int index);
+    RadioClusterEditorWidget(QString title, int index, QSize gridUnits = QSize(1,1), QPoint gridPos = QPoint(0,0));
     void addRadio(RadioEditorWidget *radio);
     RadioEditorWidget* getPointer(int index);
-    void renderWidget(QPainter *painter, QRect renderRect);
+    void renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient);
     int select(int x, int y, int index = -1);
 private:
     int _index;
@@ -46,29 +63,29 @@ private:
 
 class ButtonEditorWidget: public EditorWidget{
 public:
-    ButtonEditorWidget(QString title, bool active = true);
+    ButtonEditorWidget(QString title, bool active = true, QSize gridUnits = QSize(1,1), QPoint gridPos = QPoint(0,0));
     bool active();
-    void renderWidget(QPainter *painter, QRect renderRect);
+    void renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient);
 private:
     bool _active;
 };
 
 class LabelEditorWidget: public EditorWidget{
 public:
-    LabelEditorWidget(QString title, QString text = NULL);
+    LabelEditorWidget(QString title, QString text = NULL, QSize gridUnits = QSize(1,1), QPoint gridPos = QPoint(0,0));
     void setText(QString newText);
-    void renderWidget(QPainter *painter, QRect renderRect);
+    void renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient);
 private:
     QString _text;
 };
 
 class TextfieldEditorWidget: public EditorWidget{
 public:
-    TextfieldEditorWidget(QString title, QString text);
+    TextfieldEditorWidget(QString title, QString text, QSize gridUnits = QSize(1,1), QPoint gridPos = QPoint(0,0));
     void addChar(QChar c);
     void backSpace();
     void setText(QString text);
-    void renderWidget(QPainter *painter, QRect renderRect);
+    void renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient);
     void setEdit(bool edit);
     QString getText();
 private:
@@ -79,9 +96,9 @@ private:
 class ListEditorWidget: public EditorWidget
 {
 public:
-    ListEditorWidget(QString title);
+    ListEditorWidget(QString title, QSize gridUnits = QSize(1,1), QPoint gridPos = QPoint(0,0));
     void addItem(QString *item, QPixmap *pixmap);
-    void renderWidget(QPainter *painter, QRect renderRect);
+    void renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient);
     void select(int height);
     int getSelected();
 private:
