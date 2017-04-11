@@ -3,9 +3,19 @@
 
 #include <QPixmap>
 #include <QBrush>
+#include <QCoreApplication>
+
+
+
+#if (defined (_WIN32) || defined (_WIN64))
+    #define APP_PATH_EXT ""
+#else
+    #define APP_PATH_EXT "/../.."
+#endif
 
 #define MAP_DIR "/../../SokoBan/maps/"
 #define SOUND_DIR "/../../SokoBan/sounds/"
+
 
 enum Direction
 {
