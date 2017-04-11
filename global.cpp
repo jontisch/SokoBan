@@ -1,6 +1,6 @@
 #include "global.h"
 #include "mainwindow.h"
-
+#include <QDebug>
 
 QPixmap **PIXMAPS;
 
@@ -96,11 +96,11 @@ QString SoundFilename(QString filename)
 
 QString MapFilename(QString filename)
 {
+    qDebug() << "map filename:" << MAP_DIR << filename;
     return LocalFilename(MAP_DIR + filename);
 }
 
 QString LocalFilename(QString filename)
 {
-    QString appPath = QCoreApplication::applicationDirPath();
-    return appPath + filename;
+    return QCoreApplication::applicationDirPath() + QString(APP_PATH_EXT) + filename;
 }

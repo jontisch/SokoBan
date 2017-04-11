@@ -53,10 +53,9 @@ Map::Map(QString filename):
 
     QFile mapFile(filename);
 
-
     if(!mapFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        qDebug() << "File not open";
+        qDebug() << "File" << filename << "not open";
     }
 
     QTextStream in(&mapFile);
@@ -309,13 +308,13 @@ QRect Map::tilesToRect(int x1, int y1, int x2, int y2, QRect renderRect)
                  tileSize * (y2-y1));
 }
 
-void Map::saveMap(QString filename)
+bool Map::saveMap(QString filename)
 {
     //QString appPath = QCoreApplication::applicationDirPath();
     QFile mapFile(filename);
     if(!mapFile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
-
+        return false;
         //QMessageBox msgBox;
         //msgBox.setText("File doesn't exist");
         //msgBox.setInformativeText("Do you want to save your changes?");
@@ -340,7 +339,18 @@ void Map::saveMap(QString filename)
             }
         }
     }
+
+    out << "%\n";
+    for(int i = 0; i < _nHighscores; i++)
+    {
+        auto row = _highscores[i];
+        out << row.name << "\n";
+        out << row.moves << "\n";
+    }
+
     mapFile.close();
+
+    return true;
 }
 
 bool Map::loaded()

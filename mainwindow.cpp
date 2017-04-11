@@ -21,11 +21,10 @@ MainWindow::MainWindow(QWidget *parent) :
     this->initMenus();
 
     _levelSelectGrid = new LevelGrid("grid", 3, 2);
-    QString appPath = QCoreApplication::applicationDirPath();
-    LevelGridItem *potato_power = new LevelGridItem(appPath + MAP_DIR + "/potato_power.fml");
-    LevelGridItem *feel_rect = new LevelGridItem(appPath + MAP_DIR + "/feel_rect.fml");
-    LevelGridItem *simplex = new LevelGridItem(appPath + MAP_DIR + "/map.fml");
-    LevelGridItem *frozen_island = new LevelGridItem(appPath + MAP_DIR + "/frozen_island.fml");
+    LevelGridItem *potato_power = new LevelGridItem(MapFilename("potato_power.fml"));
+    LevelGridItem *feel_rect = new LevelGridItem(MapFilename("feel_rect.fml"));
+    LevelGridItem *simplex = new LevelGridItem(MapFilename("map.fml"));
+    LevelGridItem *frozen_island = new LevelGridItem(MapFilename("frozen_island.fml"));
 
     _levelSelectGrid->addItem(potato_power);
     _levelSelectGrid->addItem(feel_rect);
@@ -156,6 +155,17 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Escape:
             _state = STATE_MENU;
             break;
+        }
+    }
+    else if(_state == STATE_HIGHSCORE)
+    {
+        switch(event->key())
+        {
+            case Qt::Key_Escape:
+                if(_highscores) delete _highscores;
+                _highscores = NULL;
+                _state = STATE_LEVEL_SELECT;
+                break;
         }
     }
 

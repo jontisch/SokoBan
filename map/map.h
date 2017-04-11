@@ -28,7 +28,7 @@ public:
     Map(QString filename);
     ~Map();
 
-    void saveMap(QString mapName);
+    bool saveMap(QString mapName);
     bool loaded();
     QString filename();
     QString name();
