@@ -3,6 +3,8 @@
 
 #include "../global.h"
 #include "entities/entity.h"
+#include "entities/door.h"
+#include "entities/button.h"
 
 enum TileFlag {
     NO_TILE_FLAGS = 0,
@@ -29,15 +31,19 @@ enum TileType {
 #define N_TILETYPES 10
 
 enum EntityType {
-    DOOR_V = 0,
-    DOOR_H = 1,
-    BUTTON = 2,
+    DOOR_VERTICAL = 0,
+    DOOR_HORIZONTAL = 1,
+    BUTTON = 2
 };
 #define N_ENTITIES 3
 
 const char *TileTypeName(TileType type);
 const char *TileFlagName(TileFlag flag);
 const char *EntityTypeName(EntityType entity);
+
+
+Entity *entityFromEntityType(EntityType entity, Map *map);
+
 
 bool IsValidTileType(TileType type);
 

@@ -59,6 +59,10 @@ public:
     void removeTileFlag(int x, int y, TileFlag flag);
     int tileFlags(int x, int y);
 
+    void addEntity(int x, int y, EntityType entity, EntityColor color);
+    void removeEntity(int x, int y);
+
+
     void addTileFlagToRect(QRect rect, TileFlag flag);
     void setTilesInRect(QRect rect, TileType type);
     void setTileFlagsInRect(QRect rect, int flags);

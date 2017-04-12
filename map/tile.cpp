@@ -109,9 +109,9 @@ const char *EntityTypeName(EntityType entity)
 {
     switch(entity)
     {
-    case DOOR_V:
+    case DOOR_VERTICAL:
         return "Vertical door";
-    case DOOR_H:
+    case DOOR_HORIZONTAL:
         return "Horizontal door";
     case BUTTON:
         return "Button";
@@ -124,13 +124,34 @@ PixmapIdentifier PixmapForEntity(EntityType entity)
 {
     switch(entity)
     {
-    case DOOR_V:
+    case DOOR_VERTICAL:
         return PIXMAP_DOOR_VERTICAL;
-    case DOOR_H:
+    case DOOR_HORIZONTAL:
         return PIXMAP_DOOR_HORIZONTAL;
     case BUTTON:
         return PIXMAP_BUTTON_UP;
     default:
         return PIXMAP_FLOOR;
     }
+}
+
+Entity *entityFromEntityType(EntityType entity, Map *map){
+    Entity *ret;
+    switch(entity)
+    {
+    case DOOR_VERTICAL:
+        ret = new Door(map);
+        //ret->setRotation(LEFT);
+        break;
+    case DOOR_HORIZONTAL:
+        ret = new Door(map);
+        //ret->setRotation(UP);
+        break;
+    case BUTTON:
+        ret = new Button(map);
+        break;
+    default:
+        break;
+    }
+    return ret;
 }

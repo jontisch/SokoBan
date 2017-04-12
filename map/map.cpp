@@ -562,7 +562,7 @@ void Map::draw(QPainter *qp, QRect rect)
 
                 if(tile->interactable != NULL)
                 {
-                    qDebug() << calculateTileRect(x, y, topLeft, tileSize, tile->interactable->height()*tileSize, 0);
+                    //qDebug() << calculateTileRect(x, y, topLeft, tileSize, tile->interactable->height()*tileSize, 0);
                     tile->interactable->drawAt(qp, calculateTileRect(x, y, topLeft, tileSize, tile->interactable->height()*tileSize, 0));
                 }
             }
@@ -681,6 +681,22 @@ int Map::tileFlags(int x, int y)
     if(!tileInBounds(x,y)) return 0;
     return tile(x,y)->flags;
 }
+
+//ENTITIES
+
+
+void Map::addEntity(int x, int y, EntityType type, EntityColor color)
+{
+    Entity *ent = entityFromEntityType(type, this);
+    setTileInteractable(x,y,ent);
+}
+
+void Map::removeEntity(int x, int y)
+{
+
+}
+
+//ENTITIES
 
 void Map::pushMovable(int x, int y, Direction dir, void *move)
 {

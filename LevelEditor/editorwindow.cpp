@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <math.h>
+#include "../map/entities/door.h"
+
 
 #define TOOL_AREA_WIDTH 240
 
@@ -114,7 +116,7 @@ EditorWindow::EditorWindow(QWidget *parent) :
     //END OF HMM
     selectedFlag = HAS_BOX;
     selectedTileType = FLOOR;
-    selectedEntityType = DOOR_V;
+    selectedEntityType = DOOR_VERTICAL;
 
     int tile_row = -1;
     int c = 0;
@@ -186,7 +188,12 @@ void EditorWindow::operateOnTile(QPoint tile)
     case REMOVE_FLAG:
         _map->removeTileFlag(tile.x(), tile.y(), selectedFlag);
         break;
+    case ADD_ENTITY:
+        _map->addEntity(tile.x(), tile.y(), selectedEntityType, _entityColor);
+        break;
+
     }
+
     this->repaint();
 }
 
@@ -235,7 +242,7 @@ void EditorWindow::mousePressEvent(QMouseEvent *Event)
             }
             else if(_entityList->getArea()->contains(mousePosition)){
                 _entityList->select(this->mapFromGlobal(QCursor::pos()).y());
-                selectedFlag = (TileFlag)(int)pow(2, _flagList->getSelected());
+                selectedEntityType = (EntityType)_entityList->getSelected();
                 if(_mode != REMOVE_ENTITY)
                     _mode = (EditingMode)_tileRadioCluster->select(0,0,3);
                 this->repaint();
