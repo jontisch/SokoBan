@@ -8,6 +8,7 @@
 #include <math.h>
 #include "../map/entities/door.h"
 
+#include <QGraphicsItem>
 
 #define TOOL_AREA_WIDTH 240
 
@@ -62,6 +63,7 @@ EditorWindow::EditorWindow(QWidget *parent) :
     _colorRadioCluster->addRadio(_blueColorRadio);
     _colorRadioCluster->addRadio(_redColorRadio);
     _colorRadioCluster->addRadio(_greenColorRadio);
+
 
 
     _shiftUpButton = new ButtonEditorWidget("Up", true, QSize(2,1), QPoint(5,6));
@@ -189,6 +191,7 @@ void EditorWindow::operateOnTile(QPoint tile)
         _map->removeTileFlag(tile.x(), tile.y(), selectedFlag);
         break;
     case ADD_ENTITY:
+        qDebug() << _entityColor;
         _map->addEntity(tile.x(), tile.y(), selectedEntityType, _entityColor);
         break;
 

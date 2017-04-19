@@ -78,6 +78,7 @@ EntityColor ColoredEntity::color()
 
 void ColoredEntity::setColor(EntityColor color)
 {
+
     EntityColor oldColor = _color;
     _color = color;
     if(oldColor != color)

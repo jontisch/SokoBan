@@ -14,7 +14,7 @@ void Map::setup()
 
     for(int i = 0; i < N_ENTITY_COLORS; i++)
     {
-        _coloredEntities[i] = new Collection<Entity *>(8);
+        _coloredEntities[i] = new Collection<ColoredEntity *>(8);
     }
 
 #if 0
@@ -347,7 +347,24 @@ bool Map::saveMap(QString filename)
         out << row.name << "\n";
         out << row.moves << "\n";
     }
+    out << "&\n";
+    for(int y = 0; y < _width; y++){
+        for(int x = 0; x < _height; x++){
 
+            Tile *t = tile(x,y);
+
+            if(t->interactable != NULL){
+                //t->interactable;
+            }
+            /*
+            ColoredEntity *ent;
+            _coloredEntities[i]->get(j, &ent);
+
+            qDebug() << ent->color() << ent->isButton() << ent->height();
+
+            */
+        }
+    }
     mapFile.close();
 
     return true;
@@ -687,7 +704,8 @@ int Map::tileFlags(int x, int y)
 
 void Map::addEntity(int x, int y, EntityType type, EntityColor color)
 {
-    Entity *ent = entityFromEntityType(type, this);
+    Entity *ent = entityFromEntityType(type, color, this);
+
     setTileInteractable(x,y,ent);
 }
 
@@ -837,16 +855,17 @@ void Map::addColoredEntity(ColoredEntity *entity)
 //Move the entity to the right collection when it changes color.
 void Map::updateEntityColor(ColoredEntity *entity, EntityColor oldColor)
 {
-    Collection<Entity *> *oldCollection = entitiesByColor(oldColor);
+    Collection<ColoredEntity *> *oldCollection = entitiesByColor(oldColor);
     int index = oldCollection->indexOf(entity);
     if(index != -1)
         oldCollection->remove(index);
     entitiesByColor(entity->color())->add(entity);
 }
 
-Collection<Entity *> *Map::entitiesByColor(EntityColor color)
+Collection<ColoredEntity *> *Map::entitiesByColor(EntityColor color)
 {
-    return _coloredEntities[color];
+    //Kan det vara här det skiter sig?
+    return _coloredEntities[color-1];
 }
 
 Entity *Map::setTileInteractable(int x, int y, Entity *interactable)

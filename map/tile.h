@@ -42,7 +42,7 @@ const char *TileFlagName(TileFlag flag);
 const char *EntityTypeName(EntityType entity);
 
 
-Entity *entityFromEntityType(EntityType entity, Map *map);
+Entity *entityFromEntityType(EntityType entity, EntityColor color, Map *map);
 
 
 bool IsValidTileType(TileType type);

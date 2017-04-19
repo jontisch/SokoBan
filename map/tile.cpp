@@ -135,23 +135,31 @@ PixmapIdentifier PixmapForEntity(EntityType entity)
     }
 }
 
-Entity *entityFromEntityType(EntityType entity, Map *map){
-    Entity *ret;
+Entity *entityFromEntityType(EntityType entity, EntityColor color, Map *map){
+
     switch(entity)
     {
     case DOOR_VERTICAL:
-        ret = new Door(map);
-        //ret->setRotation(LEFT);
-        break;
-    case DOOR_HORIZONTAL:
-        ret = new Door(map);
-        //ret->setRotation(UP);
-        break;
-    case BUTTON:
-        ret = new Button(map);
-        break;
-    default:
-        break;
+    {
+        Door *d = new Door(map);
+        d->setRotation(UP);
+        d->setColor(color);
+        return d;
     }
-    return ret;
+    case DOOR_HORIZONTAL:
+    {
+        Door *d = new Door(map);
+        d->setRotation(LEFT);
+        d->setColor(color);
+        return d;
+    }
+    case BUTTON:
+    {
+        Button *b = new Button(map);
+        b->setColor(color);
+        return b;
+    }
+    default:
+        return NULL;
+    }
 }

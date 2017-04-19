@@ -85,11 +85,11 @@ void Button::setIsDown(bool value)
 
     // Count the number of buttons that are down and have the same color as this button.
     // Then set the toggle value of all toggleables (e.g. doors) to true if there are no unpressed buttons with this color.
-    Collection<Entity *> *entities = _map->entitiesByColor(_color);
+    Collection<ColoredEntity *> *entities = _map->entitiesByColor(_color);
     int unpressedButtonsFound = 0;
     for(int i = 0; i < entities->size(); i++)
     {
-        Entity *entity;
+        ColoredEntity *entity;
         if(entities->get(i, &entity) && entity->isButton())
         {
             qDebug() << ((Button*)entity)->isDown();
@@ -103,7 +103,7 @@ void Button::setIsDown(bool value)
     bool toggleValue = (unpressedButtonsFound <= 0);
     for(int i = 0; i < entities->size(); i++)
     {
-        Entity *entity;
+        ColoredEntity *entity;
         if(entities->get(i, &entity))
         {
             if(entity->isToggleable())

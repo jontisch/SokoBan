@@ -9,7 +9,6 @@
 #include "tile.h"
 #include "entities/entity.h"
 #include "../collection.h"
-
 #include <cstdlib>
 #include <cstring>
 #include <QPainter>
@@ -79,7 +78,7 @@ public:
     void updateEntityColor(ColoredEntity *entity, EntityColor oldColor);
 
     //NOTE: The returned collection is the same as the internal one.
-    Collection<Entity *> *entitiesByColor(EntityColor color);
+    Collection<ColoredEntity *> *entitiesByColor(EntityColor color);
 protected:
 
 private:
@@ -110,7 +109,7 @@ private:
     QRect calculateTileRect(int x, int y, QPoint mapPixelOffset, int tileSize, int depth, int zOffset);
 
     //This sorts entities by colors
-    Collection<Entity *> *_coloredEntities[N_ENTITY_COLORS];
+    Collection<ColoredEntity *> *_coloredEntities[N_ENTITY_COLORS];
 
     struct {
         QString name;
