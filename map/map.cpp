@@ -567,6 +567,8 @@ void Map::draw(QPainter *qp, QRect rect)
             {
                 PixmapIdentifier overlay = NO_PIXMAP;
 
+
+
                 if(tile->type != WATER && tile->flags & HAS_SNOW)
                 {
                     overlay = PIXMAP_SNOW;
@@ -584,7 +586,10 @@ void Map::draw(QPainter *qp, QRect rect)
                 {
                     drawTilePixmap(qp, PIXMAP_TARGET, x, y, topLeft, tileSize);
                 }
-
+                if(tile->interactable != NULL)
+                {
+                    tile->interactable->drawAt(qp, calculateTileRect(x, y, topLeft, tileSize, tile->interactable->height()*tileSize, 0));
+                }
                 if(tile->flags & HAS_SNOWBALL_SMALL)
                 {
                     drawTilePixmap(qp, PIXMAP_SNOWBALL_SMALL, x, y, topLeft, tileSize, 0);
@@ -598,11 +603,7 @@ void Map::draw(QPainter *qp, QRect rect)
                     drawTilePixmap(qp, PIXMAP_SNOWBALL_BIG, x, y, topLeft, tileSize, 0);
                 }
 
-                if(tile->interactable != NULL)
-                {
-                    //qDebug() << calculateTileRect(x, y, topLeft, tileSize, tile->interactable->height()*tileSize, 0);
-                    tile->interactable->drawAt(qp, calculateTileRect(x, y, topLeft, tileSize, tile->interactable->height()*tileSize, 0));
-                }
+
             }
 
             if(_playerVisible && x == _player.x() && y == _player.y()){
