@@ -883,7 +883,6 @@ void Map::updateEntityColor(Entity *entity, EntityColor oldColor)
 
 Collection<Entity *> *Map::entitiesByColor(EntityColor color)
 {
-    //Kan det vara här det skiter sig?
     return _coloredEntities[color-1];
 }
 
@@ -1002,7 +1001,6 @@ void Map::revertMove()
 Map::~Map()
 {
     free(tiles);
-    //free(referenceTiles);
     delete _moveStack;
 
     for(int i = 0; i < N_ENTITY_COLORS; i++)

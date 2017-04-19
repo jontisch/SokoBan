@@ -107,3 +107,8 @@ void Game::setDelegate(GameDelegate *delegate)
 {
     _delegate = delegate;
 }
+
+Game::~Game()
+{
+    delete _map;
+}

@@ -409,7 +409,27 @@ void Editor::draw(QPainter *painter, QRect renderRect)
 
 Editor::~Editor()
 {
-
+    delete _map;
+    delete _toolboxRadioCluster;
+    delete _drawToolBox;
+    delete _dimensionsToolBox;
+    delete _tileList;
+    delete _flagList;
+    delete _entityList;
+    delete _mapPosLabel;
+    delete _tileRadioCluster;
+    delete _colorRadioCluster;
+    delete _mapNameTextfield;
+    delete _shiftUpButton;
+    delete _shiftDownButton;
+    delete _shiftLeftButton;
+    delete _shiftRightButton;
+    delete _shiftLabel;
+    delete _widthTextfield;
+    delete _heightTextfield;
+    delete _updateMapButton;
+    delete _saveMapButton;
+    delete _loadMapButton;
 }
 
 void Editor::updateUI()

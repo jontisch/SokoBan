@@ -64,7 +64,15 @@ void MainWindow::mapCompleted(Map *map)
 
 MainWindow::~MainWindow()
 {
-
+    delete _game;
+    delete _editor;
+    delete _standardLevelSelectGrid;
+    delete _customLevelSelectGrid;
+    if(_highscores){
+        delete _highscores;
+    }
+    delete _mainMenu;
+    delete _resumeItem;
 }
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {

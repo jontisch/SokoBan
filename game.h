@@ -18,7 +18,7 @@ public:
     void draw(QPainter *painter, QRect renderRect);
     void setMap(Map *map);
     void setDelegate(GameDelegate *delegate);
-
+    ~Game();
 private:
     Map *_map;
     GameDelegate *_delegate;

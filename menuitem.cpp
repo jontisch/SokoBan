@@ -35,7 +35,6 @@ void MenuItem::setVisible(bool visible)
 }
 
 
-
 Menu::Menu(QString title, Menu *ownerMenu, QString text, bool visible):_menuItems(8),_title(title), MenuItem((text != NULL)?text:title, ownerMenu, visible), _currentPos(-1){
     _bgMap = new Map(QString(":/maps/menumap.fml"));
     _bgMap->setPlayerVisible(false);
@@ -100,6 +99,11 @@ void Menu::setPos(int pos)
 Map *Menu::getMap()
 {
     return _bgMap;
+}
+
+Menu::~Menu()
+{
+    delete _bgMap;
 }
 
 void Menu::nextPos(bool forward){

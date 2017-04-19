@@ -43,6 +43,7 @@ public:
     Menu *select();
     void setPos(int pos);
     Map *getMap();
+    ~Menu();
 protected:
     QString _title;
     Collection<MenuItem*> _menuItems;
