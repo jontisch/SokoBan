@@ -223,22 +223,22 @@ void Editor::mousePress(QMouseEvent *event, QRect renderRect, QWidget *parentWid
 
         if(_visibleToolBox == _drawToolBox){
 
-            QPoint localMousePosition = mousePosition - renderRect.topLeft();
+            //QPoint localMousePosition = mousePosition - renderRect.topLeft();
 
             if(_tileList->getArea()->contains(mousePosition)){
-                _tileList->select(localMousePosition.y());
+                _tileList->select(mousePosition.y());
                 selectedTileType = tileTypeForListRow[_tileList->getSelected()];
                 _mode = (EditingMode)_tileRadioCluster->select(0,0,0);
             }
             else if(_flagList->getArea()->contains(mousePosition)){
-                _flagList->select(localMousePosition.y());
+                _flagList->select(mousePosition.y());
                 selectedFlag = (TileFlag)(int)pow(2, _flagList->getSelected());
                 if(_mode != REMOVE_FLAG)
                     _mode = (EditingMode)_tileRadioCluster->select(0,0,1);
 
             }
             else if(_entityList->getArea()->contains(mousePosition)){
-                _entityList->select(localMousePosition.y());
+                _entityList->select(mousePosition.y());
                 selectedEntityType = (EntityType)_entityList->getSelected();
                 if(_mode != REMOVE_ENTITY)
                     _mode = (EditingMode)_tileRadioCluster->select(0,0,3);

@@ -188,7 +188,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
-    if(_state == STATE_EDITOR) _editor->mouseMove(event, this->rect());
+    if(_state == STATE_EDITOR) _editor->mouseMove(event, this->rect().adjusted(0,32,0,0));
     repaint();
 }
 
@@ -200,7 +200,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
         {
             _state = STATE_MENU;
         }
-        else _editor->mousePress(event, this->rect(), this);
+        else _editor->mousePress(event, this->rect().adjusted(0,32,0,0), this);
     }
     else if(_state == STATE_MENU && _activeMenu->getMap()->tilesToRect(0, 0, 0, 0, rect()).adjusted(0, 0, 72, 32).contains(event->pos()))
     {
