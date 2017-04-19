@@ -110,9 +110,9 @@ const char *EntityTypeName(EntityType entity)
     switch(entity)
     {
     case DOOR_VERTICAL:
-        return "Vertical door";
-    case DOOR_HORIZONTAL:
         return "Horizontal door";
+    case DOOR_HORIZONTAL:
+        return "Vertical door";
     case BUTTON:
         return "Button";
     default:
@@ -136,7 +136,6 @@ PixmapIdentifier PixmapForEntity(EntityType entity)
 }
 
 Entity *entityFromEntityType(EntityType entity, EntityColor color, Map *map){
-
     switch(entity)
     {
     case DOOR_VERTICAL:

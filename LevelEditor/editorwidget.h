@@ -122,7 +122,7 @@ private:
 
 class TextfieldEditorWidget: public EditorWidget{
 public:
-    TextfieldEditorWidget(QString title, QString text, QSize gridUnits = QSize(1,1), QPoint gridPos = QPoint(0,0));
+    TextfieldEditorWidget(QString title, QString text, QSize gridUnits = QSize(1,1), QPoint gridPos = QPoint(0,0), bool numeric = false);
     void addChar(QChar c);
     void backSpace();
     void setText(QString text);
@@ -131,6 +131,7 @@ public:
     QString getText();
 private:
     bool _editActive;
+    bool _numeric;
     QString _text;
 };
 

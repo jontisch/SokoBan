@@ -6,6 +6,7 @@
 #include <QColor>
 #include "../../global.h"
 
+
 class Map;
 
 enum EntityColor
@@ -15,6 +16,14 @@ enum EntityColor
     ENTITY_COLOR_GREEN = 3
 };
 #define N_ENTITY_COLORS 3
+
+enum EntityType {
+    DOOR_VERTICAL = 0,
+    DOOR_HORIZONTAL = 1,
+    BUTTON = 2
+};
+#define N_ENTITIES 3
+
 
 class Entity
 {
@@ -45,14 +54,22 @@ public:
 
     //This should only return true if the object inherits from Button.
     virtual bool isButton();
+
+    virtual EntityType getEntityType() = 0;
+
+    EntityColor color();
+    void setColor(EntityColor color);
+    QColor qColor();
 protected:
     Map *_map;
+    EntityColor _color;
 };
 
 class Rotated
 {
 public:
     void setRotation(Direction rotation);
+
 protected:
     Direction _rotation;
 };
@@ -65,7 +82,7 @@ public:
     void setColor(EntityColor color);
     QColor qColor();
 protected:
-    EntityColor _color;
+
 };
 
 

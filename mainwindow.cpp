@@ -3,35 +3,35 @@
 #include "ui_mainwindow.h"
 #include <QDebug>
 #include <QDesktopWidget>
-#include <dirent.h>
+#include <QDir>
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent)
 {
-    ui->setupUi(this);
 
     _state = STATE_MENU;
 
     InitPixmaps();
-    QRect screenRect = QApplication::desktop()->screenGeometry();
-    this->setGeometry(screenRect.width()/2 - 1024/2, screenRect.height()/2-768/2, 1024,768);
 
+    setMouseTracking(true);
+
+    _editor = new Editor();
+
+
+    QRect screenRect = QApplication::desktop()->screenGeometry();
+    this->setGeometry(screenRect.width()/2 - 1280/2, screenRect.height()/2-800/2, 1280,800);
+    this->setMinimumSize(1280, 800);
     _game = new Game();
+    _game->setDelegate(this);
     this->initMenus();
 
-    _levelSelectGrid = new LevelGrid("grid", 3, 2);
-    LevelGridItem *potato_power = new LevelGridItem(MapFilename("potato_power.fml"));
-    LevelGridItem *walk_in_le_park = new LevelGridItem(MapFilename("walk_in_le_park.fml"));
-    LevelGridItem *feel_rect = new LevelGridItem(MapFilename("feel_rect.fml"));
-    LevelGridItem *simplex = new LevelGridItem(MapFilename("map.fml"));
-    LevelGridItem *frozen_island = new LevelGridItem(MapFilename("frozen_island.fml"));
+    _standardLevelSelectGrid = new LevelGrid("Standard maps", 3, 2);
 
-    _levelSelectGrid->addItem(potato_power);
-    _levelSelectGrid->addItem(walk_in_le_park);
-    _levelSelectGrid->addItem(feel_rect);
-    _levelSelectGrid->addItem(simplex);
-    _levelSelectGrid->addItem(frozen_island);
+    _customLevelSelectGrid = new LevelGrid("Custom maps", 3, 2);
+    _visibleLevelGrid = _standardLevelSelectGrid;
+    populateMaps();
+    populateCustomMaps();
+
 
     _highscores = NULL;
 }
@@ -56,14 +56,22 @@ void MainWindow::executeMenuAction(int action)
     }
 }
 
+void MainWindow::mapCompleted(Map *map)
+{
+    showHighscore(map);
+}
+
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+
 }
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
+    if(event->key() == Qt::Key_F11){
 
+        this->setWindowState(windowState() ^ Qt::WindowFullScreen);
+    }
     if(_state == STATE_GAME && event->key() == Qt::Key_Escape){
 
         _resumeItem->setVisible(_game->hasMap());
@@ -115,20 +123,20 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         switch(event->key()){
         case Qt::Key_Up:
-            _levelSelectGrid->move(UP);
+            _visibleLevelGrid->move(UP);
             break;
         case Qt::Key_Down:
-            _levelSelectGrid->move(DOWN);
+            _visibleLevelGrid->move(DOWN);
             break;
         case Qt::Key_Left:
-            _levelSelectGrid->move(LEFT);
+            _visibleLevelGrid->move(LEFT);
             break;
         case Qt::Key_Right:
-            _levelSelectGrid->move(RIGHT);
+            _visibleLevelGrid->move(RIGHT);
             break;
         case Qt::Key_Return:
             {
-                Map *levelMap = _levelSelectGrid->selectCurrent();
+                Map *levelMap = _visibleLevelGrid->selectCurrent();
                 if(levelMap)
                 {
                     QString mapFilename = levelMap->filename();
@@ -139,20 +147,12 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             break;
         case Qt::Key_X:
         {
-            Map *levelMap = _levelSelectGrid->selectCurrent();
-            if(levelMap)
-            {
-                bool createNewHighscoreList = !_highscores || _highscores->map() != levelMap;
-                if(_highscores && createNewHighscoreList)
-                {
-                    delete _highscores;
-                }
-                else
-                {
-                    _highscores = new HighscoreList(levelMap);
-                }
-                _state = STATE_HIGHSCORE;
-            }
+            Map *levelMap = _visibleLevelGrid->selectCurrent();
+            showHighscore(levelMap);
+        } break;
+        case Qt::Key_C:
+        {
+            _visibleLevelGrid = (_visibleLevelGrid == _customLevelSelectGrid)? _standardLevelSelectGrid:_customLevelSelectGrid;
         } break;
         case Qt::Key_Escape:
             _state = STATE_MENU;
@@ -170,8 +170,72 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
                 break;
         }
     }
+    else if(_state == STATE_EDITOR)
+    {
+        _editor->keyPress(event);
+    }
 
     this->repaint();
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    if(_state == STATE_EDITOR) _editor->mouseMove(event, this->rect());
+    repaint();
+}
+
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+    if(_state == STATE_EDITOR)
+    {
+        if(QRect(0, 0, 72, 32).contains(event->pos()))
+        {
+            _state = STATE_MENU;
+        }
+        else _editor->mousePress(event, this->rect(), this);
+    }
+    else if(_state == STATE_MENU && _activeMenu->getMap()->tilesToRect(0, 0, 0, 0, rect()).adjusted(0, 0, 72, 32).contains(event->pos()))
+    {
+        _state = STATE_EDITOR;
+    }
+    repaint();
+}
+
+
+void MainWindow::showHighscore(Map *map)
+{
+    if(map)
+    {
+        bool createNewHighscoreList = !_highscores || _highscores->map() != map;
+        if(_highscores && createNewHighscoreList)
+        {
+            delete _highscores;
+        }
+        else
+        {
+            _highscores = new HighscoreList(map);
+        }
+        _state = STATE_HIGHSCORE;
+    }
+}
+void MainWindow::populateMaps()
+{
+    QDir dir(LocalFilename("maps"));
+
+    QStringList maps = dir.entryList(QStringList("*.fml"), (QDir::Filters)QDir::NoFilter, (QDir::SortFlags)QDir::Name);
+    for(int i = 0; i < maps.length(); i++){
+        _standardLevelSelectGrid->addItem(new LevelGridItem(dir.absolutePath() + "/" + maps.at(i)));
+    }
+}
+
+void MainWindow::populateCustomMaps()
+{
+    QDir dir(LocalFilename("custom_maps"));
+
+    QStringList maps = dir.entryList(QStringList("*.fml"), (QDir::Filters)QDir::NoFilter, (QDir::SortFlags)QDir::Time);
+    for(int i = 0; i < maps.length(); i++){
+        _customLevelSelectGrid->addItem(new LevelGridItem(dir.absolutePath() + "/" + maps.at(i)));
+    }
 }
 
 void MainWindow::initMenus()
@@ -195,19 +259,40 @@ void MainWindow::paintEvent(QPaintEvent *event)
 {
     QPainter qp(this);
     qp.setOpacity(1.0);
+    qp.fillRect(this->rect(), Qt::black);
 
     if(_state == STATE_GAME && _game->hasMap()){
         _game->draw(&qp, this->rect());
     }
     else if(_state == STATE_MENU){
         _activeMenu->renderMenu(this->rect(),&qp);
+        qp.save();
+        qp.setPen(Qt::white);
+        qp.setBrush(Qt::black);
+        qp.drawRoundedRect(_activeMenu->getMap()->tilesToRect(0, 0, 0, 0, rect()).adjusted(0, 0, 72, 32), 10,10);
+        qp.setFont(QFont("Arial", 16, 50));
+        qp.drawText(_activeMenu->getMap()->tilesToRect(0, 0, 0, 0, rect()).adjusted(0, 0, 72, 32), "Editor", (QTextOption)Qt::AlignCenter);
+        qp.restore();
     }
     else if(_state == STATE_LEVEL_SELECT)
     {
-        _levelSelectGrid->draw(&qp, this->rect());
+        _visibleLevelGrid->draw(&qp, this->rect());
     }
     else if(_state == STATE_HIGHSCORE)
     {
         _highscores->draw(&qp, this->rect());
-    }
+    }else if(_state == STATE_NEW_HIGHSCORE){
+        _game->draw(&qp, this->rect());
+
+    } else if(_state == STATE_EDITOR)
+    {
+        QRect editorRect = this->rect().adjusted(0, 32, 0, 0);
+        _editor->draw(&qp, editorRect);
+        qp.save();
+        qp.setPen(Qt::white);
+        qp.setBrush(Qt::black);
+        qp.drawRoundedRect(QRect(0,0,72,32), 10,10);
+        qp.setFont(QFont("Arial", 16, 50));
+        qp.drawText(QRect(0, 0, 72, 32), "Exit", (QTextOption)Qt::AlignCenter);
+        qp.restore();}
 }

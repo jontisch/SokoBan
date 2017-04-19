@@ -19,10 +19,11 @@ EditorWindow::EditorWindow(QWidget *parent) :
     //ui->setupUi(this);
     InitPixmaps();
     QRect screenRect = QApplication::desktop()->screenGeometry();
-    this->setGeometry(screenRect.width()/2 - 1280/2, screenRect.height()/2-720/2, 1280,720);
-
+    setGeometry(screenRect.width()/2 - 1280/2, screenRect.height()/2-800/2, 1280,800);
+    setMinimumSize(1280,800);
     setMouseTracking(true);
-    _map = new Map(LocalFilename("/../../maps/menumap.fml"));
+//    _map = new Map(LocalFilename("/../../maps/menumap.fml"));
+    _map = new Map(24,16,11,7);
 
 
     //HMM
@@ -41,15 +42,15 @@ EditorWindow::EditorWindow(QWidget *parent) :
     _flagList = new ListEditorWidget("Flags", QSize(6,7), QPoint(6,0));
     _entityList = new ListEditorWidget("Entities", QSize(12,3),QPoint(0,7));
 
-    _gridPosLabel = new LabelEditorWidget("Position", "X:0\tY:0", QSize(12,1), QPoint(0,14));
+    _mapPosLabel = new LabelEditorWidget("Position", "X:0\tY:0", QSize(12,1), QPoint(0,14));
 
 
     _tileRadioCluster = new RadioClusterEditorWidget("Tiles", 0, QSize(12,1), QPoint(0,10));
-    RadioEditorWidget *_setTypeRadio = new RadioEditorWidget("Set type", true);
-    RadioEditorWidget *_addFlagRadio = new RadioEditorWidget("Add flag", false);
-    RadioEditorWidget *_removeFlagRadio = new RadioEditorWidget("Remove flag", false);
-    RadioEditorWidget *_addEntityRadio = new RadioEditorWidget("Add Ent", false);
-    RadioEditorWidget *_removeEntityRadio = new RadioEditorWidget("Remove Ent", false);
+    RadioEditorWidget *_setTypeRadio = new RadioEditorWidget("Type", true);
+    RadioEditorWidget *_addFlagRadio = new RadioEditorWidget("+Flag", false);
+    RadioEditorWidget *_removeFlagRadio = new RadioEditorWidget("-Flag", false);
+    RadioEditorWidget *_addEntityRadio = new RadioEditorWidget("+Ent", false);
+    RadioEditorWidget *_removeEntityRadio = new RadioEditorWidget("-Ent", false);
     _tileRadioCluster->addRadio(_setTypeRadio);
     _tileRadioCluster->addRadio(_addFlagRadio);
     _tileRadioCluster->addRadio(_removeFlagRadio);
@@ -65,21 +66,23 @@ EditorWindow::EditorWindow(QWidget *parent) :
     _colorRadioCluster->addRadio(_greenColorRadio);
 
 
+    _mapNameTextfield = new TextfieldEditorWidget("Map name", "No name", QSize(12, 1));
 
     _shiftUpButton = new ButtonEditorWidget("Up", true, QSize(2,1), QPoint(5,6));
     _shiftDownButton = new ButtonEditorWidget("Down", true, QSize(2,1), QPoint(5,8));
     _shiftLeftButton = new ButtonEditorWidget("Left", true, QSize(2,1), QPoint(3,7));
     _shiftRightButton = new ButtonEditorWidget("Right", true, QSize(2,1), QPoint(7,7));
     _shiftLabel = new LabelEditorWidget("Shift", NULL, QSize(2,1), QPoint(5,7));
-    _widthTextfield = new TextfieldEditorWidget("Width", "0", QSize(6,1), QPoint(0,10));
-    _heightTextfield = new TextfieldEditorWidget("Height", "0", QSize(6,1), QPoint(6,10));
+
+    _widthTextfield = new TextfieldEditorWidget("Width", "0", QSize(6,1), QPoint(0,10), true);
+    _heightTextfield = new TextfieldEditorWidget("Height", "0", QSize(6,1), QPoint(6,10), true);
 
     _updateMapButton = new ButtonEditorWidget("Update Map", true, QSize(12,1), QPoint(0,12));
 
-    _saveMapButton = new ButtonEditorWidget("Save Map", true, QSize(6,3), QPoint(0,2));
-    _loadMapButton = new ButtonEditorWidget("Load Map", true, QSize(6,3), QPoint(6,2));
+    _saveMapButton = new ButtonEditorWidget("Save Map", true, QSize(6,2), QPoint(0,2));
+    _loadMapButton = new ButtonEditorWidget("Load Map", true, QSize(6,2), QPoint(6,2));
 
-   _activeTextField = NULL;
+    _activeTextField = NULL;
     _hoveredWidget = NULL;
 
 
@@ -88,7 +91,7 @@ EditorWindow::EditorWindow(QWidget *parent) :
     _drawToolBox->addWidget(_tileList);
     _drawToolBox->addWidget(_flagList);
     _drawToolBox->addWidget(_entityList);
-    _drawToolBox->addWidget(_gridPosLabel);
+    _drawToolBox->addWidget(_mapPosLabel);
     _drawToolBox->addWidget(_tileRadioCluster);
     _drawToolBox->addWidget(_colorRadioCluster);
 
@@ -96,6 +99,7 @@ EditorWindow::EditorWindow(QWidget *parent) :
 
     //Tools added to the Dimensions toolbox
 
+    _dimensionsToolBox->addWidget(_mapNameTextfield);
     _dimensionsToolBox->addWidget(_loadMapButton);
     _dimensionsToolBox->addWidget(_saveMapButton);
     _dimensionsToolBox->addWidget(_shiftUpButton);
@@ -106,7 +110,7 @@ EditorWindow::EditorWindow(QWidget *parent) :
     _dimensionsToolBox->addWidget(_widthTextfield);
     _dimensionsToolBox->addWidget(_heightTextfield);
     _dimensionsToolBox->addWidget(_updateMapButton);
-    _dimensionsToolBox->addWidget(_gridPosLabel);
+    _dimensionsToolBox->addWidget(_mapPosLabel);
 
 
     //Gradient settings
@@ -191,8 +195,10 @@ void EditorWindow::operateOnTile(QPoint tile)
         _map->removeTileFlag(tile.x(), tile.y(), selectedFlag);
         break;
     case ADD_ENTITY:
-        qDebug() << _entityColor;
         _map->addEntity(tile.x(), tile.y(), selectedEntityType, _entityColor);
+        break;
+    case REMOVE_ENTITY:
+        _map->removeEntity(tile.x(), tile.y());
         break;
 
     }
@@ -265,6 +271,7 @@ void EditorWindow::mousePressEvent(QMouseEvent *Event)
 
             if(_saveMapButton->getArea()->contains(mousePosition) && _saveMapButton->active()){
                 QString appPath = QCoreApplication::applicationDirPath();
+                _map->setName(_mapNameTextfield->getText());
                 QString filename = QFileDialog::getSaveFileName(this,
                                                                 tr("Save map"),
                                                                 appPath + "/../../maps/",
@@ -307,6 +314,11 @@ void EditorWindow::mousePressEvent(QMouseEvent *Event)
 
                 repaint();
             }
+            else if(_mapNameTextfield->getArea()->contains(mousePosition)){
+                _activeTextField = _mapNameTextfield;
+                _activeTextField->setEdit(true);
+                repaint();
+            }
             else if(_widthTextfield->getArea()->contains(mousePosition)){
                 _activeTextField = _widthTextfield;
                 _activeTextField->setEdit(true);
@@ -337,7 +349,7 @@ void EditorWindow::mouseMoveEvent(QMouseEvent *Event)
             lastClickedTile = tile;
         }
     }
-    _gridPosLabel->setText(QString("X:" + QString::number(tile.x()+1) + "\tY:" + QString::number(tile.y()+1)));
+    _mapPosLabel->setText(QString("X:" + QString::number(tile.x()+1) + "\tY:" + QString::number(tile.y()+1)));
 
     if(_saveMapButton->getArea()->contains(mousePosition) && _saveMapButton->active())
     {
@@ -367,6 +379,10 @@ void EditorWindow::mouseMoveEvent(QMouseEvent *Event)
     {
         _hoveredWidget = _updateMapButton;
     }
+    else if(_mapNameTextfield->getArea()->contains(mousePosition))
+    {
+        _hoveredWidget = _mapNameTextfield;
+    }
     else if(_widthTextfield->getArea()->contains(mousePosition))
     {
         _hoveredWidget = _widthTextfield;
@@ -385,22 +401,17 @@ void EditorWindow::mouseMoveEvent(QMouseEvent *Event)
 void EditorWindow::keyPressEvent(QKeyEvent *Event)
 {
     if(_activeTextField == NULL) return;
+
+    int key = Event->key();
+    QChar character((char)key);
+    if((character.isLetterOrNumber() || character.isPunct() || character == ' ') && key != Qt::Key_Shift)
+    {
+        _activeTextField->addChar((char)key);
+    }
+
     switch(Event->key()){
     case Qt::Key_Backspace:
         _activeTextField->backSpace();
-        break;
-    case Qt::Key_0:
-    case Qt::Key_1:
-    case Qt::Key_2:
-    case Qt::Key_3:
-    case Qt::Key_4:
-    case Qt::Key_5:
-    case Qt::Key_6:
-    case Qt::Key_7:
-    case Qt::Key_8:
-    case Qt::Key_9:
-        _activeTextField->addChar(QChar(Event->key()));
-        qDebug() << QChar(Event->key());
         break;
     default:
         break;
@@ -430,4 +441,5 @@ void EditorWindow::updateUI()
 {
     _widthTextfield->setText(QString::number(_map->width()));
     _heightTextfield->setText(QString::number(_map->height()));
+    _mapNameTextfield->setText(_map->name());
 }

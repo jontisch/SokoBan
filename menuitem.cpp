@@ -37,8 +37,7 @@ void MenuItem::setVisible(bool visible)
 
 
 Menu::Menu(QString title, Menu *ownerMenu, QString text, bool visible):_menuItems(8),_title(title), MenuItem((text != NULL)?text:title, ownerMenu, visible), _currentPos(-1){
-    QString appPath = QCoreApplication::applicationDirPath() + MAP_DIR;
-    _bgMap = new Map(MapFilename("menumap.fml"));
+    _bgMap = new Map(QString(":/maps/menumap.fml"));
     _bgMap->setPlayerVisible(false);
 
 }

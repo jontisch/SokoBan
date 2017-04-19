@@ -13,8 +13,8 @@
     #define APP_PATH_EXT "/../.."
 #endif
 
-#define MAP_DIR "/../../SokoBan/maps/"
-#define SOUND_DIR "/../../SokoBan/sounds/"
+#define MAP_DIR "maps/"
+#define SOUND_DIR "sounds/"
 
 
 enum Direction

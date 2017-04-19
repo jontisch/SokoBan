@@ -13,6 +13,8 @@
 Entity::Entity(Map *map)
 {
     _map = map;
+    _color = ENTITY_COLOR_BLUE;
+    _map->addColoredEntity(this);
 }
 
 float Entity::height()
@@ -65,18 +67,15 @@ void Rotated::setRotation(Direction rotation)
     _rotation = rotation;
 }
 
-ColoredEntity::ColoredEntity(Map *map) : Entity(map)
-{
-    _color = ENTITY_COLOR_BLUE;
-    _map->addColoredEntity(this);
-}
 
-EntityColor ColoredEntity::color()
+
+
+EntityColor Entity::color()
 {
     return _color;
 }
 
-void ColoredEntity::setColor(EntityColor color)
+void Entity::setColor(EntityColor color)
 {
 
     EntityColor oldColor = _color;
@@ -85,7 +84,7 @@ void ColoredEntity::setColor(EntityColor color)
         _map->updateEntityColor(this, oldColor);
 }
 
-QColor ColoredEntity::qColor()
+QColor Entity::qColor()
 {
     switch(_color)
     {

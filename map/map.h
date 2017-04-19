@@ -74,11 +74,23 @@ public:
     bool tileHasInteractable(int x, int y, Entity *interactable);
 
     //These two are called by a ColoredEntity so that map can keep track of them (see ColoredEntity::setColor and ColoredEntity::Colored())
-    void addColoredEntity(ColoredEntity *entity);
-    void updateEntityColor(ColoredEntity *entity, EntityColor oldColor);
+    void addColoredEntity(Entity *entity);
+    void updateEntityColor(Entity *entity, EntityColor oldColor);
 
     //NOTE: The returned collection is the same as the internal one.
-    Collection<ColoredEntity *> *entitiesByColor(EntityColor color);
+    Collection<Entity *> *entitiesByColor(EntityColor color);
+    int movesMade();
+
+    void setName(QString name);
+
+    void insertHighscore(QString playerName, int movesMade);
+    bool saveHighscores();
+
+    int nHighscores();
+    bool highscoreRow(int index, QString *outputName, int *outputMoves, bool *outputLastInserted);
+
+    bool isSolved();
+
 protected:
 
 private:
@@ -98,6 +110,7 @@ private:
     MoveStack *_moveStack;
     int targetsLeft;
     int _movesMade;
+    bool _solved;
     bool _loaded;
     QString _filename;
     QString _name;
@@ -109,13 +122,14 @@ private:
     QRect calculateTileRect(int x, int y, QPoint mapPixelOffset, int tileSize, int depth, int zOffset);
 
     //This sorts entities by colors
-    Collection<ColoredEntity *> *_coloredEntities[N_ENTITY_COLORS];
+    Collection<Entity *> *_coloredEntities[N_ENTITY_COLORS];
 
     struct {
         QString name;
         int moves;
     } _highscores[10];
     int _nHighscores;
+    int _lastHighscoreIndex;
 };
 
 #endif // MAP_H

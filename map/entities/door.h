@@ -5,7 +5,7 @@
 
 
 
-class Door: public ColoredEntity, public Rotated
+class Door: public Entity, public Rotated
 {
 public:
     Door(Map *map);
@@ -20,6 +20,7 @@ public:
 
     bool blocksPlayer();
 
+    EntityType getEntityType();
 private:
     bool _isOpen;
 };

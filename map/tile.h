@@ -30,12 +30,6 @@ enum TileType {
 };
 #define N_TILETYPES 10
 
-enum EntityType {
-    DOOR_VERTICAL = 0,
-    DOOR_HORIZONTAL = 1,
-    BUTTON = 2
-};
-#define N_ENTITIES 3
 
 const char *TileTypeName(TileType type);
 const char *TileFlagName(TileFlag flag);

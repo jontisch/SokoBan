@@ -51,7 +51,7 @@ private:
     ListEditorWidget *_flagList;
     ListEditorWidget *_entityList;
 
-    LabelEditorWidget *_gridPosLabel;
+    LabelEditorWidget *_mapPosLabel;
     RadioClusterEditorWidget *_tileRadioCluster;
     RadioClusterEditorWidget *_colorRadioCluster;
     ButtonEditorWidget *_shiftUpButton;
@@ -59,6 +59,7 @@ private:
     ButtonEditorWidget *_shiftLeftButton;
     ButtonEditorWidget *_shiftRightButton;
     LabelEditorWidget *_shiftLabel;
+    TextfieldEditorWidget *_mapNameTextfield;
     ButtonEditorWidget *_saveMapButton;
     ButtonEditorWidget *_loadMapButton;
     ButtonEditorWidget *_updateMapButton;

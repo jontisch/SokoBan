@@ -4,7 +4,7 @@
 #include "entity.h"
 
 
-class Button: public ColoredEntity
+class Button: public Entity
 {
 public:
     Button(Map *map);
@@ -23,6 +23,8 @@ public:
     bool isButton();
 
     bool isDown();
+
+    EntityType getEntityType();
 private:
     bool _isDown;
 };

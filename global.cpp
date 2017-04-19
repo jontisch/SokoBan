@@ -102,5 +102,5 @@ QString MapFilename(QString filename)
 
 QString LocalFilename(QString filename)
 {
-    return QCoreApplication::applicationDirPath() + QString(APP_PATH_EXT) + filename;
+    return QCoreApplication::applicationDirPath() + QString(APP_PATH_EXT) + "/" + filename ;
 }

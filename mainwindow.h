@@ -9,33 +9,46 @@
 #include "global.h"
 #include "levelgrid.h"
 #include "highscorelist.h"
+#include "gamedelegate.h"
+#include "editor/editor.h"
+
 
 enum AppState
 {
     STATE_MENU,
     STATE_GAME,
     STATE_LEVEL_SELECT,
-    STATE_HIGHSCORE
+    STATE_HIGHSCORE,
+    STATE_NEW_HIGHSCORE,
+    STATE_EDITOR
 };
 
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow, public MenuActionDelegate
+class MainWindow : public QMainWindow, public MenuActionDelegate, public GameDelegate
 {
     Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     void executeMenuAction(int action);
+    void mapCompleted(Map *map);
     ~MainWindow();
 
 protected:
     void paintEvent(QPaintEvent * event);
 
     void keyPressEvent(QKeyEvent *event);
+
+    void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
 private:
+    void showHighscore(Map *map);
+    void populateMaps();
+    void populateCustomMaps();
+
     enum Action{
         RESUME_GAME,
         QUIT_GAME,
@@ -46,7 +59,6 @@ private:
 
     void initMenus();
     Game *_game;
-    Ui::MainWindow *ui;
 
     Menu *_mainMenu;
     Menu *_activeMenu;
@@ -54,7 +66,10 @@ private:
 
     HighscoreList *_highscores;
 
-    LevelGrid *_levelSelectGrid;
+    LevelGrid *_standardLevelSelectGrid;
+    LevelGrid *_customLevelSelectGrid;
+    LevelGrid *_visibleLevelGrid;
+    Editor *_editor;
 };
 
 #endif // MAINWINDOW_H

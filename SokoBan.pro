@@ -37,7 +37,10 @@ SOURCES += global.cpp \
     map/entities/door.cpp \
     levelgrid.cpp \
     audiolibrary.cpp \
-    highscorelist.cpp
+    highscorelist.cpp \
+    gamedelegate.cpp \
+    editor/editor.cpp \
+    editor/editorwidget.cpp
 
 HEADERS  += game.h \
     mainwindow.h \
@@ -53,7 +56,10 @@ HEADERS  += game.h \
     map/entities/door.h \
     levelgrid.h \
     audiolibrary.h \
-    highscorelist.h
+    highscorelist.h \
+    gamedelegate.h \
+    editor/editor.h \
+    editor/editorwidget.h
 
 FORMS    += mainwindow.ui
 

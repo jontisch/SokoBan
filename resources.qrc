@@ -1,7 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-    <file>maps/map.fml</file>
-    <file>maps/map2pointO.fml</file>
+    <file>maps/menumap.fml</file>
+    <file>maps/highscore.fml</file>
+    <file>maps/level_select.fml</file>
     <file>images/player.png</file>
     <file>images/watertile.png</file>
     <file>images/boxtile.png</file>

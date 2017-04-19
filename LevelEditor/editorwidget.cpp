@@ -134,12 +134,6 @@ int ListEditorWidget::heightToIndex(int height){
 
 
 
-
-
-
-
-
-
 LabelEditorWidget::LabelEditorWidget(QString title, QString text, QSize gridUnits, QPoint gridPos):EditorWidget(title, gridUnits, gridPos), _text(text)
 {
 
@@ -309,33 +303,45 @@ void ButtonEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QLine
 
 
 
-TextfieldEditorWidget::TextfieldEditorWidget(QString title, QString text, QSize gridUnits, QPoint gridPos):EditorWidget(title, gridUnits, gridPos), _text(text), _editActive(false)
+TextfieldEditorWidget::TextfieldEditorWidget(QString title, QString text, QSize gridUnits, QPoint gridPos, bool numeric):
+    EditorWidget(title, gridUnits, gridPos),
+    _text(text),
+    _numeric(numeric),
+    _editActive(false)
 {
 
 }
 
 void TextfieldEditorWidget::addChar(QChar c)
 {
+    if(_numeric && !c.isDigit()) return;
     _text.append(c);
-    if(_text.toInt()>128){
-        _text == "128";
-    }
-    else if(_text.toInt()<0){
-        _text == "0";
+    if(_numeric){
+        if(_text.toInt()>128){
+            _text = "128";
+        }
+        else if(_text.toInt()<0){
+            _text = "0";
+        }
     }
 }
 
 void TextfieldEditorWidget::backSpace()
 {
     _text.truncate(_text.length()-1);
-    if(_text.length() == 0){
-        _text = "0";
-    }
+ //   if(_text.length() == 0){
+//        _text = "0";
+//    }
 }
 
 void TextfieldEditorWidget::setText(QString text)
 {
-    _text = text;
+    if(!_numeric) _text = text;
+    else
+    {
+        _text = "";
+        for(int i = 0; i < text.length(); i++) addChar(text.at(i));
+    }
 }
 
 
@@ -347,12 +353,12 @@ void TextfieldEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QL
     //painter->setBrush((_editActive||_hover)?Qt::white:Qt::black);
     gradient->setStart(_area.topLeft());
     gradient->setFinalStop(_area.bottomLeft());
-    painter->setPen(QColor(6,28,43));
+    painter->setPen((_hover || _editActive)?QColor(93,121,138):QColor(6,28,43));
     painter->setBrush(*gradient);
     painter->drawRoundedRect(renderRect, 10,10);
     painter->setFont(QFont(QString("sans serif"), 10, 10));
     painter->drawText(renderRect, Qt::AlignHCenter, _title);
-    painter->drawText(renderRect, Qt::AlignBottom | Qt::AlignHCenter, _text);
+    painter->drawText(renderRect, Qt::AlignBottom | Qt::AlignHCenter, getText());
 }
 
 void TextfieldEditorWidget::setEdit(bool edit)
@@ -362,7 +368,27 @@ void TextfieldEditorWidget::setEdit(bool edit)
 
 QString TextfieldEditorWidget::getText()
 {
-    return _text;
+    QString result = "";
+    bool lastWasLetterOrNumber = false;
+    for(int i = 0; i < _text.length(); i++)
+    {
+        QChar c = _text.at(i);
+        if(c.isLetterOrNumber())
+        {
+            if(lastWasLetterOrNumber)
+                c = c.toLower();
+            else
+                c = c.toUpper();
+            lastWasLetterOrNumber = true;
+        }
+        else
+        {
+            lastWasLetterOrNumber = false;
+        }
+
+        result.append(c);
+    }
+    return result;
 }
 
 

@@ -44,6 +44,8 @@ private:
     int _width;
     int _height;
     int _nItems;
+    int _allocatedItems;
+    QString _text;
     LevelGridItem **_items;
     Map *_backgroundMap;
 };

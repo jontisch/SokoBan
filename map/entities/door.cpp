@@ -21,7 +21,15 @@ bool Door::blocksPlayer()
     return (!_isOpen); //TODO @Bug If you have a button in front of the door and you stand on it, you can enter the door tile and you'll be standing on a closed door.
 }
 
-Door::Door(Map *map) : ColoredEntity(map)
+EntityType Door::getEntityType()
+{
+    if (_rotation == UP  || _rotation == DOWN)
+        return DOOR_VERTICAL;
+    else
+        return DOOR_HORIZONTAL;
+}
+
+Door::Door(Map *map) : Entity(map)
 {
     _isOpen = false;
 }

@@ -14,16 +14,8 @@ void Map::setup()
 
     for(int i = 0; i < N_ENTITY_COLORS; i++)
     {
-        _coloredEntities[i] = new Collection<ColoredEntity *>(8);
+        _coloredEntities[i] = new Collection<Entity *>(8);
     }
-
-#if 0
-    Door *door = new Door(this);
-    door->setRotation(LEFT);
-    setTileInteractable(12, 11, door);
-    setTileInteractable(11, 11, new Button(this));
-    setTileInteractable(12, 9, new Button(this));
-#endif
 
 }
 
@@ -35,7 +27,10 @@ Map::Map(int width, int height, int playerX, int playerY):
     _movesMade(0),
     _startTile(playerX, playerY),
     _loaded(true),
-    _playerVisible(true)
+    _playerVisible(true),
+    _solved(false),
+    _lastHighscoreIndex(-1)
+
 {
     tiles = (Tile *)malloc(sizeof(Tile)* width * height);
     memset(tiles, 0, sizeof(Tile)* width * height);
@@ -48,8 +43,11 @@ Map::Map(QString filename):
     _startTile(0, 0),
     _loaded(false),
     _playerVisible(true),
-    _filename(filename)
+    _filename(filename),
+    _solved(false),
+    _lastHighscoreIndex(-1)
 {
+    setup();
 
     QFile mapFile(filename);
 
@@ -88,7 +86,7 @@ Map::Map(QString filename):
     int y = 0;
     int c = 0;
     bool metaFound = false;
-    bool highscoresFound = false;
+    bool entitiesFound = false;
     while(!in.atEnd()) {
         QString line = in.readLine();
         if(y == 0) _width = line.length();
@@ -98,9 +96,9 @@ Map::Map(QString filename):
             metaFound = true;
             break;
         }
-        if(line.at(0) == '%')
+        if(line.at(0) == '&')
         {
-            highscoresFound = true;
+            entitiesFound = true;
             break;
         }
         for(int x = 0; x < line.length(); x++)
@@ -122,9 +120,9 @@ Map::Map(QString filename):
         while(!in.atEnd())
         {
             QString line = in.readLine();
-            if(line.at(0) == '%')
+            if(line.at(0) == '&')
             {
-                highscoresFound = true;
+                entitiesFound = true;
                 break;
             }
             QStringList xSplit = line.split('x');
@@ -161,16 +159,67 @@ Map::Map(QString filename):
             }
         }
     }
+    _height = y;
+    tiles = (Tile *)malloc(sizeof(Tile)*_width*_height);
+    memcpy(tiles, temporaryTiles, sizeof(Tile)*_width*_height);
 
-    _nHighscores = 0;
-    if(highscoresFound)
+
+    if(entitiesFound)
     {
         while(!in.atEnd())
         {
-            QString nameLine = in.readLine();
+            QString line = in.readLine();
+            QStringList xSplit = line.split('x');
+            QString xString = xSplit.at(0);
+            if(xSplit.count() < 2)
+            {
+                qDebug() << "Invalid entity meta data";
+                break;
+            }
+            QStringList colonSplit = xSplit.at(1).split(':');
+            QString yString = colonSplit.at(0);
+            if(colonSplit.count() < 2)
+            {
+                qDebug() << "Invalid entity meta data";
+                break;
+            }
+            QString entityString = colonSplit.at(1);
+
+            //TODO Not safe...
+            int x = atoi(xString.toLatin1().data());
+            int y = atoi(yString.toLatin1().data());
+
+            QStringList commaSplit = entityString.split(',');
+            if(commaSplit.count() < 2)
+            {
+                qDebug() << "Invalid entity meta data";
+                break;
+            }
+            else
+            {
+                EntityType type = (EntityType)atoi(commaSplit.at(0).toLatin1().data());
+                EntityColor color = (EntityColor)atoi(commaSplit.at(1).toLatin1().data());
+                addEntity(x,y,type,color);
+            }
+
+
+        }
+    }
+
+
+    QFile highscoreFile(filename + ".hs");
+
+    _nHighscores = 0;
+    if(highscoreFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QTextStream hin(&highscoreFile);
+        while(!hin.atEnd())
+        {
+            QString nameLine = hin.readLine();
+
             if(nameLine.length() < 1) break;
-            if(in.atEnd()) break;
-            QString movesLine = in.readLine();
+            if(hin.atEnd()) break;
+            QString movesLine = hin.readLine();
             if(movesLine.length() < 1) break;
             _highscores[_nHighscores].name = nameLine;
             bool movesParsed = false;
@@ -179,23 +228,9 @@ Map::Map(QString filename):
         }
     }
 
-    _height = y;
-    tiles = (Tile *)malloc(sizeof(Tile)*_width*_height);
-    memcpy(tiles, temporaryTiles, sizeof(Tile)*_width*_height);
-
-    /*
-    referenceTiles = (TileType *)malloc(sizeof(TileType)*_width*_height);
-    memcpy(referenceTiles, temporaryTiles, sizeof(TileType)*_width*_height);
-    for(int i = 0; i < _width * _height; i++)
-    {
-        if(referenceTiles[i] == BOX) referenceTiles[i] = FLOOR;
-    }
-    */
-
     free(temporaryTiles);
     mapFile.close();
 
-    setup();
     _loaded = true;
 }
 void Map::setTile(int x, int y, TileType Type)
@@ -262,7 +297,7 @@ int Map::calculateTileSize(QRect renderRect)
     int tileHeight = renderRect.height()/_height;
     int tileSize = (tileWidth > tileHeight) ? tileHeight : tileWidth;
 
-    while(tileSize % 4 != 0) tileSize--;
+    while(tileSize % 2 != 0) tileSize--;
 
     return tileSize;
 }
@@ -310,14 +345,10 @@ QRect Map::tilesToRect(int x1, int y1, int x2, int y2, QRect renderRect)
 
 bool Map::saveMap(QString filename)
 {
-    //QString appPath = QCoreApplication::applicationDirPath();
     QFile mapFile(filename);
     if(!mapFile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         return false;
-        //QMessageBox msgBox;
-        //msgBox.setText("File doesn't exist");
-        //msgBox.setInformativeText("Do you want to save your changes?");
     }
     QTextStream out(&mapFile);
 
@@ -340,32 +371,22 @@ bool Map::saveMap(QString filename)
         }
     }
 
-    out << "%\n";
-    for(int i = 0; i < _nHighscores; i++)
-    {
-        auto row = _highscores[i];
-        out << row.name << "\n";
-        out << row.moves << "\n";
-    }
     out << "&\n";
-    for(int y = 0; y < _width; y++){
-        for(int x = 0; x < _height; x++){
+    for(int y = 0; y < _height; y++){
+        for(int x = 0; x < _width; x++){
 
             Tile *t = tile(x,y);
 
             if(t->interactable != NULL){
-                //t->interactable;
+                out << x << "x" << y << ":";
+                out << t->interactable->getEntityType() << "," << t->interactable->color() << "\n";
             }
-            /*
-            ColoredEntity *ent;
-            _coloredEntities[i]->get(j, &ent);
 
-            qDebug() << ent->color() << ent->isButton() << ent->height();
-
-            */
         }
     }
     mapFile.close();
+
+    _filename = filename;
 
     return true;
 }
@@ -711,7 +732,7 @@ void Map::addEntity(int x, int y, EntityType type, EntityColor color)
 
 void Map::removeEntity(int x, int y)
 {
-
+    setTileInteractable(x, y, NULL);
 }
 
 //ENTITIES
@@ -828,11 +849,8 @@ void Map::movePlayer(int dx, int dy, bool force)
             _movesMade++;
         }
     }
+    _solved = targetsLeft <= 0;
 
-    if(targetsLeft <= 0)
-    {
-        qDebug() << "Victory!" << _movesMade << " moves made";
-    }
 }
 
 bool Map::tileHasInteractable(int x, int y, Entity *interactable)
@@ -847,25 +865,107 @@ bool Map::tileHasInteractable(int x, int y, Entity *interactable)
     return false;
 }
 
-void Map::addColoredEntity(ColoredEntity *entity)
+void Map::addColoredEntity(Entity *entity)
 {
     entitiesByColor(entity->color())->add(entity);
 }
 
 //Move the entity to the right collection when it changes color.
-void Map::updateEntityColor(ColoredEntity *entity, EntityColor oldColor)
+void Map::updateEntityColor(Entity *entity, EntityColor oldColor)
 {
-    Collection<ColoredEntity *> *oldCollection = entitiesByColor(oldColor);
+    Collection<Entity *> *oldCollection = entitiesByColor(oldColor);
     int index = oldCollection->indexOf(entity);
     if(index != -1)
         oldCollection->remove(index);
     entitiesByColor(entity->color())->add(entity);
 }
 
-Collection<ColoredEntity *> *Map::entitiesByColor(EntityColor color)
+Collection<Entity *> *Map::entitiesByColor(EntityColor color)
 {
     //Kan det vara här det skiter sig?
     return _coloredEntities[color-1];
+}
+
+int Map::movesMade()
+{
+    return _movesMade;
+}
+
+void Map::setName(QString name)
+{
+    _name = name;
+}
+
+void Map::insertHighscore(QString playerName, int movesMade)
+{
+    _lastHighscoreIndex = -1;
+    bool inserted = false;
+    for(int i = 0; i < _nHighscores; i++){
+
+        if(_highscores[i].moves > movesMade){
+            if(_nHighscores < 10)
+                _nHighscores++;
+            for(int j = _nHighscores-1; j > i; j--){
+                if(j >= 9)
+                    continue;
+                _highscores[j] = _highscores[j-1];
+            }
+            _highscores[i].name = playerName.toUtf8().data();
+            _highscores[i].moves = movesMade;
+            inserted = true;
+            _lastHighscoreIndex = i;
+            break;
+        }
+
+    }
+    if(!inserted && _nHighscores < 10){
+        _highscores[_nHighscores].name = playerName.toLatin1().data();
+        _highscores[_nHighscores].moves = movesMade;
+        _lastHighscoreIndex = _nHighscores;
+        _nHighscores++;
+    }
+}
+
+bool Map::saveHighscores()
+{
+
+    QFile highscoreFile(_filename + ".hs");
+    if(!highscoreFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        return false;
+    }
+
+    QTextStream out(&highscoreFile);
+
+    for(int i = 0; i < _nHighscores; i++)
+    {
+        auto row = _highscores[i];
+        out << row.name << "\n";
+        out << row.moves << "\n";
+    }
+
+    highscoreFile.close();
+
+    return true;
+}
+
+int Map::nHighscores()
+{
+    return _nHighscores;
+}
+
+bool Map::highscoreRow(int index, QString *outputName, int *outputMoves, bool *outputLastInserted)
+{
+    if(index < 0 || index >= _nHighscores) return false;
+    *outputName = _highscores[index].name;
+    *outputMoves = _highscores[index].moves;
+    *outputLastInserted = index == _lastHighscoreIndex;
+    return true;
+}
+
+bool Map::isSolved()
+{
+    return _solved;
 }
 
 Entity *Map::setTileInteractable(int x, int y, Entity *interactable)
