@@ -43,7 +43,7 @@ bool LevelGrid::addItem(LevelGridItem *item)
 void LevelGrid::draw(QPainter *painter, QRect renderRect)
 {
     _backgroundMap->draw(painter, renderRect);
-    int nPages = _nItems / (_width * _height)+1;
+    int nPages = (_nItems / (_width * _height))+(_nItems % (_width * _height)?1:0);
     int page = (_currentY * _width + _currentX)/ (_width * _height);
 
     for(int y = _height * page; y < _height * page + _height; y++)
