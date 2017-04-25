@@ -37,11 +37,13 @@ Editor::Editor()
 
     _tileRadioCluster = new RadioClusterEditorWidget("Tiles", 0, QSize(12,1), QPoint(0,10));
     RadioEditorWidget *_setTypeRadio = new RadioEditorWidget("Type", true);
+    RadioEditorWidget *_fillTypeRadio = new RadioEditorWidget("Fill", false);
     RadioEditorWidget *_addFlagRadio = new RadioEditorWidget("+Flag", false);
     RadioEditorWidget *_removeFlagRadio = new RadioEditorWidget("-Flag", false);
     RadioEditorWidget *_addEntityRadio = new RadioEditorWidget("+Ent", false);
     RadioEditorWidget *_removeEntityRadio = new RadioEditorWidget("-Ent", false);
     _tileRadioCluster->addRadio(_setTypeRadio);
+    _tileRadioCluster->addRadio(_fillTypeRadio);
     _tileRadioCluster->addRadio(_addFlagRadio);
     _tileRadioCluster->addRadio(_removeFlagRadio);
     _tileRadioCluster->addRadio(_addEntityRadio);
@@ -231,20 +233,21 @@ void Editor::mousePress(QMouseEvent *event, QRect renderRect, QWidget *parentWid
             if(_tileList->getArea()->contains(mousePosition)){
                 _tileList->select(mousePosition.y());
                 selectedTileType = tileTypeForListRow[_tileList->getSelected()];
-                _mode = (EditingMode)_tileRadioCluster->select(0,0,0);
+                if(_mode != FILL_TYPE)
+                    _mode = (EditingMode)_tileRadioCluster->select(0,0,0);
             }
             else if(_flagList->getArea()->contains(mousePosition)){
                 _flagList->select(mousePosition.y());
                 selectedFlag = (TileFlag)(int)pow(2, _flagList->getSelected());
                 if(_mode != REMOVE_FLAG)
-                    _mode = (EditingMode)_tileRadioCluster->select(0,0,1);
+                    _mode = (EditingMode)_tileRadioCluster->select(0,0,2);
 
             }
             else if(_entityList->getArea()->contains(mousePosition)){
                 _entityList->select(mousePosition.y());
                 selectedEntityType = (EntityType)_entityList->getSelected();
                 if(_mode != REMOVE_ENTITY)
-                    _mode = (EditingMode)_tileRadioCluster->select(0,0,3);
+                    _mode = (EditingMode)_tileRadioCluster->select(0,0,4);
 
             }
             else if(_tileRadioCluster->getArea()->contains(mousePosition)){

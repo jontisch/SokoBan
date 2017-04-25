@@ -12,10 +12,11 @@
 enum EditingMode
 {
     SET_TYPE = 0,
-    ADD_FLAG = 1,
-    REMOVE_FLAG = 2,
-    ADD_ENTITY = 3,
-    REMOVE_ENTITY = 4
+    FILL_TYPE = 1,
+    ADD_FLAG = 2,
+    REMOVE_FLAG = 3,
+    ADD_ENTITY = 4,
+    REMOVE_ENTITY = 5
 };
 
 
@@ -65,6 +66,7 @@ private:
 
 
     QPoint lastClickedTile;
+    QPoint firstCorner;
     TileFlag selectedFlag;
     TileType selectedTileType;
     EntityType selectedEntityType;

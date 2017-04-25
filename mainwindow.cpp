@@ -71,8 +71,6 @@ MainWindow::~MainWindow()
     if(_highscores){
         delete _highscores;
     }
-    delete _mainMenu;
-    delete _resumeItem;
 }
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {

@@ -241,8 +241,29 @@ void Map::setTile(int x, int y, TileType Type)
 void Map::fillType(int x, int y, TileType Type)
 {
     TileType currentType = tiles[x+_width*y].type;
-    tiles[x+_width*y];
+    if(tiles[x+_width*y].type == Type) return;
+    tiles[x+_width*y].type = Type;
 
+    if(x > 0){
+        if(tiles[x-1+_width*y].type == currentType){
+            fillType(x-1, y, Type);
+        }
+    }
+    if(x < _width){
+        if(tiles[x+1+_width*y].type == currentType){
+            fillType(x+1, y, Type);
+        }
+    }
+    if(y > 0){
+        if(tiles[x+_width*(y-1)].type == currentType){
+            fillType(x, y-1, Type);
+        }
+    }
+    if(y < _height){
+        if(tiles[x+_width*(y+1)].type == currentType){
+            fillType(x, y+1, Type);
+        }
+    }
 }
 TileType Map::getTileType(int x, int y)
 {
