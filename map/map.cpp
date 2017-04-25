@@ -238,6 +238,12 @@ void Map::setTile(int x, int y, TileType Type)
     tiles[x+_width*y].type = Type;
 }
 
+void Map::fillType(int x, int y, TileType Type)
+{
+    TileType currentType = tiles[x+_width*y].type;
+    tiles[x+_width*y];
+
+}
 TileType Map::getTileType(int x, int y)
 {
     return tiles[ x + _width * y ].type;

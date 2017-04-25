@@ -170,6 +170,9 @@ void Editor::operateOnTile(QPoint tile)
     case SET_TYPE:
         _map->setTile(tile.x(), tile.y(), selectedTileType);
         break;
+    case FILL_TYPE:
+        _map->fillType(tile.x(), tile.y(), selectedTileType);
+        break;
     case ADD_FLAG:
         if((selectedFlag != HAS_BOX && selectedFlag != IS_TARGET && selectedFlag != IS_START) || _map->tileIsWalkable(tile.x(), tile.y()))
         {

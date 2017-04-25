@@ -52,6 +52,7 @@ public:
     void revertMove();
 
     void setTile(int x, int y, TileType Type);
+    void fillType(int x, int y, TileType Type);
     TileType getTileType(int x, int y);
     void setTileFlags(int x, int y, int flags);
     void addTileFlag(int x, int y, TileFlag flag);
