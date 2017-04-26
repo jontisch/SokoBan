@@ -13,10 +13,11 @@ enum EditingMode
 {
     SET_TYPE = 0,
     FILL_TYPE = 1,
-    ADD_FLAG = 2,
-    REMOVE_FLAG = 3,
-    ADD_ENTITY = 4,
-    REMOVE_ENTITY = 5
+    RECT_TYPE = 2,
+    ADD_FLAG = 3,
+    REMOVE_FLAG = 4,
+    ADD_ENTITY = 5,
+    REMOVE_ENTITY = 6
 };
 
 
@@ -32,8 +33,9 @@ public:
     void draw(QPainter *painter, QRect renderRect);
 
     void mousePress(QMouseEvent *event, QRect renderRect, QWidget *parentWidget);
-
 private:
+    void initToolBoxes();
+
     Map *_map;
 
     RadioClusterEditorWidget *_toolboxRadioCluster;
@@ -61,12 +63,16 @@ private:
     ButtonEditorWidget *_updateMapButton;
     TextfieldEditorWidget *_widthTextfield;
     TextfieldEditorWidget *_heightTextfield;
+    ButtonEditorWidget *_widthPlusButton;
+    ButtonEditorWidget *_widthMinusButton;
+    ButtonEditorWidget *_heightPlusButton;
+    ButtonEditorWidget *_heightMinusButton;
 
     QLinearGradient _buttonGradient;
 
 
     QPoint lastClickedTile;
-    QPoint firstCorner;
+    QPoint _firstCorner;
     TileFlag selectedFlag;
     TileType selectedTileType;
     EntityType selectedEntityType;

@@ -44,6 +44,7 @@ protected:
 
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
+
 private:
     void showHighscore(Map *map);
     void populateMaps();

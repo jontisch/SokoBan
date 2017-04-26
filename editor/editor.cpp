@@ -15,103 +15,10 @@ Editor::Editor()
 {
     _map = new Map(24,16,11,7);
 
-
-    //HMM
-    _toolboxRadioCluster = new RadioClusterEditorWidget("Tools",0);
-    _toolboxRadioCluster->addRadio(new RadioEditorWidget("Draw", true));
-    _toolboxRadioCluster->addRadio(new RadioEditorWidget("Misc", false));
-
-
-    _drawToolBox = new ToolboxEditorWidget("Draw", QSize(12,15));
-    _dimensionsToolBox = new ToolboxEditorWidget("Dimensions", QSize(12,15));
-
-    _visibleToolBox = _drawToolBox;
-
-
-    _tileList = new ListEditorWidget("Tiles",QSize(6,7), QPoint(0,0));
-    _flagList = new ListEditorWidget("Flags", QSize(6,7), QPoint(6,0));
-    _entityList = new ListEditorWidget("Entities", QSize(12,3),QPoint(0,7));
-
-    _mapPosLabel = new LabelEditorWidget("Position", "X:0\tY:0", QSize(12,1), QPoint(0,14));
-
-
-    _tileRadioCluster = new RadioClusterEditorWidget("Tiles", 0, QSize(12,1), QPoint(0,10));
-    RadioEditorWidget *_setTypeRadio = new RadioEditorWidget("Type", true);
-    RadioEditorWidget *_fillTypeRadio = new RadioEditorWidget("Fill", false);
-    RadioEditorWidget *_addFlagRadio = new RadioEditorWidget("+Flag", false);
-    RadioEditorWidget *_removeFlagRadio = new RadioEditorWidget("-Flag", false);
-    RadioEditorWidget *_addEntityRadio = new RadioEditorWidget("+Ent", false);
-    RadioEditorWidget *_removeEntityRadio = new RadioEditorWidget("-Ent", false);
-    _tileRadioCluster->addRadio(_setTypeRadio);
-    _tileRadioCluster->addRadio(_fillTypeRadio);
-    _tileRadioCluster->addRadio(_addFlagRadio);
-    _tileRadioCluster->addRadio(_removeFlagRadio);
-    _tileRadioCluster->addRadio(_addEntityRadio);
-    _tileRadioCluster->addRadio(_removeEntityRadio);
-
-    _colorRadioCluster = new RadioClusterEditorWidget("Colors", 0, QSize(12,1), QPoint(0,11));
-    RadioEditorWidget *_blueColorRadio = new RadioEditorWidget("Blue", true);
-    RadioEditorWidget *_redColorRadio = new RadioEditorWidget("Red", false);
-    RadioEditorWidget *_greenColorRadio = new RadioEditorWidget("Green", false);
-    _colorRadioCluster->addRadio(_blueColorRadio);
-    _colorRadioCluster->addRadio(_redColorRadio);
-    _colorRadioCluster->addRadio(_greenColorRadio);
-
-
-    _mapNameTextfield = new TextfieldEditorWidget("Map name", "No name", QSize(12, 1));
-
-    _shiftUpButton = new ButtonEditorWidget("Up", true, QSize(2,1), QPoint(5,6));
-    _shiftDownButton = new ButtonEditorWidget("Down", true, QSize(2,1), QPoint(5,8));
-    _shiftLeftButton = new ButtonEditorWidget("Left", true, QSize(2,1), QPoint(3,7));
-    _shiftRightButton = new ButtonEditorWidget("Right", true, QSize(2,1), QPoint(7,7));
-    _shiftLabel = new LabelEditorWidget("Shift", NULL, QSize(2,1), QPoint(5,7));
-
-    _widthTextfield = new TextfieldEditorWidget("Width", "0", QSize(6,1), QPoint(0,10), true);
-    _heightTextfield = new TextfieldEditorWidget("Height", "0", QSize(6,1), QPoint(6,10), true);
-
-    _updateMapButton = new ButtonEditorWidget("Update Map", true, QSize(12,1), QPoint(0,12));
-
-    _saveMapButton = new ButtonEditorWidget("Save Map", true, QSize(6,2), QPoint(0,2));
-    _loadMapButton = new ButtonEditorWidget("Load Map", true, QSize(6,2), QPoint(6,2));
-
-    _activeTextField = NULL;
-    _hoveredWidget = NULL;
+    initToolBoxes();
 
 
 
-    //Tools added to the Drawing toolbox
-    _drawToolBox->addWidget(_tileList);
-    _drawToolBox->addWidget(_flagList);
-    _drawToolBox->addWidget(_entityList);
-    _drawToolBox->addWidget(_mapPosLabel);
-    _drawToolBox->addWidget(_tileRadioCluster);
-    _drawToolBox->addWidget(_colorRadioCluster);
-
-
-
-    //Tools added to the Dimensions toolbox
-
-    _dimensionsToolBox->addWidget(_mapNameTextfield);
-    _dimensionsToolBox->addWidget(_loadMapButton);
-    _dimensionsToolBox->addWidget(_saveMapButton);
-    _dimensionsToolBox->addWidget(_shiftUpButton);
-    _dimensionsToolBox->addWidget(_shiftDownButton);
-    _dimensionsToolBox->addWidget(_shiftLeftButton);
-    _dimensionsToolBox->addWidget(_shiftRightButton);
-    _dimensionsToolBox->addWidget(_shiftLabel);
-    _dimensionsToolBox->addWidget(_widthTextfield);
-    _dimensionsToolBox->addWidget(_heightTextfield);
-    _dimensionsToolBox->addWidget(_updateMapButton);
-    _dimensionsToolBox->addWidget(_mapPosLabel);
-
-
-    //Gradient settings
-    _buttonGradient.setColorAt(0,QColor(59,148,204));
-    _buttonGradient.setColorAt(1,QColor(28,73,102));
-
-
-
-    //END OF HMM
     selectedFlag = HAS_BOX;
     selectedTileType = FLOOR;
     selectedEntityType = DOOR_VERTICAL;
@@ -175,6 +82,10 @@ void Editor::operateOnTile(QPoint tile)
     case FILL_TYPE:
         _map->fillType(tile.x(), tile.y(), selectedTileType);
         break;
+    case RECT_TYPE:
+        //qDebug() << _firstCorner << tile;
+        _map->setTilesInRect(QRect(_firstCorner, tile), selectedTileType);
+        break;
     case ADD_FLAG:
         if((selectedFlag != HAS_BOX && selectedFlag != IS_TARGET && selectedFlag != IS_START) || _map->tileIsWalkable(tile.x(), tile.y()))
         {
@@ -213,8 +124,14 @@ void Editor::mousePress(QMouseEvent *event, QRect renderRect, QWidget *parentWid
 
         if(mapArea.contains(mousePosition)){
             QPoint tile = _map->pixelToTile(mousePosition.x(), mousePosition.y(), mapArea);
-            operateOnTile(tile);
-            lastClickedTile = tile;
+            if(_mode == RECT_TYPE){
+                _firstCorner = tile;
+            }
+            else
+            {
+                operateOnTile(tile);
+            }
+            lastClickedTile = tile; // Kanske flytta in i loopen
         }
 
         else if(_toolboxRadioCluster->getArea()->contains(mousePosition)){
@@ -233,21 +150,21 @@ void Editor::mousePress(QMouseEvent *event, QRect renderRect, QWidget *parentWid
             if(_tileList->getArea()->contains(mousePosition)){
                 _tileList->select(mousePosition.y());
                 selectedTileType = tileTypeForListRow[_tileList->getSelected()];
-                if(_mode != FILL_TYPE)
+                if(_mode != FILL_TYPE && _mode != RECT_TYPE)
                     _mode = (EditingMode)_tileRadioCluster->select(0,0,0);
             }
             else if(_flagList->getArea()->contains(mousePosition)){
                 _flagList->select(mousePosition.y());
                 selectedFlag = (TileFlag)(int)pow(2, _flagList->getSelected());
                 if(_mode != REMOVE_FLAG)
-                    _mode = (EditingMode)_tileRadioCluster->select(0,0,2);
+                    _mode = (EditingMode)_tileRadioCluster->select(0,0,3);
 
             }
             else if(_entityList->getArea()->contains(mousePosition)){
                 _entityList->select(mousePosition.y());
                 selectedEntityType = (EntityType)_entityList->getSelected();
                 if(_mode != REMOVE_ENTITY)
-                    _mode = (EditingMode)_tileRadioCluster->select(0,0,4);
+                    _mode = (EditingMode)_tileRadioCluster->select(0,0,5);
 
             }
             else if(_tileRadioCluster->getArea()->contains(mousePosition)){
@@ -292,6 +209,22 @@ void Editor::mousePress(QMouseEvent *event, QRect renderRect, QWidget *parentWid
             else if(_shiftRightButton->getArea()->contains(mousePosition) && _shiftRightButton->active()){
                 _map->shiftTiles(RIGHT);
             }
+            else if(_widthMinusButton->getArea()->contains(mousePosition) && _updateMapButton->active()){
+                int w = _map->width();
+                _map->setSize(QSize((w > 1)?w-1:w,_map->height()));
+            }
+            else if(_widthPlusButton->getArea()->contains(mousePosition) && _updateMapButton->active()){
+                int w = _map->width();
+                _map->setSize(QSize((w < 128)?w+1:w,_map->height()));
+            }
+            else if(_heightMinusButton->getArea()->contains(mousePosition) && _updateMapButton->active()){
+                int h = _map->height();
+                _map->setSize(QSize(_map->width(),(h > 1)?h-1:h));
+            }
+            else if(_heightPlusButton->getArea()->contains(mousePosition) && _updateMapButton->active()){
+                int h = _map->height();
+                _map->setSize(QSize(_map->width(),(h < 128)?h+1:h));
+            }
             else if(_updateMapButton->getArea()->contains(mousePosition) && _updateMapButton->active()){
                 int w =_widthTextfield->getText().toInt();
                 int h =_heightTextfield->getText().toInt();
@@ -311,6 +244,115 @@ void Editor::mousePress(QMouseEvent *event, QRect renderRect, QWidget *parentWid
             }
         }
     }
+}
+
+void Editor::initToolBoxes()
+{
+    //HMM
+    _toolboxRadioCluster = new RadioClusterEditorWidget("Tools",0);
+    _toolboxRadioCluster->addRadio(new RadioEditorWidget("Draw", true));
+    _toolboxRadioCluster->addRadio(new RadioEditorWidget("Misc", false));
+
+
+    _drawToolBox = new ToolboxEditorWidget("Draw", QSize(12,15));
+    _dimensionsToolBox = new ToolboxEditorWidget("Dimensions", QSize(12,15));
+
+    _visibleToolBox = _drawToolBox;
+
+
+    _tileList = new ListEditorWidget("Tiles",QSize(6,7), QPoint(0,0));
+    _flagList = new ListEditorWidget("Flags", QSize(6,7), QPoint(6,0));
+    _entityList = new ListEditorWidget("Entities", QSize(12,3),QPoint(0,7));
+
+    _mapPosLabel = new LabelEditorWidget("Position", "X:0\tY:0", QSize(12,1), QPoint(0,14));
+
+
+    _tileRadioCluster = new RadioClusterEditorWidget("Tiles", 0, QSize(12,1), QPoint(0,10));
+    RadioEditorWidget *_setTypeRadio = new RadioEditorWidget("Type", true);
+    RadioEditorWidget *_fillTypeRadio = new RadioEditorWidget("Fill", false);
+    RadioEditorWidget *_rectTypeRadio = new RadioEditorWidget("[]", false);
+    RadioEditorWidget *_addFlagRadio = new RadioEditorWidget("+Flag", false);
+    RadioEditorWidget *_removeFlagRadio = new RadioEditorWidget("-Flag", false);
+    RadioEditorWidget *_addEntityRadio = new RadioEditorWidget("+Ent", false);
+    RadioEditorWidget *_removeEntityRadio = new RadioEditorWidget("-Ent", false);
+    _tileRadioCluster->addRadio(_setTypeRadio);
+    _tileRadioCluster->addRadio(_fillTypeRadio);
+    _tileRadioCluster->addRadio(_rectTypeRadio);
+    _tileRadioCluster->addRadio(_addFlagRadio);
+    _tileRadioCluster->addRadio(_removeFlagRadio);
+    _tileRadioCluster->addRadio(_addEntityRadio);
+    _tileRadioCluster->addRadio(_removeEntityRadio);
+
+    _colorRadioCluster = new RadioClusterEditorWidget("Colors", 0, QSize(12,1), QPoint(0,11));
+    RadioEditorWidget *_blueColorRadio = new RadioEditorWidget("Blue", true);
+    RadioEditorWidget *_redColorRadio = new RadioEditorWidget("Red", false);
+    RadioEditorWidget *_greenColorRadio = new RadioEditorWidget("Green", false);
+    _colorRadioCluster->addRadio(_blueColorRadio);
+    _colorRadioCluster->addRadio(_redColorRadio);
+    _colorRadioCluster->addRadio(_greenColorRadio);
+
+
+    _mapNameTextfield = new TextfieldEditorWidget("Map name", "No name", QSize(12, 1));
+
+    _shiftUpButton = new ButtonEditorWidget("Up", true, QSize(2,1), QPoint(5,6));
+    _shiftDownButton = new ButtonEditorWidget("Down", true, QSize(2,1), QPoint(5,8));
+    _shiftLeftButton = new ButtonEditorWidget("Left", true, QSize(2,1), QPoint(3,7));
+    _shiftRightButton = new ButtonEditorWidget("Right", true, QSize(2,1), QPoint(7,7));
+    _shiftLabel = new LabelEditorWidget("Shift", NULL, QSize(2,1), QPoint(5,7));
+
+    _widthTextfield = new TextfieldEditorWidget("Width", "0", QSize(6,1), QPoint(0,10), true);
+    _heightTextfield = new TextfieldEditorWidget("Height", "0", QSize(6,1), QPoint(6,10), true);
+
+
+    _widthMinusButton = new ButtonEditorWidget("-", true, QSize(3,1), QPoint(0,11));
+    _widthPlusButton = new ButtonEditorWidget("+", true, QSize(3,1), QPoint(3,11));
+    _heightMinusButton = new ButtonEditorWidget("-", true, QSize(3,1), QPoint(6,11));
+    _heightPlusButton = new ButtonEditorWidget("+", true, QSize(3,1), QPoint(9,11));
+
+    _updateMapButton = new ButtonEditorWidget("Update Map", true, QSize(12,1), QPoint(0,12));
+
+    _saveMapButton = new ButtonEditorWidget("Save Map", true, QSize(6,1), QPoint(0,2));
+    _loadMapButton = new ButtonEditorWidget("Load Map", true, QSize(6,1), QPoint(6,2));
+
+    _activeTextField = NULL;
+    _hoveredWidget = NULL;
+
+
+
+    //Tools added to the Drawing toolbox
+    _drawToolBox->addWidget(_tileList);
+    _drawToolBox->addWidget(_flagList);
+    _drawToolBox->addWidget(_entityList);
+    _drawToolBox->addWidget(_mapPosLabel);
+    _drawToolBox->addWidget(_tileRadioCluster);
+    _drawToolBox->addWidget(_colorRadioCluster);
+
+
+
+    //Tools added to the Dimensions toolbox
+
+    _dimensionsToolBox->addWidget(_mapNameTextfield);
+    _dimensionsToolBox->addWidget(_loadMapButton);
+    _dimensionsToolBox->addWidget(_saveMapButton);
+    _dimensionsToolBox->addWidget(_shiftUpButton);
+    _dimensionsToolBox->addWidget(_shiftDownButton);
+    _dimensionsToolBox->addWidget(_shiftLeftButton);
+    _dimensionsToolBox->addWidget(_shiftRightButton);
+    _dimensionsToolBox->addWidget(_shiftLabel);
+    _dimensionsToolBox->addWidget(_widthTextfield);
+    _dimensionsToolBox->addWidget(_heightTextfield);
+    _dimensionsToolBox->addWidget(_updateMapButton);
+    _dimensionsToolBox->addWidget(_mapPosLabel);
+    _dimensionsToolBox->addWidget(_widthMinusButton);
+    _dimensionsToolBox->addWidget(_widthPlusButton);
+    _dimensionsToolBox->addWidget(_heightMinusButton);
+    _dimensionsToolBox->addWidget(_heightPlusButton);
+
+
+    //Gradient settings
+    _buttonGradient.setColorAt(0,QColor(59,148,204));
+    _buttonGradient.setColorAt(1,QColor(28,73,102));
+
 }
 
 

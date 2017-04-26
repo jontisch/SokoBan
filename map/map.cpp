@@ -4,6 +4,8 @@
 #include "entities/door.h"
 #include <stdlib.h>
 #include "../audiolibrary.h"
+#include <thread>
+
 
 using namespace std;
 
@@ -309,9 +311,13 @@ void Map::setTileFlagsInRect(QRect rect, int flags)
 
 void Map::setTilesInRect(QRect rect, TileType type)
 {
-    for(int x = rect.x(); x < rect.width(); x++)
+    if(rect.bottomRight().x() < 0 || rect.bottomRight().x() < 0)
+        return;
+    rect = rect.normalized();
+
+    for(int y = rect.top(); y <= rect.bottom(); y++)
     {
-        for(int y = rect.y(); y < rect.height(); y++)
+        for(int x = rect.left(); x <= rect.right(); x++)
         {
             setTile(x, y, type);
         }
