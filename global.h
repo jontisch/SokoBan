@@ -10,7 +10,7 @@
 #if (defined (_WIN32) || defined (_WIN64))
     #define APP_PATH_EXT ""
 #else
-    #define APP_PATH_EXT "/../.."
+    #define APP_PATH_EXT ""
 #endif
 
 #define MAP_DIR "maps/"
