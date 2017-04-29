@@ -5,6 +5,7 @@ HighscoreList::HighscoreList(Map *map)
 {
     _map = map;
     _backgroundMap = new Map(QString(":/maps/highscore.fml"));
+    _backgroundMap->setPlayerVisible(false);
 }
 
 HighscoreList::~HighscoreList()
