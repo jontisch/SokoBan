@@ -65,6 +65,8 @@ void InitPixmaps()
     PIXMAPS[PIXMAP_BUTTON_UP] = new QPixmap(":/images/button_up.png");
     PIXMAPS[PIXMAP_BUTTON_DOWN] = new QPixmap(":/images/button_down.png");
 
+    PIXMAPS[PIXMAP_CACTUS] = new QPixmap(":/images/cactus.png");
+
 }
 
 QPixmap *Pixmap(PixmapIdentifier ident){

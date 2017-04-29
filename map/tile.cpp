@@ -162,3 +162,15 @@ Entity *entityFromEntityType(EntityType entity, EntityColor color, Map *map){
         return NULL;
     }
 }
+
+PixmapIdentifier PixmapForDecoration(TileDecoration decoration)
+{
+    switch(decoration)
+    {
+    case CACTUS:
+        return PIXMAP_CACTUS;
+
+    default:
+        return NO_PIXMAP;
+    }
+}

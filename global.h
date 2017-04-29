@@ -50,9 +50,10 @@ enum PixmapIdentifier
     PIXMAP_DOOR_VERTICAL,
     PIXMAP_DOOR_HORIZONTAL,
     PIXMAP_BUTTON_UP,
-    PIXMAP_BUTTON_DOWN
+    PIXMAP_BUTTON_DOWN,
+    PIXMAP_CACTUS
 };
-#define N_PIXMAPS 20
+#define N_PIXMAPS 21
 
 
 void InitPixmaps();

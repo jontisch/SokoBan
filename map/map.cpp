@@ -1,4 +1,4 @@
-#include "map.h"
+﻿#include "map.h"
 #include "entities/button.h"
 #include <QDebug>
 #include "entities/door.h"
@@ -18,6 +18,7 @@ void Map::setup()
     {
         _coloredEntities[i] = new Collection<Entity *>(8);
     }
+
 
 }
 
@@ -234,6 +235,9 @@ Map::Map(QString filename):
     mapFile.close();
 
     _loaded = true;
+
+
+    tile(0,0)->decoration = CACTUS;
 }
 void Map::setTile(int x, int y, TileType Type)
 {
@@ -539,7 +543,11 @@ QRect Map::calculateTileRect(int x, int y, QPoint mapPixelOffset, int tileSize, 
     return QRect(rectX, rectY, rectWidth, rectHeight);
 }
 
-void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x, int y, QPoint topLeft, int tileSize, int zOffset, PixmapIdentifier overlay)
+void Map::drawTilePixmap(QPainter *qp,
+                         PixmapIdentifier pixmapIdentifier,
+                         int x, int y, QPoint topLeft, int tileSize, int zOffset,
+                         PixmapIdentifier overlay,
+                         PixmapIdentifier decoration)
 {
     int size = 0;
     QBrush brush;
@@ -553,6 +561,9 @@ void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x,
     case PIXMAP_WALL:
         size = 8;
         break;
+    case PIXMAP_CACTUS:
+        size = 8;
+        break;
     default:
         break;
     }
@@ -560,19 +571,21 @@ void Map::drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x,
     int depth = (size * tileSize / 32.0);
     QRect renderRect = calculateTileRect(x, y, topLeft, tileSize, depth, zOffset);
 
-
-    if(pixmap == NULL)
+    if(pixmapIdentifier != NO_PIXMAP)
     {
-        qp->fillRect(renderRect, brush);
+        if(pixmap == NULL)
+        {
+            qp->fillRect(renderRect, brush);
+        }
+        else
+        {
+            qp->drawPixmap(renderRect, *pixmap);
+        }
     }
-    else
-    {
-        qp->drawPixmap(renderRect, *pixmap);
-    }
 
-    if(overlay != NO_PIXMAP)
+    if(overlay != NO_PIXMAP || decoration != NO_PIXMAP)
     {
-        drawTilePixmap(qp, overlay, x, y, topLeft, tileSize, depth);
+        drawTilePixmap(qp, overlay, x, y, topLeft, tileSize, depth, decoration);
     }
 
 }
@@ -599,8 +612,7 @@ void Map::draw(QPainter *qp, QRect rect)
             else
             {
                 PixmapIdentifier overlay = NO_PIXMAP;
-
-
+                PixmapIdentifier decoration = NO_PIXMAP;
 
                 if(tile->type != WATER && tile->flags & HAS_SNOW)
                 {
@@ -608,12 +620,14 @@ void Map::draw(QPainter *qp, QRect rect)
                 }
                 else if(tile->flags & WAS_SNOW) overlay = PIXMAP_EX_SNOW;
 
+                decoration = PixmapForDecoration(tile->decoration);
+
                 PixmapIdentifier tilePixmap = PixmapForTileType(tile->type);
                 if(tile->type == WATER && tile->flags & HAS_SNOW)
                 {
                     tilePixmap = PIXMAP_ICE;
                 }
-                drawTilePixmap(qp, tilePixmap, x, y, topLeft, tileSize, 0, overlay);
+                drawTilePixmap(qp, tilePixmap, x, y, topLeft, tileSize, 0, overlay, decoration);
 
                 if(tile->flags & IS_TARGET)
                 {

@@ -95,7 +95,13 @@ public:
 protected:
 
 private:
-    void drawTilePixmap(QPainter *qp, PixmapIdentifier pixmapIdentifier, int x, int y, QPoint pixelOffset, int tileSize, int zOffset = 0, PixmapIdentifier overlay = NO_PIXMAP);
+    void drawTilePixmap(QPainter *qp,
+                        PixmapIdentifier pixmapIdentifier,
+                        int x, int y,
+                        QPoint pixelOffset,
+                        int tileSize, int zOffset = 0,
+                        PixmapIdentifier overlay = NO_PIXMAP,
+                        PixmapIdentifier decoration = NO_PIXMAP);
 
     bool tileHasMovable(int x, int y, TileFlag *outputMovable = NULL);
     bool tileIsEmptyOrItemCanBePushed(int x, int y, Direction direction, int itemsBetween = 0);

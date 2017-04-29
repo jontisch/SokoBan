@@ -6,6 +6,12 @@
 #include "entities/door.h"
 #include "entities/button.h"
 
+enum TileDecoration
+{
+    NO_DECORATION = 0,
+    CACTUS
+};
+
 enum TileFlag {
     NO_TILE_FLAGS = 0,
 
@@ -46,10 +52,12 @@ struct Tile
     TileType type;
     long flags; //Use TileFlag:s
     Entity *interactable;
+    TileDecoration decoration;
 };
 
 PixmapIdentifier PixmapForTileType(TileType type);
 PixmapIdentifier PixmapForTileFlag(TileFlag flag);
 PixmapIdentifier PixmapForEntity(EntityType entity);
+PixmapIdentifier PixmapForDecoration(TileDecoration decoration);
 
 #endif // TILE_H
