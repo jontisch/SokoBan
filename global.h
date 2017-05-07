@@ -56,6 +56,26 @@ enum PixmapIdentifier
 #define N_PIXMAPS 21
 
 
+enum SpriteIdentifier
+{
+    SPRITE_PLAYER,
+    SPRITE_WATER
+};
+#define N_SPRITES 2
+
+struct Sprite
+{
+    QPixmap **frames;
+    int frameDuration;
+    int nFrames;
+    int zHeight;
+};
+
+Sprite *GetSprite(SpriteIdentifier identifier);
+void InitSprites();
+
+
+
 void InitPixmaps();
 
 QPixmap *Pixmap(PixmapIdentifier index);

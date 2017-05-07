@@ -11,6 +11,7 @@
 #include "highscorelist.h"
 #include "gamedelegate.h"
 #include "editor/editor.h"
+#include <QTimer>
 
 
 enum AppState
@@ -39,11 +40,13 @@ public:
 
 protected:
     void paintEvent(QPaintEvent * event);
-
     void keyPressEvent(QKeyEvent *event);
-
+    void mouseReleaseEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
+
+private slots:
+    void timerTimeout();
 
 private:
     void showHighscore(Map *map);
@@ -55,6 +58,8 @@ private:
         QUIT_GAME,
         PLAY_LEVEL
     };
+
+    QTimer *timer;
 
     AppState _state;
 

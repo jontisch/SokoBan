@@ -174,3 +174,9 @@ PixmapIdentifier PixmapForDecoration(TileDecoration decoration)
         return NO_PIXMAP;
     }
 }
+
+bool TileTypeHasSprite(TileType type){
+    switch(type){
+
+    }
+}

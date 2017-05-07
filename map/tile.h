@@ -12,6 +12,13 @@ enum TileDecoration
     CACTUS
 };
 
+enum TileEffect
+{
+    NO_EFFECT = 0,
+    EXPLOSION = 1,
+    WHIRLWIND = 2
+};
+
 enum TileFlag {
     NO_TILE_FLAGS = 0,
 
@@ -37,6 +44,7 @@ enum TileType {
 #define N_TILETYPES 10
 
 
+
 const char *TileTypeName(TileType type);
 const char *TileFlagName(TileFlag flag);
 const char *EntityTypeName(EntityType entity);
@@ -53,6 +61,9 @@ struct Tile
     long flags; //Use TileFlag:s
     Entity *interactable;
     TileDecoration decoration;
+    int tick;
+    TileEffect effect;
+    int effectTick;
 };
 
 PixmapIdentifier PixmapForTileType(TileType type);

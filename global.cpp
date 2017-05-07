@@ -3,7 +3,7 @@
 #include <QDebug>
 
 QPixmap **PIXMAPS;
-
+Sprite SPRITES[N_SPRITES];
 
 int XModifiedByDirection(int x, Direction direction, int delta)
 {
@@ -31,6 +31,33 @@ int YModifiedByDirection(int y, Direction direction, int delta)
     }
 }
 
+
+void InitSprites()
+{
+    SPRITES[SPRITE_PLAYER].nFrames = 4;
+    SPRITES[SPRITE_PLAYER].zHeight = 4;
+    SPRITES[SPRITE_PLAYER].frameDuration = 10;
+    SPRITES[SPRITE_PLAYER].frames = (QPixmap **)malloc(sizeof(QPixmap *)*SPRITES[SPRITE_PLAYER].nFrames);
+    QPixmap sheet(":/images/player_spritesheet.png");
+    for(int i = 0; i < SPRITES[SPRITE_PLAYER].nFrames; i++)
+    {
+        SPRITES[SPRITE_PLAYER].frames[i] = new QPixmap(sheet.copy(QRect(i*36, 0, 36, 36)));
+    }
+
+
+    SPRITES[SPRITE_WATER].nFrames = 4;
+    SPRITES[SPRITE_WATER].zHeight = 0;
+    SPRITES[SPRITE_WATER].frameDuration = 30;
+    SPRITES[SPRITE_WATER].frames = (QPixmap **)malloc(sizeof(QPixmap *)*SPRITES[SPRITE_WATER].nFrames);
+    QPixmap water_sheet(":/images/watertile_spritesheet.png");
+    for(int i = 0; i < SPRITES[SPRITE_WATER].nFrames; i++)
+    {
+        SPRITES[SPRITE_WATER].frames[i] = new QPixmap(water_sheet.copy(QRect(i*32, 0, 32, 32)));
+    }
+}
+Sprite *GetSprite(SpriteIdentifier identifier){
+    return &SPRITES[identifier];
+}
 
 void InitPixmaps()
 {

@@ -125,6 +125,7 @@ void Editor::mousePress(QMouseEvent *event, QRect renderRect, QWidget *parentWid
         if(mapArea.contains(mousePosition)){
             QPoint tile = _map->pixelToTile(mousePosition.x(), mousePosition.y(), mapArea);
             if(_mode == RECT_TYPE){
+                _map->beginEditing();
                 _firstCorner = tile;
             }
             else
@@ -243,6 +244,13 @@ void Editor::mousePress(QMouseEvent *event, QRect renderRect, QWidget *parentWid
                 _activeTextField->setEdit(true);
             }
         }
+    }
+}
+
+void Editor::mouseRelease(QMouseEvent *event)
+{
+    if(_mode == RECT_TYPE){
+        _map->applyChanges();
     }
 }
 
@@ -368,10 +376,16 @@ void Editor::mouseMove(QMouseEvent *Event, QRect renderRect)
     }
     if(Event->buttons() & Qt::LeftButton)
     {
-        if(tile != lastClickedTile)
-        {
-            operateOnTile(tile);
-            lastClickedTile = tile;
+        if(mapArea.contains(mousePosition)){
+            if(tile != lastClickedTile)
+            {
+                if(_mode == RECT_TYPE){
+                    _map->revertChanges();
+                    _map->beginEditing();
+               }
+               operateOnTile(tile);
+               lastClickedTile = tile;
+            }
         }
     }
     _mapPosLabel->setText(QString("X:" + QString::number(tile.x()+1) + "\tY:" + QString::number(tile.y()+1)));

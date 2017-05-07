@@ -57,7 +57,7 @@ public:
     void setTileFlags(int x, int y, int flags);
     void addTileFlag(int x, int y, TileFlag flag);
     void removeTileFlag(int x, int y, TileFlag flag);
-    int tileFlags(int x, int y);
+    int tileFlags(int x, int y, bool useCurrent=false);
 
     void addEntity(int x, int y, EntityType entity, EntityColor color);
     void removeEntity(int x, int y);
@@ -92,6 +92,11 @@ public:
 
     bool isSolved();
 
+    bool isEditing();
+    void beginEditing();
+    void applyChanges();
+    void revertChanges();
+
 protected:
 
 private:
@@ -103,17 +108,27 @@ private:
                         PixmapIdentifier overlay = NO_PIXMAP,
                         PixmapIdentifier decoration = NO_PIXMAP);
 
+    void drawTileSprite(QPainter *qp,
+                       SpriteIdentifier spriteIdentifier,
+                       int x, int y,
+                       QPoint pixelOffset,
+                       int tileSize,
+                       int *tickIndex);
+
     bool tileHasMovable(int x, int y, TileFlag *outputMovable = NULL);
     bool tileIsEmptyOrItemCanBePushed(int x, int y, Direction direction, int itemsBetween = 0);
     void pushMovable(int x, int y, Direction dir, void *move);
 
     Tile *tiles;
-    //TileType *referenceTiles;
+
+    Tile *tempTiles;
+
     int _width;
     int _height;
     QPoint _startTile;
     bool _playerVisible;
     QPoint _player;
+    int _playerTickIndex;
     MoveStack *_moveStack;
     int targetsLeft;
     int _movesMade;
@@ -123,7 +138,7 @@ private:
     QString _name;
 
     void setup();
-    Tile *tile(int x, int y);
+    Tile *tile(int x, int y, bool useCurrent=false);
 
     //Calculate the render rect for a tile
     QRect calculateTileRect(int x, int y, QPoint mapPixelOffset, int tileSize, int depth, int zOffset);
@@ -137,6 +152,8 @@ private:
     } _highscores[10];
     int _nHighscores;
     int _lastHighscoreIndex;
+    Tile *resizeTileArray(int w, int h, int currentWidth, int currentHeight, Tile *source);
+    Tile *currentTileArray();
 };
 
 #endif // MAP_H

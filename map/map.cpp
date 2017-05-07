@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "../audiolibrary.h"
 #include <thread>
+#include <math.h>
 
 
 using namespace std;
@@ -32,7 +33,9 @@ Map::Map(int width, int height, int playerX, int playerY):
     _loaded(true),
     _playerVisible(true),
     _solved(false),
-    _lastHighscoreIndex(-1)
+    _lastHighscoreIndex(-1),
+    tempTiles(NULL),
+    _playerTickIndex(0)
 
 {
     tiles = (Tile *)malloc(sizeof(Tile)* width * height);
@@ -48,7 +51,9 @@ Map::Map(QString filename):
     _playerVisible(true),
     _filename(filename),
     _solved(false),
-    _lastHighscoreIndex(-1)
+    _lastHighscoreIndex(-1),
+    tempTiles(NULL),
+    _playerTickIndex(0)
 {
     setup();
 
@@ -241,32 +246,33 @@ Map::Map(QString filename):
 }
 void Map::setTile(int x, int y, TileType Type)
 {
-    tiles[x+_width*y].type = Type;
+    currentTileArray()[x+_width*y].type = Type;
 }
 
 void Map::fillType(int x, int y, TileType Type)
 {
-    TileType currentType = tiles[x+_width*y].type;
-    if(tiles[x+_width*y].type == Type) return;
-    tiles[x+_width*y].type = Type;
+    Tile *currentTiles = currentTileArray();
+    TileType currentType = currentTiles[x+_width*y].type;
+    if(currentTiles[x+_width*y].type == Type) return;
+    currentTiles[x+_width*y].type = Type;
 
     if(x > 0){
-        if(tiles[x-1+_width*y].type == currentType){
+        if(currentTiles[x-1+_width*y].type == currentType){
             fillType(x-1, y, Type);
         }
     }
     if(x < _width){
-        if(tiles[x+1+_width*y].type == currentType){
+        if(currentTiles[x+1+_width*y].type == currentType){
             fillType(x+1, y, Type);
         }
     }
     if(y > 0){
-        if(tiles[x+_width*(y-1)].type == currentType){
+        if(currentTiles[x+_width*(y-1)].type == currentType){
             fillType(x, y-1, Type);
         }
     }
     if(y < _height){
-        if(tiles[x+_width*(y+1)].type == currentType){
+        if(currentTiles[x+_width*(y+1)].type == currentType){
             fillType(x, y+1, Type);
         }
     }
@@ -314,10 +320,15 @@ void Map::setTileFlagsInRect(QRect rect, int flags)
 }
 
 void Map::setTilesInRect(QRect rect, TileType type)
-{
-    if(rect.bottomRight().x() < 0 || rect.bottomRight().x() < 0)
-        return;
-    rect = rect.normalized();
+{   
+    int x1, x2, y1, y2;
+    rect.getCoords(&x1, &y1, &x2, &y2);
+    rect = QRect(QPoint(min(x1, x2), min(y1, y2)), QPoint(max(x1, x2), max(y1, y2)));
+
+    if(rect.left() < 0) rect.setLeft(0);
+    if(rect.top()) rect.setTop(0);
+    if(rect.right() >= _width) rect.setRight(_width-1);
+    if(rect.bottom() >= _height) rect.setBottom(_height-1);
 
     for(int y = rect.top(); y <= rect.bottom(); y++)
     {
@@ -357,7 +368,7 @@ QPoint Map::pixelToTile(int x, int y, QRect renderRect)
     int tileX = (x - minX)/tileSize;
     int tileY = (y - minY)/tileSize;
 
-    if(!tileInBounds(tileX, tileY)) return QPoint(-1, -1);
+    // if(!tileInBounds(tileX, tileY)) return QPoint(-1, -1);
 
     return QPoint(tileX, tileY);
 }
@@ -458,57 +469,68 @@ void Map::setSize(QSize size)
     int w = size.width();
     int h = size.height();
 
+    tiles = resizeTileArray(w, h, _width, _height, tiles);
+    if(tempTiles)
+        tempTiles = resizeTileArray(w, h, _width, _height, tempTiles);
+    _width = w;
+    _height = h;
+}
+
+Tile* Map::resizeTileArray(int w, int h, int currentWidth, int currentHeight, Tile* source){
     Tile *tmp = (Tile*)malloc(sizeof(Tile)*w*h);
     memset(tmp, 0, sizeof(Tile)*w*h);
 
     Tile *current = tmp;
-    int rowElements = _width;
-    int rowsToCopy = _height;
-    if(w < _width){
+    int rowElements = currentWidth;
+    int rowsToCopy = currentHeight;
+    if(w < currentWidth){
         rowElements = w;
     }
-    if(h < _height){
+    if(h < currentHeight){
         rowsToCopy = h;
     }
 
     for(int i = 0; i < rowsToCopy; i++){
-        memcpy(current, &tiles[i*_width], sizeof(Tile)*rowElements);
+        memcpy(current, &source[i*currentWidth], sizeof(Tile)*rowElements);
         current += w;
     }
-    _width = w;
-    _height = h;
+    free(source);
+    return tmp;
+}
 
-    free(tiles);
-    tiles = tmp;
+Tile *Map::currentTileArray()
+{
+    return(tempTiles)?tempTiles:tiles;
 }
 
 void Map::shiftTiles(Direction dir)
 {
+    Tile *currentTiles = currentTileArray();
     switch(dir){
     case UP:
     {
         Tile *firstRow = (Tile*)malloc(sizeof(Tile)*_width);
-        memcpy(firstRow, tiles, sizeof(Tile)*_width);
-        memcpy(tiles, &tiles[_width], sizeof(Tile)*_width*(_height-1));
-        memcpy(&tiles[_width*(_height-1)], firstRow, sizeof(Tile)*_width);
+        memcpy(firstRow, currentTiles, sizeof(Tile)*_width);
+        memcpy(currentTiles, &currentTiles[_width], sizeof(Tile)*_width*(_height-1));
+        memcpy(&currentTiles[_width*(_height-1)], firstRow, sizeof(Tile)*_width);
         movePlayer(0,-1,true);
         break;
     }
     case DOWN:
     {
         Tile *lastRow = (Tile*)malloc(sizeof(Tile)*_width);
-        memcpy(lastRow, &tiles[(_height-1)*_width], sizeof(Tile)*_width);
-        memcpy(&tiles[_width], tiles, sizeof(Tile)*_width*(_height-1));
-        memcpy(tiles, lastRow, sizeof(Tile)*_width);
+        memcpy(lastRow, &currentTiles[(_height-1)*_width], sizeof(Tile)*_width);
+        memcpy(&currentTiles[_width], currentTiles, sizeof(Tile)*_width*(_height-1));
+        memcpy(currentTiles, lastRow, sizeof(Tile)*_width);
         movePlayer(0,1,true);
         break;
     }
     case LEFT:
     {
         for(int i = 0; i < _height; i++){
-            Tile first = tiles[i*_width];
-            memcpy(&tiles[i*_width], &tiles[i*_width+1], sizeof(Tile)*(_width-1));
-            tiles[i*_width+_width-1] = first;
+            Tile first = currentTiles[i*_width];
+            memcpy(&currentTiles[i*_width], &currentTiles[i*_width+1], sizeof(Tile)*(_width-1));
+            currentTiles[i*_width+_width-1] = first;
         }
         movePlayer(-1,0,true);
         break;
@@ -516,9 +538,9 @@ void Map::shiftTiles(Direction dir)
     case RIGHT:
     {
         for(int i = 0; i < _height; i++){
-            Tile last = tiles[i*_width+_width-1];
-            memcpy(&tiles[i*_width+1], &tiles[i*_width], sizeof(Tile)*(_width-1));
-            tiles[i*_width] = last;
+            Tile last = currentTiles[i*_width+_width-1];
+            memcpy(&currentTiles[i*_width+1], &currentTiles[i*_width], sizeof(Tile)*(_width-1));
+            currentTiles[i*_width] = last;
         }
         movePlayer(1,0,true);
         break;
@@ -590,6 +612,21 @@ void Map::drawTilePixmap(QPainter *qp,
 
 }
 
+void Map::drawTileSprite(QPainter *qp, SpriteIdentifier spriteIdentifier, int x, int y, QPoint pixelOffset, int tileSize, int *tickIndex)
+{
+    Sprite *sprite = GetSprite(spriteIdentifier);
+    int frameIndex = (*tickIndex/sprite->frameDuration) % sprite->nFrames;
+    QPixmap frame = *sprite->frames[frameIndex];
+
+
+    int depth = (sprite->zHeight/32.0f)*tileSize;
+    qp->drawPixmap(QRect(pixelOffset.x() + x * tileSize - depth,
+                         pixelOffset.y() + y * tileSize - depth,
+                         tileSize + depth,
+                         tileSize + depth), frame);
+    (*tickIndex)++;
+}
+
 void Map::draw(QPainter *qp, QRect rect)
 {
     if(_width <= 0 || _height <= 0) return;
@@ -600,10 +637,12 @@ void Map::draw(QPainter *qp, QRect rect)
 
     QPoint topLeft(rect.x() + pixelOffset.x(), rect.y() + pixelOffset.y());
 
+    Tile *toDraw = currentTileArray();
+
     for(int x = 0; x < _width;x++){
         for(int y = 0; y < _height; y++){
 
-            Tile *tile = &tiles[x + _width * y];
+            Tile *tile = &toDraw[x + _width * y];
 
             if(tile->flags & HAS_BOX)
             {
@@ -622,12 +661,19 @@ void Map::draw(QPainter *qp, QRect rect)
 
                 decoration = PixmapForDecoration(tile->decoration);
 
-                PixmapIdentifier tilePixmap = PixmapForTileType(tile->type);
-                if(tile->type == WATER && tile->flags & HAS_SNOW)
+                if(tile->type != WATER)
                 {
-                    tilePixmap = PIXMAP_ICE;
+                    PixmapIdentifier tilePixmap = PixmapForTileType(tile->type);
+                    if(tile->type == WATER && tile->flags & HAS_SNOW)
+                    {
+                        tilePixmap = PIXMAP_ICE;
+                    }
+                    drawTilePixmap(qp, tilePixmap, x, y, topLeft, tileSize, 0, overlay, decoration);
                 }
-                drawTilePixmap(qp, tilePixmap, x, y, topLeft, tileSize, 0, overlay, decoration);
+                else
+                {
+                    drawTileSprite(qp, SPRITE_WATER, x, y, topLeft, tileSize, &tile->tick);
+                }
 
                 if(tile->flags & IS_TARGET)
                 {
@@ -654,7 +700,12 @@ void Map::draw(QPainter *qp, QRect rect)
             }
 
             if(_playerVisible && x == _player.x() && y == _player.y()){
-                drawTilePixmap(qp, PIXMAP_PLAYER, x, y, topLeft, tileSize, 0);
+                drawTileSprite(qp, SPRITE_PLAYER, x, y, topLeft, tileSize, &_playerTickIndex);
+                //playerFrameIndex++;
+
+                //if(playerFrameIndex >= 4) playerFrameIndex = 0;
+
+                //drawTilePixmap(qp, PIXMAP_PLAYER, x, y, topLeft, tileSize, 0);
             }
 
         }
@@ -756,16 +807,16 @@ bool Map::tileIsEmptyOrItemCanBePushed(int x, int y, Direction direction, int it
     return true;
 }
 
-Tile *Map::tile(int x, int y)
+Tile *Map::tile(int x, int y, bool useCurrent)
 {
     if(!tileInBounds(x,y)) return NULL;
-    return &tiles[x + _width * y];
+    return &((useCurrent)?currentTileArray():tiles)[x + _width * y];
 }
 
-int Map::tileFlags(int x, int y)
+int Map::tileFlags(int x, int y, bool useCurrent)
 {
     if(!tileInBounds(x,y)) return 0;
-    return tile(x,y)->flags;
+    return tile(x,y,useCurrent)->flags;
 }
 
 //ENTITIES
@@ -1015,6 +1066,37 @@ bool Map::isSolved()
     return _solved;
 }
 
+bool Map::isEditing()
+{
+    return(tempTiles);
+}
+
+void Map::beginEditing()
+{
+    if(tempTiles) return;
+
+    tempTiles = (Tile*)malloc(sizeof(Tile)*_width*_height);
+    memcpy(tempTiles, tiles, sizeof(Tile)*_width*_height);
+
+}
+
+void Map::applyChanges()
+{
+    if(tempTiles){
+        memcpy(tiles, tempTiles, sizeof(Tile)*_width*_height);
+        free(tempTiles);
+        tempTiles = NULL;
+    }
+}
+
+void Map::revertChanges()
+{
+    if(tempTiles){
+        free(tempTiles);
+        tempTiles = NULL;
+    }
+}
+
 Entity *Map::setTileInteractable(int x, int y, Entity *interactable)
 {
     Tile *tile = this->tile(x, y);
@@ -1048,6 +1130,7 @@ void Map::revertMove()
 Map::~Map()
 {
     free(tiles);
+    if(tempTiles)free(tempTiles);
     delete _moveStack;
 
     for(int i = 0; i < N_ENTITY_COLORS; i++)

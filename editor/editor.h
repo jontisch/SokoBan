@@ -33,10 +33,13 @@ public:
     void draw(QPainter *painter, QRect renderRect);
 
     void mousePress(QMouseEvent *event, QRect renderRect, QWidget *parentWidget);
+    void mouseRelease(QMouseEvent *event);
 private:
     void initToolBoxes();
 
     Map *_map;
+
+
 
     RadioClusterEditorWidget *_toolboxRadioCluster;
 

@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _state = STATE_MENU;
 
     InitPixmaps();
+    InitSprites();
 
     setMouseTracking(true);
 
@@ -32,7 +33,10 @@ MainWindow::MainWindow(QWidget *parent) :
     populateMaps();
     populateCustomMaps();
 
-
+    timer = new QTimer(this);
+    timer->setInterval(33);
+    timer->start();
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerTimeout()));
     _highscores = NULL;
 }
 
@@ -85,7 +89,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         _activeMenu = _mainMenu;
         _mainMenu->setPos(0);
 
-        this->repaint();
+        //this->repaint();
         return;
     }
 
@@ -181,13 +185,20 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         _editor->keyPress(event);
     }
 
-    this->repaint();
+    //this->repaint();
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    if(_state == STATE_EDITOR){
+        _editor->mouseRelease(event);
+    }
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
     if(_state == STATE_EDITOR) _editor->mouseMove(event, this->rect().adjusted(0,32,0,0));
-    repaint();
+    //repaint();
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
@@ -204,6 +215,11 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     {
         _state = STATE_EDITOR;
     }
+    //repaint();
+}
+
+void MainWindow::timerTimeout()
+{
     repaint();
 }
 
@@ -300,5 +316,6 @@ void MainWindow::paintEvent(QPaintEvent *event)
         qp.drawRoundedRect(QRect(0,0,72,32), 10,10);
         qp.setFont(QFont("Arial", 16, 50));
         qp.drawText(QRect(0, 0, 72, 32), "Exit", (QTextOption)Qt::AlignCenter);
-        qp.restore();}
+        qp.restore();
+    }
 }
