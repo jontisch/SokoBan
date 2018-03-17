@@ -51,17 +51,19 @@ enum PixmapIdentifier
     PIXMAP_DOOR_HORIZONTAL,
     PIXMAP_BUTTON_UP,
     PIXMAP_BUTTON_DOWN,
-    PIXMAP_CACTUS
+    PIXMAP_CACTUS,
+    PIXMAP_MONSTER
 };
-#define N_PIXMAPS 21
+#define N_PIXMAPS 22
 
 
 enum SpriteIdentifier
 {
     SPRITE_PLAYER,
-    SPRITE_WATER
+    SPRITE_WATER,
+    SPRITE_MONSTER,
+    N_SPRITES
 };
-#define N_SPRITES 2
 
 struct Sprite
 {

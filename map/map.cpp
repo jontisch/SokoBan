@@ -35,7 +35,8 @@ Map::Map(int width, int height, int playerX, int playerY):
     _solved(false),
     _lastHighscoreIndex(-1),
     tempTiles(NULL),
-    _playerTickIndex(0)
+    _playerTickIndex(0),
+    _monsterTickIndex(0)
 
 {
     tiles = (Tile *)malloc(sizeof(Tile)* width * height);
@@ -53,7 +54,8 @@ Map::Map(QString filename):
     _solved(false),
     _lastHighscoreIndex(-1),
     tempTiles(NULL),
-    _playerTickIndex(0)
+    _playerTickIndex(0),
+    _monsterTickIndex(0)
 {
     setup();
 
@@ -695,7 +697,10 @@ void Map::draw(QPainter *qp, QRect rect)
                 {
                     drawTilePixmap(qp, PIXMAP_SNOWBALL_BIG, x, y, topLeft, tileSize, 0);
                 }
-
+                if(tile->flags & HAS_MONSTER)
+                {
+                    drawTileSprite(qp, SPRITE_MONSTER, x, y, topLeft, tileSize, &_monsterTickIndex);
+                }
 
             }
 
@@ -783,6 +788,13 @@ bool Map::tileHasMovable(int x, int y, TileFlag *outputMovable)
     if(t->flags & HAS_SNOWBALL_MEDIUM){ *outputMovable = HAS_SNOWBALL_MEDIUM; return true; }
     if(t->flags & HAS_SNOWBALL_BIG){ *outputMovable = HAS_SNOWBALL_BIG; return true; }
     return false;
+}
+
+bool Map::tileIsWalkableAndEmpty(int x, int y)
+{
+    if(!tileIsWalkable(x, y)) return false;
+    if(tileHasMovable(x, y)) return false;
+    return true;
 }
 
 bool Map::tileIsEmptyOrItemCanBePushed(int x, int y, Direction direction, int itemsBetween)
@@ -944,6 +956,33 @@ void Map::movePlayer(int dx, int dy, bool force)
             setPlayerPosition(newX, newY);
             move.playerDX = dx;
             move.playerDY = dy;
+
+            for(int x = 0; x < _width; x++)
+            {
+                for(int y = 0; y < _height; y++)
+                {
+                    Tile *t = tile(x, y);
+                    if(!(t->flags & HAS_MONSTER)) continue;
+                    int xDiff = _player.x() - x;
+                    int yDiff = _player.y() - y;
+
+                    int nextX = x + min(1, max(-1, xDiff));
+                    int nextY = y + min(1, max(-1, yDiff));
+                    if(abs(xDiff) > abs(yDiff) && tileIsWalkableAndEmpty(nextX, y))
+                        nextY = y;
+                    else if(tileIsWalkableAndEmpty(x, nextY))
+                        nextX = x;
+                    else
+                        continue;
+
+                    MoveStack::addTileChange(&move, x, y, tileFlags(x, y));
+                    MoveStack::addTileChange(&move, nextX, nextY, tileFlags(nextX, nextY));
+
+                    removeTileFlag(x, y, HAS_MONSTER);
+                    addTileFlag(nextX, nextY, HAS_MONSTER);
+                }
+            }
+
             _moveStack->pushMove(move);
             _movesMade++;
         }

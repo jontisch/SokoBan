@@ -11,8 +11,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     _state = STATE_MENU;
 
-    InitPixmaps();
     InitSprites();
+    InitPixmaps();
 
     setMouseTracking(true);
 

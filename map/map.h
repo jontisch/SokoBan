@@ -97,6 +97,7 @@ public:
     void applyChanges();
     void revertChanges();
 
+    bool tileIsWalkableAndEmpty(int x, int y);
 protected:
 
 private:
@@ -127,8 +128,12 @@ private:
     int _height;
     QPoint _startTile;
     bool _playerVisible;
+
     QPoint _player;
+
     int _playerTickIndex;
+    int _monsterTickIndex;
+
     MoveStack *_moveStack;
     int targetsLeft;
     int _movesMade;

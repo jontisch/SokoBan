@@ -100,6 +100,8 @@ PixmapIdentifier PixmapForTileFlag(TileFlag flag)
         return PIXMAP_SNOWBALL_MEDIUM;
     case HAS_SNOWBALL_BIG:
         return PIXMAP_SNOWBALL_BIG;
+    case HAS_MONSTER:
+        return PIXMAP_MONSTER;
     default:
         return PIXMAP_WATER;
     }

@@ -54,6 +54,18 @@ void InitSprites()
     {
         SPRITES[SPRITE_WATER].frames[i] = new QPixmap(water_sheet.copy(QRect(i*32, 0, 32, 32)));
     }
+
+
+    SPRITES[SPRITE_MONSTER].nFrames = 4;
+    SPRITES[SPRITE_MONSTER].zHeight = 0;
+    SPRITES[SPRITE_MONSTER].frameDuration = 5;
+    SPRITES[SPRITE_MONSTER].frames = (QPixmap **)malloc(sizeof(QPixmap *)*SPRITES[SPRITE_MONSTER].nFrames);
+    QPixmap monster_sheet(":/images/monster.png");
+    for(int i = 0; i < SPRITES[SPRITE_MONSTER].nFrames; i++)
+    {
+        SPRITES[SPRITE_MONSTER].frames[i] = new QPixmap(monster_sheet.copy(QRect(i*36, 0, 36, 36)));
+    }
+
 }
 Sprite *GetSprite(SpriteIdentifier identifier){
     return &SPRITES[identifier];
@@ -93,6 +105,8 @@ void InitPixmaps()
     PIXMAPS[PIXMAP_BUTTON_DOWN] = new QPixmap(":/images/button_down.png");
 
     PIXMAPS[PIXMAP_CACTUS] = new QPixmap(":/images/cactus.png");
+
+    PIXMAPS[PIXMAP_MONSTER] = GetSprite(SPRITE_MONSTER)->frames[0];
 
 }
 
