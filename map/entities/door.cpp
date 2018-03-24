@@ -1,66 +1,35 @@
 #include "door.h"
+#include "../tile.h"
+#include "../map.h"
 
 
-float Door::height()
+void InitDoor(Door *door, Map *map, int tileX, int tileY, EntityColor color, Direction direction)
 {
-    return 0.1875f;
+    InitEntity(&door->entity, map, tileX, tileY, (direction == UP || direction == DOWN) ? DOOR_VERTICAL : DOOR_HORIZONTAL);
+    InitColored(&door->colored, (Entity *)door, color);
+    InitRotated(&door->rotated, direction);
+    door->isOpen = false;
 }
 
-void Door::setToggleValue(bool value)
-{
-    _isOpen = value;
-}
-
-bool Door::blocksPlayer()
-{
-    return (!_isOpen); //TODO @Bug If you have a button in front of the door and you stand on it, you can enter the door tile and you'll be standing on a closed door.
-}
-
-EntityType Door::getEntityType()
-{
-    if (_rotation == UP  || _rotation == DOWN)
-        return DOOR_VERTICAL;
-    else
-        return DOOR_HORIZONTAL;
-}
-
-bool Door::isToggleable()
-{
-    return true;
-}
-
-bool Door::isRotated()
-{
-    return true;
-}
-
-bool Door::isColored()
-{
-    return true;
-}
-
-Door::Door(Map *map, EntityColor color) : Entity(map), Colored(map, color)
-{
-    _isOpen = false;
-}
-
-void Door::drawAt(QPainter *painter, QRect renderRect)
+void DrawDoorAt(Door *door, QPainter *painter, QRect tileRect)
 {
     //This is for the color overlay at the top of the door.
     //Calculated for when the door is vertical (_rotation is LEFT or RIGHT)
-    QColor color = qColor();
+    QColor color = EntityColorToQColor(door->colored.color);
 
-    float zOffset = (_isOpen) ? height() * renderRect.width() : 0;
+    float zOffset = (door->isOpen) ? EntityHeight((Entity *)door) * tileRect.width() : 0;
 
-    float colorLeft = (float)13/38*renderRect.width();
-    float colorTop = (float)1/38*renderRect.width();
-    float colorWidth = (float)2/38*renderRect.width();
-    float colorHeight = (float)30/38*renderRect.width();
+    float colorLeft = (float)13/38*tileRect.width();
+    float colorTop = (float)1/38*tileRect.width();
+    float colorWidth = (float)2/38*tileRect.width();
+    float colorHeight = (float)30/38*tileRect.width();
 
-    float maskWidth = (float)26/38*renderRect.width();
-    float maskHeight = renderRect.width();
+    float maskWidth = (float)26/38*tileRect.width();
+    float maskHeight = tileRect.width();
 
-    if(_rotation == UP || _rotation == DOWN)
+    Direction dir = door->rotated.direction;
+
+    if(dir == UP || dir == DOWN)
     {
         float tmp = maskHeight;
         maskHeight = maskWidth;
@@ -69,22 +38,36 @@ void Door::drawAt(QPainter *painter, QRect renderRect)
 
     painter->save();
 
-    painter->setClipRect(QRectF(renderRect.x(), renderRect.y(), maskWidth, maskHeight));
+    painter->setClipRect(QRectF(tileRect.x(), tileRect.y(), maskWidth, maskHeight));
 
     //There is one pixmap for up and down, and one for left/right
-    if(_rotation == UP || _rotation == DOWN)
+    if(dir == UP || dir == DOWN)
     {
-        painter->drawPixmap(renderRect.x() + zOffset, renderRect.y() + zOffset, renderRect.width(), renderRect.height(), *Pixmap(PIXMAP_DOOR_VERTICAL));
+        painter->drawPixmap(tileRect.x() + zOffset, tileRect.y() + zOffset, tileRect.width(), tileRect.height(), *Pixmap(PIXMAP_DOOR_VERTICAL));
 
         //measurements swapped here cuz rotated.
-        painter->fillRect(QRectF(renderRect.x() + zOffset + colorTop, renderRect.y() + zOffset + colorLeft, colorHeight, colorWidth), color);
+        painter->fillRect(QRectF(tileRect.x() + zOffset + colorTop, tileRect.y() + zOffset + colorLeft, colorHeight, colorWidth), color);
     }
     else
     {
-        painter->drawPixmap(renderRect.x() + zOffset, renderRect.y() + zOffset, renderRect.width(), renderRect.height(), *Pixmap(PIXMAP_DOOR_HORIZONTAL));
-        painter->fillRect(QRectF(renderRect.x() + zOffset + colorLeft, renderRect.y() + zOffset + colorTop, colorWidth, colorHeight), color);
+        painter->drawPixmap(tileRect.x() + zOffset, tileRect.y() + zOffset, tileRect.width(), tileRect.height(), *Pixmap(PIXMAP_DOOR_HORIZONTAL));
+        painter->fillRect(QRectF(tileRect.x() + zOffset + colorLeft, tileRect.y() + zOffset + colorTop, colorWidth, colorHeight), color);
 
     }
 
     painter->restore();
+}
+
+void SetDoorState(Door *door, bool isOpen)
+{
+    Map *map = door->entity.map;
+
+
+    if(!map->tileHasMovable(door->entity.position.x(), door->entity.position.y()))
+    {
+        if(map->_player != door->entity.position)
+        {
+            door->isOpen = isOpen;
+        }
+    }
 }

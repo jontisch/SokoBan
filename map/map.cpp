@@ -427,16 +427,9 @@ bool Map::saveMap(QString filename)
             {
                 Entity *entity = t->entities.E[e];
                 out << x << "x" << y << ":";
-                out << entity->getEntityType();
+                out << entity->type;
 
-                if(IsColored(entity))
-                {
-                    Colored *colored = reinterpret_cast<Colored *>(entity);
-                    if(colored)
-                    {
-                        out << "," << colored->color() << "\n";
-                    }
-                }
+                if(IsColored(entity)) out << "," << ColoredComponent(entity)->color << "\n";
             }
         }
     }
@@ -690,7 +683,7 @@ void Map::draw(QPainter *qp, QRect rect)
                 for(int e = 0; e < tile->entities.N; e++)
                 {
                     Entity *entity = tile->entities.E[e];
-                    entity->drawAt(qp, calculateTileRect(x, y, topLeft, tileSize, entity->height()*tileSize, 0));
+                    DrawEntityAt(entity, qp, calculateTileRect(x, y, topLeft, tileSize, EntityHeight(entity)*tileSize, 0));
                 }
                 if(tile->flags & HAS_SNOWBALL_SMALL)
                 {
@@ -754,11 +747,11 @@ void Map::setTileFlags(int x, int y, int flags)
         //Tell the entity that a movable has entered or exited
         if(!hadMovable && hasMovable)
         {
-            entity->movableEntered(x, y);
+            MovableEnteredEntity(entity, x, y);
         }
         else if(hadMovable && !hasMovable)
         {
-            entity->movableExited(x, y);
+            MovableExitedEntity(entity, x, y);
         }
     }
 
@@ -773,7 +766,7 @@ bool Map::tileIsWalkable(int x, int y)
     for(int e = 0; e < tile->entities.N; e++)
     {
         Entity *entity = tile->entities.E[e];
-        if(entity->blocksPlayer()) return false;
+        if(EntityBlocksPlayer(entity)) return false;
     }
 
     TileType type = getTileType(x, y);
@@ -846,7 +839,7 @@ int Map::tileFlags(int x, int y, bool useCurrent)
 
 void Map::addEntity(int x, int y, EntityType type, EntityColor color)
 {
-    Entity *ent = entityFromEntityType(type, color, this);
+    Entity *ent = EntityFromEntityType(type, color, this, x, y);
     tile(x,y)->entities.add(&ent);
 }
 
@@ -854,6 +847,7 @@ void Map::removeEntity(int x, int y, Entity *entity)
 {
     Tile *t = tile(x,y);
     t->entities.remove(t->entities.indexOf(&entity));
+    free(entity);
 }
 
 //ENTITIES
@@ -989,11 +983,13 @@ bool Map::tileHasInteractable(int x, int y, Entity *interactable)
 }
 */
 
-void Map::addColoredEntity(Colored *colored)
+void Map::addColoredEntity(Entity *entity)
 {
-    Entity *entity = reinterpret_cast<Entity *>(colored);
+    if(!IsColored(entity)) return;
+
+    Colored *colored = ColoredComponent(entity);
     assert(colored);
-    entitiesByColor(colored->color())->add(&entity);
+    entitiesByColor(colored->color)->add(&entity);
 }
 
 //Move the entity to the right List when it changes color.
@@ -1001,13 +997,13 @@ void Map::updateEntityColor(Entity *entity, EntityColor oldColor)
 {
     if(!IsColored(entity)) return;
 
-    Colored *colored = reinterpret_cast<Colored *>(entity);
+    Colored *colored = ColoredComponent(entity);
 
     List<Entity *> *oldList = entitiesByColor(oldColor);
     int index = oldList->indexOf(&entity);
     if(index != -1)
         oldList->remove(index);
-    entitiesByColor(colored->color())->add(&entity);
+    entitiesByColor(colored->color)->add(&entity);
 }
 
 List<Entity *> *Map::entitiesByColor(EntityColor color)
@@ -1140,14 +1136,14 @@ void Map::setPlayerPosition(int x, int y)
         for(int e = 0; e < currentTile->entities.N; e++)
         {
             Entity *entity = currentTile->entities.E[e];
-            entity->playerExited(_player.x(), _player.y());
+            PlayerExitedEntity(entity, _player.x(), _player.y());
         }
 
     if(newTile != NULL)
         for(int e = 0; e < newTile->entities.N; e++)
         {
             Entity *entity = newTile->entities.E[e];
-            entity->playerEntered(x, y);
+            PlayerEnteredEntity(entity, x, y);
         }
 
 

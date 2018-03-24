@@ -51,7 +51,7 @@ const char *TileFlagName(TileFlag flag);
 const char *EntityTypeName(EntityType entity);
 
 
-Entity *entityFromEntityType(EntityType entity, EntityColor color, Map *map);
+Entity *EntityFromEntityType(EntityType entity, EntityColor color, Map *map, int tileX, int tileY);
 
 
 bool IsValidTileType(TileType type);

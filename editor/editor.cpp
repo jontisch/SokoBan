@@ -105,7 +105,7 @@ void Editor::operateOnTile(QPoint tile)
         for(int e = 0; e < t->entities.N; e++)
         {
             Entity *entity = t->entities.E[e];
-            if(entity->getEntityType() == selectedEntityType) break;
+            if(entity->type == selectedEntityType) break;
         }
         _map->addEntity(tile.x(), tile.y(), selectedEntityType, _entityColor);
         break;
@@ -113,7 +113,7 @@ void Editor::operateOnTile(QPoint tile)
         for(int e = 0; e < t->entities.N; e++)
         {
             Entity *entity = t->entities.E[e];
-            if(entity->getEntityType() == selectedEntityType)
+            if(entity->type == selectedEntityType)
             {
                 _map->removeEntity(tile.x(), tile.y(), entity);
                 e--;

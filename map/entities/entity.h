@@ -32,21 +32,7 @@ struct Entity
 {
     EntityType type;
     Map *map;
-};
-
-struct Door
-{
-    Entity entity;
-    Colored colored;
-    Toggleable toggleable;
-    Rotated rotated;
-};
-
-struct Button
-{
-    Entity entity;
-    Colored colored;
-    bool isDown;
+    QPoint position;
 };
 
 struct Colored
@@ -64,28 +50,26 @@ struct Rotated
     Direction direction;
 };
 
-void initEntity(Entity *entity, Map *map, EntityType type);
+void InitEntity(Entity *entity, Map *map, int tileX, int tileY, EntityType type);
 
-void initColored(Colored *colored, EntityColor entityColor);
+void InitColored(Colored *colored, Entity *entity, EntityColor entityColor);
 
-void initRotated(Rotated *rotated, Direction direction);
-
-void initToggleable(Toggleable *toggleable, bool value);
+void InitRotated(Rotated *rotated, Direction direction);
 
 //Map calls drawAt when it finds an entity at a tile.
-void drawEntityAt(Entity *entity, QPainter *painter, QRect renderRect);
+void DrawEntityAt(Entity *entity, QPainter *painter, QRect renderRect);
 
     //Returns the height of the entity (1.0 is 1.0*tilesize). Used to calculate the render rect.
-float entityHeight(Entity *entity);
+float EntityHeight(Entity *entity);
 
     // If this returns true, the player wont be able to walk on the tile it's on.
-bool entityBlocksPlayer(Entity *entity);
+bool EntityBlocksPlayer(Entity *entity);
 
     //Called by map
-void playerEnteredEntity(Entity *entity, int tileX, int tileY);
-void playerExitedEntity(Entity *entity, int tileX, int tileY);
-void movableEnteredEntity(Entity *entity, int tileX, int tileY);
-void movableExitedEntity(Entity *entity, int tileX, int tileY);
+void PlayerEnteredEntity(Entity *entity, int tileX, int tileY);
+void PlayerExitedEntity(Entity *entity, int tileX, int tileY);
+void MovableEnteredEntity(Entity *entity, int tileX, int tileY);
+void MovableExitedEntity(Entity *entity, int tileX, int tileY);
     //-
 
 
@@ -94,12 +78,12 @@ void setToggleValue(Entity *entity, bool value);
 
 
 QColor EntityColorToQColor(EntityColor color);
-void setEntityColor(Entity *entity,  EntityColor color);
+void SetEntityColor(Entity *entity,  EntityColor color);
 
 bool IsToggleable(Entity *entity);
 bool IsRotated(Entity *entity);
 bool IsColored(Entity *entity);
 
-
+Colored *ColoredComponent(Entity *entity);
 
 #endif // ENTITY_H

@@ -11,27 +11,29 @@
  * Det kommer gå att fråga Map efter alla entities med en viss färg.
  */
 
-void initEntity(Entity *entity, Map *map, EntityType type)
+void InitEntity(Entity *entity, Map *map, int tileX, int tileY, EntityType type)
 {
     entity->map = map;
     entity->type = type;
+    entity->position = QPoint(tileX, tileY);
 }
 
-void initColored(Colored *colored, EntityColor entityColor)
+void InitColored(Colored *colored, Entity *entity, EntityColor entityColor)
 {
     colored->color = entityColor;
+    entity->map->addColoredEntity(entity);
 }
 
-void initRotated(Rotated *rotated, Direction direction)
+void InitRotated(Rotated *rotated, Direction direction)
 {
    rotated->direction = direction;
 }
 
-void initToggleable(Toggleable *toggleable, bool value){
+void InitToggleable(Toggleable *toggleable, bool value){
     toggleable->value = value;
 }
 
-float entityHeight(Entity *entity)
+float EntityHeight(Entity *entity)
 {
     switch (entity->type) {
     case DOOR_HORIZONTAL:
@@ -40,57 +42,64 @@ float entityHeight(Entity *entity)
     default:
         return 0.0f;
     }
-
-
 }
 
-bool entityBlocksPlayer(Entity *entity)
+bool EntityBlocksPlayer(Entity *entity)
 {
-    return true;
+    switch(entity->type)
+    {
+    case DOOR_HORIZONTAL:
+    case DOOR_VERTICAL:
+        return !((Door *)entity)->isOpen;
+    case BUTTON:
+        return false;
+    default:
+        return true;
+    }
 }
 
-void playerEntered(Entity *entity, int tileX, int tileY)
+void PlayerEnteredEntity(Entity *entity, int tileX, int tileY)
 {
     switch(entity->type)
     {
     case BUTTON:
-        ((Button *)entity)->isDown = true;
+        SetButtonState((Button *)entity, true);
         break;
     default:
         break;
     }
 }
 
-void playerExited(Entity *entity, int tileX, int tileY)
+void PlayerExitedEntity(Entity *entity, int tileX, int tileY)
 {
     switch(entity->type)
     {
     case BUTTON:
-        ((Button *)entity)->isDown = false;
+        SetButtonState((Button *)entity, false);
         break;
     default:
         break;
     }
 }
 
-void movableEntered(Entity *entity, int tileX, int tileY)
+void MovableEnteredEntity(Entity *entity, int tileX, int tileY)
 {
     switch(entity->type)
     {
     case BUTTON:
-        ((Button *)entity)->isDown = true;
+        SetButtonState((Button *)entity, true);
         break;
     default:
         break;
     }
 }
 
-void movableExited(Entity *entity, int tileX, int tileY)
+void MovableExitedEntity(Entity *entity, int tileX, int tileY)
 {
     switch(entity->type)
     {
     case BUTTON:
-        ((Button *)entity)->isDown = false;
+        SetButtonState((Button *)entity, false);
         break;
     default:
         break;
@@ -98,21 +107,13 @@ void movableExited(Entity *entity, int tileX, int tileY)
 }
 
 
-void Toggleable::setToggleValue(Entity *entity, bool value)
+void SetEntityColor(Entity *entity, Colored *colored, EntityColor color)
 {
+    EntityColor oldColor = colored->color;
+    colored->color = color;
 
-}
-
-
-void setEntityColor(Entity *entity, EntityColor color)
-{
-
-    EntityColor oldColor = _color;
-    _color = color;
-
-    Entity *entity = reinterpret_cast<Entity *>(this);
     if(oldColor != color)
-        entity->_map->updateEntityColor(entity, oldColor);
+        entity->map->updateEntityColor(entity, oldColor);
 }
 
 QColor EntityColorToQColor(EntityColor color)
@@ -137,13 +138,23 @@ QColor EntityColorToQColor(EntityColor color)
 
 bool IsToggleable(Entity *entity)
 {
-    if(dynamic_cast<Door *>(entity)) return true;
+    switch(entity->type)
+    {
+    case DOOR_HORIZONTAL:
+    case DOOR_VERTICAL:
+        return true;
+    }
     return false;
 }
 
 bool IsRotated(Entity *entity)
 {
-    if(dynamic_cast<Door *>(entity)) return true;
+    switch (entity->type)
+    {
+    case DOOR_HORIZONTAL:
+    case DOOR_VERTICAL:
+        return true;
+    }
     return false;
 }
 
@@ -152,7 +163,36 @@ bool IsColored(Entity *entity)
     return true;
 }
 
-void drawEntityAt(Entity *entity, QPainter *painter, QRect renderRect)
+void DrawEntityAt(Entity *entity, QPainter *painter, QRect renderRect)
 {
-
+    switch(entity->type)
+    {
+    case DOOR_HORIZONTAL:
+    case DOOR_VERTICAL:
+        DrawDoorAt((Door *)entity, painter, renderRect);
+        break;
+    case BUTTON:
+        DrawButtonAt((Button *)entity, painter, renderRect);
+        break;
+    default:
+        assert(false);
+        break;
+    }
 }
+
+Colored *ColoredComponent(Entity *entity)
+{
+    switch(entity->type)
+    {
+    case DOOR_HORIZONTAL:
+    case DOOR_VERTICAL:
+        return &((Door *)entity)->colored;
+    case BUTTON:
+        return &((Button *)entity)->colored;
+        break;
+    default:
+        assert(false);
+        break;
+    }
+}
+

@@ -17,6 +17,8 @@
 #define SOUND_DIR "sounds/"
 
 
+#define Alloc(Type) ((Type *)malloc(sizeof(Type)))
+
 enum Direction
 {
     LEFT,

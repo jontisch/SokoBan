@@ -135,30 +135,25 @@ PixmapIdentifier PixmapForEntity(EntityType entity)
     }
 }
 
-Entity *entityFromEntityType(EntityType entity, EntityColor color, Map *map){
+Entity *EntityFromEntityType(EntityType entity, EntityColor color, Map *map, int tileX, int tileY)
+{
     switch(entity)
     {
     case DOOR_VERTICAL:
-    {
-        Door *d = new Door(map, color);
-        d->setRotation(UP);
-        d->setColor(color);
-        return d;
-    }
     case DOOR_HORIZONTAL:
     {
-        Door *d = new Door(map, color);
-        d->setRotation(LEFT);
-        d->setColor(color);
-        return d;
+        Door *door = Alloc(Door);
+        InitDoor(door, map, tileX, tileY, color, (entity == DOOR_VERTICAL) ? UP : LEFT);
+        return (Entity *)door;
     }
     case BUTTON:
     {
-        Button *b = new Button(map, color);
-        b->setColor(color);
-        return b;
+        Button *button = Alloc(Button);
+        InitButton(button, map, tileX, tileY, color);
+        return (Entity *)button;
     }
     default:
+        assert(false);
         return NULL;
     }
 }
@@ -175,8 +170,3 @@ PixmapIdentifier PixmapForDecoration(TileDecoration decoration)
     }
 }
 
-bool TileTypeHasSprite(TileType type){
-    switch(type){
-
-    }
-}

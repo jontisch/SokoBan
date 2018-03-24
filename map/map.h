@@ -75,7 +75,7 @@ public:
     bool tileHasInteractable(int x, int y, Entity *interactable);
 
     //These two are called by a ColoredEntity so that map can keep track of them (see ColoredEntity::setColor and ColoredEntity::Colored())
-    void addColoredEntity(Colored *colored);
+    void addColoredEntity(Entity *entity);
     void updateEntityColor(Entity *entity, EntityColor oldColor);
 
     //NOTE: The returned collection is the same as the internal one.
@@ -98,9 +98,14 @@ public:
     void revertChanges();
 
     bool tileIsWalkableAndEmpty(int x, int y);
+    bool tileHasMovable(int x, int y, TileFlag *outputMovable = NULL);
+    bool tileIsEmptyOrItemCanBePushed(int x, int y, Direction direction, int itemsBetween = 0);
 
 
     Tile *tile(int x, int y, bool useCurrent=false);
+
+
+    QPoint _player;
 
 private:
     void drawTilePixmap(QPainter *qp,
@@ -118,8 +123,7 @@ private:
                        int tileSize,
                        int *tickIndex);
 
-    bool tileHasMovable(int x, int y, TileFlag *outputMovable = NULL);
-    bool tileIsEmptyOrItemCanBePushed(int x, int y, Direction direction, int itemsBetween = 0);
+
     void pushMovable(int x, int y, Direction dir, void *move);
 
     Tile *tiles;
@@ -131,7 +135,6 @@ private:
     QPoint _startTile;
     bool _playerVisible;
 
-    QPoint _player;
 
     int _playerTickIndex;
     int _monsterTickIndex;

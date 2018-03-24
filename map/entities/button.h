@@ -3,9 +3,20 @@
 
 #include "entity.h"
 
-void initButton(Button* button, Map *map);
 
-void drawButtonAt(Button *button, QRect tileRect);
+struct Button
+{
+    Entity entity;
+    Colored colored;
+    bool isDown;
+};
+
+void InitButton(Button* button, Map *map, int tileX, int tileY, EntityColor color);
+
+void DrawButtonAt(Button *button, QPainter *painter, QRect tileRect);
+
+
+void SetButtonState(Button *button, bool isDown);
 
 
 #endif // BUTTON_H

@@ -111,25 +111,25 @@ void Menu::nextPos(bool forward){
     int nextPos = _currentPos;
     int counter = 0;
     while(true){
-            nextPos += (forward)? 1 : -1;
+        nextPos += (forward)? 1 : -1;
 
-            if(nextPos == _currentPos || (nextPos == 0 && counter > 0 && _currentPos == -1)) break;
+        if(nextPos == _currentPos || (nextPos == 0 && counter > 0 && _currentPos == -1)) break;
 
-            if(nextPos < 0){
-                nextPos = _menuItems.N;
-            }else if(nextPos >= _menuItems.N){
-                nextPos = -1;
-            }
+        if(nextPos < 0){
+            nextPos = _menuItems.N;
+        }else if(nextPos >= _menuItems.N){
+            nextPos = -1;
+        }
 
+        if(nextPos >= 0)
+        {
             MenuItem *nextItem = _menuItems.E[nextPos];
             if(nextItem->isVisible()){
                 _currentPos = nextPos;
                 break;
             }
-
-
-            counter++;
-
+        }
+        counter++;
      }
 
     updateMap();
