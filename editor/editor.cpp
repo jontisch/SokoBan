@@ -74,6 +74,8 @@ QRect Editor::toolArea(QRect renderRect)
 
 void Editor::operateOnTile(QPoint tile)
 {
+    Tile *t = _map->tile(tile.x(), tile.y());
+
     switch(_mode)
     {
     case SET_TYPE:
@@ -100,10 +102,23 @@ void Editor::operateOnTile(QPoint tile)
         _map->removeTileFlag(tile.x(), tile.y(), selectedFlag);
         break;
     case ADD_ENTITY:
+        for(int e = 0; e < t->entities.N; e++)
+        {
+            Entity *entity = t->entities.E[e];
+            if(entity->getEntityType() == selectedEntityType) break;
+        }
         _map->addEntity(tile.x(), tile.y(), selectedEntityType, _entityColor);
         break;
     case REMOVE_ENTITY:
-        _map->removeEntity(tile.x(), tile.y());
+        for(int e = 0; e < t->entities.N; e++)
+        {
+            Entity *entity = t->entities.E[e];
+            if(entity->getEntityType() == selectedEntityType)
+            {
+                _map->removeEntity(tile.x(), tile.y(), entity);
+                e--;
+            }
+        }
         break;
 
     }

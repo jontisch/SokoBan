@@ -35,7 +35,7 @@ void MenuItem::setVisible(bool visible)
 }
 
 
-Menu::Menu(QString title, Menu *ownerMenu, QString text, bool visible):_menuItems(8),_title(title), MenuItem((text != NULL)?text:title, ownerMenu, visible), _currentPos(-1){
+Menu::Menu(QString title, Menu *ownerMenu, QString text, bool visible):_title(title), MenuItem((text != NULL)?text:title, ownerMenu, visible), _currentPos(-1){
     _bgMap = new Map(QString(":/maps/menumap.fml"));
     _bgMap->setPlayerVisible(false);
 
@@ -59,10 +59,9 @@ void Menu::renderMenu(QRect renderRect, QPainter *qp)
     qp->drawText(QRect(m.itemX,m.menuOffset,m.itemWidth,m.itemHeight),Qt::AlignCenter,_title);
     qp->setFont(QFont(QString("sans serif"), m.itemFontSize, 10));
     int c = 0;
-    for(int i = 0; i < _menuItems.size(); i++ ){
 
-        assert(_menuItems.isValid(i));
-
+    for(int i = 0; i < _menuItems.N; i++)
+    {
         if((*_menuItems.getPointer(i))->renderMenuItem(calculateItemRenderRect(c, &m), qp, (_currentPos==i))){
             c++;
         }
@@ -77,7 +76,7 @@ Menu *Menu::menuSelect()
 
 void Menu::addMenuItem(MenuItem *item)
 {
-    _menuItems.add(item);
+    _menuItems.add(&item);
     if(_currentPos == -1){
         this->nextPos(true);
     }
@@ -91,8 +90,8 @@ MenuItem *Menu::getSelected()
 void Menu::setPos(int pos)
 {
     _currentPos = pos;
-    MenuItem *nextItem;
-    if(!_menuItems.get(pos, &nextItem) || !nextItem->isVisible()) nextPos(true);
+    MenuItem *nextItem = _menuItems.E[pos];
+    if(!nextItem->isVisible()) nextPos(true);
     else updateMap();
 }
 
@@ -108,7 +107,7 @@ Menu::~Menu()
 
 void Menu::nextPos(bool forward){
 
-    if(_menuItems.size() == 0) return;
+    if(_menuItems.N == 0) return;
     int nextPos = _currentPos;
     int counter = 0;
     while(true){
@@ -117,13 +116,13 @@ void Menu::nextPos(bool forward){
             if(nextPos == _currentPos || (nextPos == 0 && counter > 0 && _currentPos == -1)) break;
 
             if(nextPos < 0){
-                nextPos = _menuItems.size();
-            }else if(nextPos >= _menuItems.size()){
+                nextPos = _menuItems.N;
+            }else if(nextPos >= _menuItems.N){
                 nextPos = -1;
             }
 
-            MenuItem *nextItem;
-            if(_menuItems.get(nextPos, &nextItem) && nextItem->isVisible()){
+            MenuItem *nextItem = _menuItems.E[nextPos];
+            if(nextItem->isVisible()){
                 _currentPos = nextPos;
                 break;
             }
@@ -168,11 +167,11 @@ QRect Menu::calculateItemRenderRect(int index, MenuRenderingMeasurements *m)
 
 void Menu::updateMap(){
 
-    MenuItem *item;
     int c = 0;
     int i = 0;
-    while(_menuItems.get(i, &item))
+    while(i < _menuItems.N)
     {
+        MenuItem *item = _menuItems.E[i];
         if(item->isVisible()){
             QPoint tile(_bgMap->width()/2 - 10/2, 3 + 4*(c+1) + 3/2);
             if(i == _currentPos){

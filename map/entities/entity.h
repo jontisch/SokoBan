@@ -9,11 +9,14 @@
 
 class Map;
 
+
 enum EntityColor
 {
     ENTITY_COLOR_BLUE = 1,
     ENTITY_COLOR_RED = 2,
-    ENTITY_COLOR_GREEN = 3
+    ENTITY_COLOR_GREEN = 3,
+
+    ENTITY_COLOR_NONE = 0
 };
 #define N_ENTITY_COLORS 3
 
@@ -25,65 +28,77 @@ enum EntityType {
 #define N_ENTITIES 3
 
 
-class Entity
+struct Entity
 {
-public:
-    Entity(Map *map);
+    EntityType type;
+    Map *map;
+};
 
-    //Map calls drawAt when it finds an entity at a tile.
-    virtual void drawAt(QPainter *painter, QRect renderRect) = 0;
+struct Door
+{
+    Entity entity;
+    Colored colored;
+    Toggleable toggleable;
+    Rotated rotated;
+};
+
+struct Button
+{
+    Entity entity;
+    Colored colored;
+    bool isDown;
+};
+
+struct Colored
+{
+    EntityColor color;
+};
+
+struct Toggleable
+{
+    bool value;
+};
+
+struct Rotated
+{
+    Direction direction;
+};
+
+void initEntity(Entity *entity, Map *map, EntityType type);
+
+void initColored(Colored *colored, EntityColor entityColor);
+
+void initRotated(Rotated *rotated, Direction direction);
+
+void initToggleable(Toggleable *toggleable, bool value);
+
+//Map calls drawAt when it finds an entity at a tile.
+void drawEntityAt(Entity *entity, QPainter *painter, QRect renderRect);
 
     //Returns the height of the entity (1.0 is 1.0*tilesize). Used to calculate the render rect.
-    virtual float height();
+float entityHeight(Entity *entity);
 
     // If this returns true, the player wont be able to walk on the tile it's on.
-    virtual bool blocksPlayer();
+bool entityBlocksPlayer(Entity *entity);
 
     //Called by map
-    virtual void playerEntered(int tileX, int tileY);
-    virtual void playerExited(int tileX, int tileY);
-    virtual void movableEntered(int tileX, int tileY);
-    virtual void movableExited(int tileX, int tileY);
+void playerEnteredEntity(Entity *entity, int tileX, int tileY);
+void playerExitedEntity(Entity *entity, int tileX, int tileY);
+void movableEnteredEntity(Entity *entity, int tileX, int tileY);
+void movableExitedEntity(Entity *entity, int tileX, int tileY);
     //-
 
-    //For example, doors are toggleable. When all buttons with the same color as the toggleable are down,
-    // setToggleValue's parameter is true - otherwise it's false.
-    virtual bool isToggleable();
-    virtual void setToggleValue(bool value);
-    //--
 
-    //This should only return true if the object inherits from Button.
-    virtual bool isButton();
+void setToggleValue(Entity *entity, bool value);
 
-    virtual EntityType getEntityType() = 0;
 
-    EntityColor color();
-    void setColor(EntityColor color);
-    QColor qColor();
-protected:
-    Map *_map;
-    EntityColor _color;
-};
 
-class Rotated
-{
-public:
-    void setRotation(Direction rotation);
+QColor EntityColorToQColor(EntityColor color);
+void setEntityColor(Entity *entity,  EntityColor color);
 
-protected:
-    Direction _rotation;
-};
-
-class ColoredEntity: public Entity
-{
-public:
-    ColoredEntity(Map *map);
-    EntityColor color();
-    void setColor(EntityColor color);
-    QColor qColor();
-protected:
-
-};
+bool IsToggleable(Entity *entity);
+bool IsRotated(Entity *entity);
+bool IsColored(Entity *entity);
 
 
 

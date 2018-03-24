@@ -34,15 +34,15 @@ void EditorWidget::setHover(bool hover)
 
 
 
-ListEditorWidget::ListEditorWidget(QString title, QSize gridUnits, QPoint gridPos):EditorWidget(title, gridUnits, gridPos), _listNames(32), _listThumbs(32)
+ListEditorWidget::ListEditorWidget(QString title, QSize gridUnits, QPoint gridPos):EditorWidget(title, gridUnits, gridPos)
 {
 
 }
 
 void ListEditorWidget::addItem(QString *item, QPixmap *pixmap)
 {
-    _listNames.add(item);
-    _listThumbs.add(pixmap);
+    _listNames.add(&item);
+    _listThumbs.add(&pixmap);
 }
 
 void ListEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient)
@@ -72,7 +72,7 @@ void ListEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QLinear
     painter->drawText(headerRect, Qt::AlignCenter,_title);
     painter->setPen(Qt::white);
     painter->setBrush(Qt::black);
-    for(int i = 0; i < _listNames.count(); i++){
+    for(int i = 0; i < _listNames.N; i++){
 
         painter->setFont(QFont(QString("sans serif"), m.itemFontSize, (i == _selected)?75:50));
         painter->drawPixmap(_area.left()+m.padding,
@@ -89,7 +89,7 @@ void ListEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QLinear
 
 void ListEditorWidget::select(int height){
     int index = heightToIndex(height);
-    if(index < _listNames.count() && index >= 0){
+    if(index < _listNames.N && index >= 0){
         _selected = index;
     }
 
@@ -212,20 +212,20 @@ void RadioEditorWidget::setState(bool state)
 
 
 
-RadioClusterEditorWidget::RadioClusterEditorWidget(QString title, int index, QSize gridUnits, QPoint gridPos):EditorWidget(title, gridUnits, gridPos), _index(index),_radios(4)
+RadioClusterEditorWidget::RadioClusterEditorWidget(QString title, int index, QSize gridUnits, QPoint gridPos):EditorWidget(title, gridUnits, gridPos), _index(index)
 {
 
 }
 
 void RadioClusterEditorWidget::addRadio(RadioEditorWidget *radio)
 {
-    _radios.add(radio);
+    _radios.add(&radio);
 }
 
 RadioEditorWidget *RadioClusterEditorWidget::getPointer(int index)
 {
-    RadioEditorWidget *result = NULL;
-    return (_radios.get(index, &result)?result:NULL);
+    if(index > _radios.N) return NULL;
+    return _radios.E[index];
 }
 
 
@@ -233,13 +233,12 @@ RadioEditorWidget *RadioClusterEditorWidget::getPointer(int index)
 void RadioClusterEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient)
 {
     _area = renderRect;
-    int count = _radios.count();
+    int count = _radios.N;
     painter->setBrush(Qt::black);
     painter->setPen(Qt::white);
     painter->drawRect(renderRect);
     for(int i = 0; i < count; i++){
-        RadioEditorWidget *radio;
-        _radios.get(i, &radio);
+        RadioEditorWidget *radio = _radios.E[i];
         radio->renderWidget(painter, QRect(renderRect.left()+i*renderRect.width()/count, renderRect.top(), renderRect.width()/count, renderRect.height()), gradient);
     }
 }
@@ -250,11 +249,10 @@ int RadioClusterEditorWidget::select(int x, int y, int index)
         _index = index;
 
     }else {
-        _index = x/(_area.width()/_radios.count());
+        _index = x/(_area.width()/_radios.N);
     }
-    for(int i = 0; i < _radios.count(); i++ ){
-        RadioEditorWidget *radio;
-        _radios.get(i, &radio);
+    for(int i = 0; i < _radios.N; i++ ){
+        RadioEditorWidget *radio = _radios.E[i];
         radio->setState(_index == i);
     }
     return _index;
@@ -400,14 +398,14 @@ QString TextfieldEditorWidget::getText()
 
 
 
-ToolboxEditorWidget::ToolboxEditorWidget(QString title, QSize gridSize, QSize gridUnits, QPoint gridPos):EditorWidget(title, gridUnits, gridPos), _gridSize(gridSize), _widgets(16)
+ToolboxEditorWidget::ToolboxEditorWidget(QString title, QSize gridSize, QSize gridUnits, QPoint gridPos):EditorWidget(title, gridUnits, gridPos), _gridSize(gridSize)
 {
 
 }
 
 void ToolboxEditorWidget::addWidget(EditorWidget *widget)
 {
-    _widgets.add(widget);
+    _widgets.add(&widget);
 }
 
 void ToolboxEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient)
@@ -415,9 +413,8 @@ void ToolboxEditorWidget::renderWidget(QPainter *painter, QRect renderRect, QLin
     _area = renderRect;
     QRect widgetRect;
     painter->fillRect(_area, Qt::black);
-    for(int i = 0; i < _widgets.count(); i++){
-        EditorWidget *w;
-        _widgets.get(i, &w);
+    for(int i = 0; i < _widgets.N; i++){
+        EditorWidget *w = _widgets.E[i];
 
         widgetRect = QRect(renderRect.left() + (renderRect.width()/_gridSize.width()) * w->getgridPos()->x(),
                            renderRect.top() + (renderRect.height()/_gridSize.height()) * w->getgridPos()->y(),

@@ -100,8 +100,6 @@ PixmapIdentifier PixmapForTileFlag(TileFlag flag)
         return PIXMAP_SNOWBALL_MEDIUM;
     case HAS_SNOWBALL_BIG:
         return PIXMAP_SNOWBALL_BIG;
-    case HAS_MONSTER:
-        return PIXMAP_MONSTER;
     default:
         return PIXMAP_WATER;
     }
@@ -142,21 +140,21 @@ Entity *entityFromEntityType(EntityType entity, EntityColor color, Map *map){
     {
     case DOOR_VERTICAL:
     {
-        Door *d = new Door(map);
+        Door *d = new Door(map, color);
         d->setRotation(UP);
         d->setColor(color);
         return d;
     }
     case DOOR_HORIZONTAL:
     {
-        Door *d = new Door(map);
+        Door *d = new Door(map, color);
         d->setRotation(LEFT);
         d->setColor(color);
         return d;
     }
     case BUTTON:
     {
-        Button *b = new Button(map);
+        Button *b = new Button(map, color);
         b->setColor(color);
         return b;
     }

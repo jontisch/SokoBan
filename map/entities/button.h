@@ -3,30 +3,9 @@
 
 #include "entity.h"
 
+void initButton(Button* button, Map *map);
 
-class Button: public Entity
-{
-public:
-    Button(Map *map);
-    void drawAt(QPainter *painter, QRect tileRect);
+void drawButtonAt(Button *button, QRect tileRect);
 
-    bool blocksPlayer();
-
-    void playerEntered(int tileX, int tileY);
-    void playerExited(int tileX, int tileY);
-    void movableEntered(int tileX, int tileY);
-    void movableExited(int tileX, int tileY);
-
-    void setIsDown(bool value);
-
-    // Returns true, because this is a button.
-    bool isButton();
-
-    bool isDown();
-
-    EntityType getEntityType();
-private:
-    bool _isDown;
-};
 
 #endif // BUTTON_H

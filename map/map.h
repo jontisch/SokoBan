@@ -8,7 +8,7 @@
 #include "move_stack.h"
 #include "tile.h"
 #include "entities/entity.h"
-#include "../collection.h"
+#include "../collections.h"
 #include <cstdlib>
 #include <cstring>
 #include <QPainter>
@@ -60,7 +60,7 @@ public:
     int tileFlags(int x, int y, bool useCurrent=false);
 
     void addEntity(int x, int y, EntityType entity, EntityColor color);
-    void removeEntity(int x, int y);
+    void removeEntity(int x, int y, Entity *entity);
 
 
     void addTileFlagToRect(QRect rect, TileFlag flag);
@@ -75,11 +75,11 @@ public:
     bool tileHasInteractable(int x, int y, Entity *interactable);
 
     //These two are called by a ColoredEntity so that map can keep track of them (see ColoredEntity::setColor and ColoredEntity::Colored())
-    void addColoredEntity(Entity *entity);
+    void addColoredEntity(Colored *colored);
     void updateEntityColor(Entity *entity, EntityColor oldColor);
 
     //NOTE: The returned collection is the same as the internal one.
-    Collection<Entity *> *entitiesByColor(EntityColor color);
+    List<Entity *> *entitiesByColor(EntityColor color);
     int movesMade();
 
     void setName(QString name);
@@ -98,7 +98,9 @@ public:
     void revertChanges();
 
     bool tileIsWalkableAndEmpty(int x, int y);
-protected:
+
+
+    Tile *tile(int x, int y, bool useCurrent=false);
 
 private:
     void drawTilePixmap(QPainter *qp,
@@ -143,13 +145,12 @@ private:
     QString _name;
 
     void setup();
-    Tile *tile(int x, int y, bool useCurrent=false);
 
     //Calculate the render rect for a tile
     QRect calculateTileRect(int x, int y, QPoint mapPixelOffset, int tileSize, int depth, int zOffset);
 
     //This sorts entities by colors
-    Collection<Entity *> *_coloredEntities[N_ENTITY_COLORS];
+    List<Entity *> _coloredEntities[N_ENTITY_COLORS] = {{0}};
 
     struct {
         QString name;

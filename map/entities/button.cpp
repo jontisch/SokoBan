@@ -1,16 +1,15 @@
 #include "button.h"
 #include <QDebug>
 #include <QPainterPath>
-#include "../../collection.h"
+#include "../../collections.h"
 #include "../map.h"
 
-
-Button::Button(Map *map): Entity(map)
+void initButton(Button *button, Map *map)
 {
-    _isDown = false;
+    initEntity(&button->entity, map, BUTTON);
 }
 
-void Button::drawAt(QPainter *painter, QRect tileRect)
+void drawButtonAt(QPainter *painter, QRect tileRect)
 {
     //TODO This method is probably slow because of all the rects and masks and stuff.
 
@@ -52,10 +51,7 @@ void Button::drawAt(QPainter *painter, QRect tileRect)
 
 }
 
-bool Button::blocksPlayer()
-{
-    return false;
-}
+
 
 void Button::playerEntered(int tileX, int tileY)
 {
@@ -85,39 +81,31 @@ void Button::setIsDown(bool value)
 
     // Count the number of buttons that are down and have the same color as this button.
     // Then set the toggle value of all toggleables (e.g. doors) to true if there are no unpressed buttons with this color.
-    Collection<Entity *> *entities = _map->entitiesByColor(_color);
+    List<Entity *> *entities = _map->entitiesByColor(_color);
     int unpressedButtonsFound = 0;
-    for(int i = 0; i < entities->size(); i++)
+    for(int i = 0; i < entities->N; i++)
     {
-        Entity *entity;
-        if(entities->get(i, &entity) && entity->isButton())
+        Entity *entity = entities->E[i];
+        Button *button = dynamic_cast<Button *>(entity);
+        if(button && button->isDown())
         {
-            qDebug() << ((Button*)entity)->isDown();
-            if(!((Button*)entity)->isDown())
-            {
-                unpressedButtonsFound++;
-            }
+            unpressedButtonsFound++;
         }
     }
 
     bool toggleValue = (unpressedButtonsFound <= 0);
-    for(int i = 0; i < entities->size(); i++)
+    for(int i = 0; i < entities->N; i++)
     {
-        Entity *entity;
-        if(entities->get(i, &entity))
-        {
-            if(entity->isToggleable())
-            {
-                entity->setToggleValue(toggleValue);
-            }
-        }
+        Entity *entity = entities->E[i];
+
+        if(!IsToggleable(entity)) continue;
+
+        Toggleable *toggleable = reinterpret_cast<Toggleable *>(entity);
+
+        toggleable->setToggleValue(toggleValue);
     }
 }
 
-bool Button::isButton()
-{
-    return true;
-}
 
 bool Button::isDown()
 {
@@ -127,4 +115,11 @@ bool Button::isDown()
 EntityType Button::getEntityType()
 {
     return BUTTON;
+}
+
+
+
+bool Button::isColored()
+{
+    return true;
 }

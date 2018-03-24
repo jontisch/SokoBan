@@ -1,6 +1,6 @@
 #ifndef EDITORWIDGET_H
 #define EDITORWIDGET_H
-#include "../collection.h"
+#include "../collections.h"
 #include "../map/tile.h"
 #include "../global.h"
 #include <QPainter>
@@ -38,7 +38,7 @@ public:
     void renderWidget(QPainter *painter, QRect renderRect, QLinearGradient *gradient);
 private:
     QSize _gridSize;
-    Collection<EditorWidget*> _widgets;
+    List<EditorWidget*> _widgets = {0};
 };
 
 
@@ -78,7 +78,7 @@ public:
     int select(int x, int y, int index = -1);
 private:
     int _index;
-    Collection<RadioEditorWidget*> _radios;
+    List<RadioEditorWidget*> _radios = {0};
 };
 
 
@@ -163,8 +163,8 @@ private:
     };
     QRect calculateItemRenderRect(int index, ListRenderingMeasurements *m);
     ListEditorWidget::ListRenderingMeasurements calculateRenderingMeasurements(QRect renderRect);
-    Collection<QString*> _listNames;
-    Collection<QPixmap*> _listThumbs;
+    List<QString*> _listNames = {0};
+    List<QPixmap*> _listThumbs = {0};
     int _selected;
     int heightToIndex(int height);
 };

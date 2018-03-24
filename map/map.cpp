@@ -6,6 +6,7 @@
 #include "../audiolibrary.h"
 #include <thread>
 #include <math.h>
+#include <assert.h>
 
 
 using namespace std;
@@ -13,13 +14,6 @@ using namespace std;
 void Map::setup()
 {
     _moveStack = new MoveStack();
-
-
-    for(int i = 0; i < N_ENTITY_COLORS; i++)
-    {
-        _coloredEntities[i] = new Collection<Entity *>(8);
-    }
-
 
 }
 
@@ -208,7 +202,9 @@ Map::Map(QString filename):
             else
             {
                 EntityType type = (EntityType)atoi(commaSplit.at(0).toLatin1().data());
-                EntityColor color = (EntityColor)atoi(commaSplit.at(1).toLatin1().data());
+                EntityColor color = ENTITY_COLOR_NONE;
+                if(commaSplit.count() > 1)
+                    color = (EntityColor)atoi(commaSplit.at(1).toLatin1().data());
                 addEntity(x,y,type,color);
             }
 
@@ -427,11 +423,21 @@ bool Map::saveMap(QString filename)
 
             Tile *t = tile(x,y);
 
-            if(t->interactable != NULL){
+            for(int e = 0; e < t->entities.N; e++)
+            {
+                Entity *entity = t->entities.E[e];
                 out << x << "x" << y << ":";
-                out << t->interactable->getEntityType() << "," << t->interactable->color() << "\n";
-            }
+                out << entity->getEntityType();
 
+                if(IsColored(entity))
+                {
+                    Colored *colored = reinterpret_cast<Colored *>(entity);
+                    if(colored)
+                    {
+                        out << "," << colored->color() << "\n";
+                    }
+                }
+            }
         }
     }
     mapFile.close();
@@ -681,9 +687,10 @@ void Map::draw(QPainter *qp, QRect rect)
                 {
                     drawTilePixmap(qp, PIXMAP_TARGET, x, y, topLeft, tileSize);
                 }
-                if(tile->interactable != NULL)
+                for(int e = 0; e < tile->entities.N; e++)
                 {
-                    tile->interactable->drawAt(qp, calculateTileRect(x, y, topLeft, tileSize, tile->interactable->height()*tileSize, 0));
+                    Entity *entity = tile->entities.E[e];
+                    entity->drawAt(qp, calculateTileRect(x, y, topLeft, tileSize, entity->height()*tileSize, 0));
                 }
                 if(tile->flags & HAS_SNOWBALL_SMALL)
                 {
@@ -696,10 +703,6 @@ void Map::draw(QPainter *qp, QRect rect)
                 else if(tile->flags & HAS_SNOWBALL_BIG)
                 {
                     drawTilePixmap(qp, PIXMAP_SNOWBALL_BIG, x, y, topLeft, tileSize, 0);
-                }
-                if(tile->flags & HAS_MONSTER)
-                {
-                    drawTileSprite(qp, SPRITE_MONSTER, x, y, topLeft, tileSize, &_monsterTickIndex);
                 }
 
             }
@@ -745,16 +748,17 @@ void Map::setTileFlags(int x, int y, int flags)
         targetsLeft++;
     }
 
-    if(t->interactable)
+    for(int e = 0; e < t->entities.N; e++)
     {
-        //Tell the interactable that a movable has entered or exited
+        Entity *entity = t->entities.E[e];
+        //Tell the entity that a movable has entered or exited
         if(!hadMovable && hasMovable)
         {
-            t->interactable->movableEntered(x, y);
+            entity->movableEntered(x, y);
         }
         else if(hadMovable && !hasMovable)
         {
-            t->interactable->movableExited(x, y);
+            entity->movableExited(x, y);
         }
     }
 
@@ -765,7 +769,13 @@ bool Map::tileIsWalkable(int x, int y)
 {
     Tile *tile = this->tile(x, y);
     if(tile == NULL) return false;
-    if(tile->interactable != NULL && tile->interactable->blocksPlayer()) return false;
+
+    for(int e = 0; e < tile->entities.N; e++)
+    {
+        Entity *entity = tile->entities.E[e];
+        if(entity->blocksPlayer()) return false;
+    }
+
     TileType type = getTileType(x, y);
     return (type != WALL && type != WATER);
 }
@@ -837,13 +847,13 @@ int Map::tileFlags(int x, int y, bool useCurrent)
 void Map::addEntity(int x, int y, EntityType type, EntityColor color)
 {
     Entity *ent = entityFromEntityType(type, color, this);
-
-    setTileInteractable(x,y,ent);
+    tile(x,y)->entities.add(&ent);
 }
 
-void Map::removeEntity(int x, int y)
+void Map::removeEntity(int x, int y, Entity *entity)
 {
-    setTileInteractable(x, y, NULL);
+    Tile *t = tile(x,y);
+    t->entities.remove(t->entities.indexOf(&entity));
 }
 
 //ENTITIES
@@ -957,32 +967,6 @@ void Map::movePlayer(int dx, int dy, bool force)
             move.playerDX = dx;
             move.playerDY = dy;
 
-            for(int x = 0; x < _width; x++)
-            {
-                for(int y = 0; y < _height; y++)
-                {
-                    Tile *t = tile(x, y);
-                    if(!(t->flags & HAS_MONSTER)) continue;
-                    int xDiff = _player.x() - x;
-                    int yDiff = _player.y() - y;
-
-                    int nextX = x + min(1, max(-1, xDiff));
-                    int nextY = y + min(1, max(-1, yDiff));
-                    if(abs(xDiff) > abs(yDiff) && tileIsWalkableAndEmpty(nextX, y))
-                        nextY = y;
-                    else if(tileIsWalkableAndEmpty(x, nextY))
-                        nextX = x;
-                    else
-                        continue;
-
-                    MoveStack::addTileChange(&move, x, y, tileFlags(x, y));
-                    MoveStack::addTileChange(&move, nextX, nextY, tileFlags(nextX, nextY));
-
-                    removeTileFlag(x, y, HAS_MONSTER);
-                    addTileFlag(nextX, nextY, HAS_MONSTER);
-                }
-            }
-
             _moveStack->pushMove(move);
             _movesMade++;
         }
@@ -991,6 +975,7 @@ void Map::movePlayer(int dx, int dy, bool force)
 
 }
 
+/*
 bool Map::tileHasInteractable(int x, int y, Entity *interactable)
 {
     Tile *tile = this->tile(x, y);
@@ -1002,25 +987,32 @@ bool Map::tileHasInteractable(int x, int y, Entity *interactable)
     }
     return false;
 }
+*/
 
-void Map::addColoredEntity(Entity *entity)
+void Map::addColoredEntity(Colored *colored)
 {
-    entitiesByColor(entity->color())->add(entity);
+    Entity *entity = reinterpret_cast<Entity *>(colored);
+    assert(colored);
+    entitiesByColor(colored->color())->add(&entity);
 }
 
-//Move the entity to the right collection when it changes color.
+//Move the entity to the right List when it changes color.
 void Map::updateEntityColor(Entity *entity, EntityColor oldColor)
 {
-    Collection<Entity *> *oldCollection = entitiesByColor(oldColor);
-    int index = oldCollection->indexOf(entity);
+    if(!IsColored(entity)) return;
+
+    Colored *colored = reinterpret_cast<Colored *>(entity);
+
+    List<Entity *> *oldList = entitiesByColor(oldColor);
+    int index = oldList->indexOf(&entity);
     if(index != -1)
-        oldCollection->remove(index);
-    entitiesByColor(entity->color())->add(entity);
+        oldList->remove(index);
+    entitiesByColor(colored->color())->add(&entity);
 }
 
-Collection<Entity *> *Map::entitiesByColor(EntityColor color)
+List<Entity *> *Map::entitiesByColor(EntityColor color)
 {
-    return _coloredEntities[color-1];
+    return &_coloredEntities[color-1];
 }
 
 int Map::movesMade()
@@ -1136,25 +1128,28 @@ void Map::revertChanges()
     }
 }
 
-Entity *Map::setTileInteractable(int x, int y, Entity *interactable)
-{
-    Tile *tile = this->tile(x, y);
-    if(tile == NULL) return NULL;
-    Entity *result = tile->interactable;
-    tile->interactable = interactable;
-    return result;
-}
 
 void Map::setPlayerPosition(int x, int y)
 {
     Tile *currentTile = tile(_player.x(), _player.y());
     Tile *newTile = tile(x, y);
 
-    //Tell the interactables that the player has exited/entered their tiles.
-    if(currentTile != NULL && currentTile->interactable != NULL)
-            currentTile->interactable->playerExited(_player.x(), _player.y());
-    if(newTile != NULL && newTile->interactable != NULL)
-            newTile->interactable->playerEntered(x, y);
+    //Tell the entities that the player has exited/entered their tiles.
+
+    if(currentTile != NULL)
+        for(int e = 0; e < currentTile->entities.N; e++)
+        {
+            Entity *entity = currentTile->entities.E[e];
+            entity->playerExited(_player.x(), _player.y());
+        }
+
+    if(newTile != NULL)
+        for(int e = 0; e < newTile->entities.N; e++)
+        {
+            Entity *entity = newTile->entities.E[e];
+            entity->playerEntered(x, y);
+        }
+
 
     _player.setX(x);
     _player.setY(y);
@@ -1171,9 +1166,4 @@ Map::~Map()
     free(tiles);
     if(tempTiles)free(tempTiles);
     delete _moveStack;
-
-    for(int i = 0; i < N_ENTITY_COLORS; i++)
-    {
-        delete _coloredEntities[i];
-    }
 }

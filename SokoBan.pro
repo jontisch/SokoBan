@@ -40,13 +40,13 @@ SOURCES += global.cpp \
     highscorelist.cpp \
     gamedelegate.cpp \
     editor/editor.cpp \
-    editor/editorwidget.cpp
+    editor/editorwidget.cpp \
+    collections.cpp
 
 HEADERS  += game.h \
     mainwindow.h \
     global.h \
     menuitem.h \
-    collection.h \
     menuactiondelegate.h \
     map/map.h \
     map/move_stack.h \
@@ -59,7 +59,8 @@ HEADERS  += game.h \
     highscorelist.h \
     gamedelegate.h \
     editor/editor.h \
-    editor/editorwidget.h
+    editor/editorwidget.h \
+    collections.h
 
 FORMS    += mainwindow.ui
 

@@ -4,7 +4,7 @@
 #include <QRect>
 #include <QPainter>
 #include "global.h"
-#include "collection.h"
+#include "collections.h"
 #include "game.h"
 #include "menuactiondelegate.h"
 #include "map/tile.h"
@@ -46,7 +46,7 @@ public:
     ~Menu();
 protected:
     QString _title;
-    Collection<MenuItem*> _menuItems;
+    List<MenuItem*> _menuItems = {0};
 private:
 
     struct MenuRenderingMeasurements

@@ -5,6 +5,7 @@
 #include "entities/entity.h"
 #include "entities/door.h"
 #include "entities/button.h"
+#include "collections.h"
 
 enum TileDecoration
 {
@@ -29,10 +30,9 @@ enum TileFlag {
     WAS_SNOW = 16,
     HAS_SNOWBALL_SMALL = 32,
     HAS_SNOWBALL_MEDIUM = 64,
-    HAS_SNOWBALL_BIG = 128,
-    HAS_MONSTER = 256
+    HAS_SNOWBALL_BIG = 128
 };
-#define N_TILEFLAGS 9 //Don't count NO_TILE_FLAGS
+#define N_TILEFLAGS 8 //Don't count NO_TILE_FLAGS
 
 enum TileType {
     WATER = 0,
@@ -60,7 +60,7 @@ struct Tile
 {
     TileType type;
     long flags; //Use TileFlag:s
-    Entity *interactable;
+    List<Entity *> entities = {0};
     TileDecoration decoration;
     int tick;
     TileEffect effect;

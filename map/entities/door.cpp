@@ -6,11 +6,6 @@ float Door::height()
     return 0.1875f;
 }
 
-bool Door::isToggleable()
-{
-    return true;
-}
-
 void Door::setToggleValue(bool value)
 {
     _isOpen = value;
@@ -29,7 +24,22 @@ EntityType Door::getEntityType()
         return DOOR_HORIZONTAL;
 }
 
-Door::Door(Map *map) : Entity(map)
+bool Door::isToggleable()
+{
+    return true;
+}
+
+bool Door::isRotated()
+{
+    return true;
+}
+
+bool Door::isColored()
+{
+    return true;
+}
+
+Door::Door(Map *map, EntityColor color) : Entity(map), Colored(map, color)
 {
     _isOpen = false;
 }

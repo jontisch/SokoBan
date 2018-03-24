@@ -5,22 +5,22 @@
 
 
 
-class Door: public Entity, public Rotated
+class Door: public Entity, public Rotated, public Colored, public Toggleable
 {
 public:
-    Door(Map *map);
+    Door(Map *map, EntityColor color);
     void drawAt(QPainter *painter, QRect tileRect);
     float height();
 
-    //This returns true, because a door is a toggleable. If this returns false, setToggleValue won't be called when buttons change.
-    bool isToggleable();
-
-    //Called when button states are changed. Value will be true if all buttons with the door's color are down.
-    void setToggleValue(bool value);
-
     bool blocksPlayer();
 
+    void setToggleValue(bool value);
+
     EntityType getEntityType();
+    bool isToggleable();
+    bool isRotated();
+    bool isColored();
+
 private:
     bool _isOpen;
 };
