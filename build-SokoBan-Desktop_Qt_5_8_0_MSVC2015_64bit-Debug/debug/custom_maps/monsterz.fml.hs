@@ -1,4 +1,0 @@
-EDDE
-99
-GUNNAR
-256

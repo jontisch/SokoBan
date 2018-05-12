@@ -1,0 +1,32 @@
+<RCC>
+    <qresource prefix="/">
+        <file>maps/menumap.fml</file>
+        <file>maps/highscore.fml</file>
+        <file>maps/level_select.fml</file>
+        <file>images/player.png</file>
+        <file>images/watertile.png</file>
+        <file>images/boxtile.png</file>
+        <file>images/walltile.png</file>
+        <file>images/floortile.png</file>
+        <file>images/targettile.png</file>
+        <file>images/snowtile.png</file>
+        <file>images/ex_snow.png</file>
+        <file>images/lavatile.png</file>
+        <file>images/snowball_small.png</file>
+        <file>images/snowball_medium.png</file>
+        <file>images/snowball_big.png</file>
+        <file>images/icetile.png</file>
+        <file>images/grasstile.png</file>
+        <file>images/sandtile.png</file>
+        <file>images/door_closed_h.png</file>
+        <file>images/door_closed_v.png</file>
+        <file>images/button_up.png</file>
+        <file>images/button_down.png</file>
+        <file>images/cactus.png</file>
+        <file>images/player_spritesheet.png</file>
+        <file>images/watertile_spritesheet.png</file>
+        <file>sounds/push_box.wav</file>
+        <file>sounds/push_box_new.wav</file>
+        <file>images/monster.png</file>
+    </qresource>
+</RCC>
