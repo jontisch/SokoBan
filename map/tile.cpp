@@ -115,6 +115,8 @@ const char *EntityTypeName(EntityType entity)
         return "Vertical door";
     case BUTTON:
         return "Button";
+    case MONSTER:
+        return "Monster";
     default:
         return "Unknown entity";
     }
@@ -130,6 +132,8 @@ PixmapIdentifier PixmapForEntity(EntityType entity)
         return PIXMAP_DOOR_HORIZONTAL;
     case BUTTON:
         return PIXMAP_BUTTON_UP;
+    case MONSTER:
+        return PIXMAP_MONSTER;
     default:
         return PIXMAP_FLOOR;
     }
@@ -151,6 +155,12 @@ Entity *EntityFromEntityType(EntityType entity, EntityColor color, Map *map, int
         Button *button = Alloc(Button);
         InitButton(button, map, tileX, tileY, color);
         return (Entity *)button;
+    }
+    case MONSTER:
+    {
+        Monster *monster = Alloc(Monster);
+        InitMonster(monster, map, tileX, tileY);
+        return (Entity *)monster;
     }
     default:
         assert(false);

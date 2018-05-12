@@ -5,6 +5,7 @@
 #include "entities/entity.h"
 #include "entities/door.h"
 #include "entities/button.h"
+#include "entities/monster.h"
 #include "collections.h"
 
 enum TileDecoration

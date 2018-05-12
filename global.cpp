@@ -31,6 +31,11 @@ int YModifiedByDirection(int y, Direction direction, int delta)
     }
 }
 
+Direction RandomDirection()
+{
+    return (Direction)(rand() % 4);
+}
+
 
 void InitSprites()
 {

@@ -23,9 +23,10 @@ enum EntityColor
 enum EntityType {
     DOOR_VERTICAL = 0,
     DOOR_HORIZONTAL = 1,
-    BUTTON = 2
+    BUTTON = 2,
+    MONSTER = 3
 };
-#define N_ENTITIES 3
+#define N_ENTITIES 4
 
 
 struct Entity
@@ -75,7 +76,7 @@ void MovableExitedEntity(Entity *entity, int tileX, int tileY);
 
 void setToggleValue(Entity *entity, bool value);
 
-
+void MoveEntity(Entity *entity, Map *map, QPoint newPosition);
 
 QColor EntityColorToQColor(EntityColor color);
 void SetEntityColor(Entity *entity,  EntityColor color);
@@ -85,5 +86,7 @@ bool IsRotated(Entity *entity);
 bool IsColored(Entity *entity);
 
 Colored *ColoredComponent(Entity *entity);
+
+void MakeEntityMove(Entity *entity, Map *map);
 
 #endif // ENTITY_H

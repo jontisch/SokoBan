@@ -21,11 +21,13 @@
 
 enum Direction
 {
-    LEFT,
-    RIGHT,
-    UP,
-    DOWN
+    LEFT = 0,
+    RIGHT = 1,
+    UP = 2,
+    DOWN = 3
 };
+
+Direction RandomDirection();
 
 int XModifiedByDirection(int x, Direction direction, int delta = 1);
 int YModifiedByDirection(int y, Direction direction, int delta = 1);

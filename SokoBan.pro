@@ -41,7 +41,8 @@ SOURCES += global.cpp \
     gamedelegate.cpp \
     editor/editor.cpp \
     editor/editorwidget.cpp \
-    collections.cpp
+    collections.cpp \
+    map/entities/monster.cpp
 
 HEADERS  += game.h \
     mainwindow.h \
@@ -60,7 +61,8 @@ HEADERS  += game.h \
     gamedelegate.h \
     editor/editor.h \
     editor/editorwidget.h \
-    collections.h
+    collections.h \
+    map/entities/monster.h
 
 FORMS    += mainwindow.ui
 

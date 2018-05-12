@@ -1,15 +1,11 @@
+
 #include "entity.h"
 #include "../../global.h"
 #include <QDebug>
 #include "../map.h"
 #include "assert.h"
+#include "monster.h"
 
-/*
- * Kommer göra dörrar och knappar till Entities som pekas på från tiles.
- *
- * Knappar öppnar dörrar som har samma färg som knappen själv när någonting står på den.
- * Det kommer gå att fråga Map efter alla entities med en viss färg.
- */
 
 void InitEntity(Entity *entity, Map *map, int tileX, int tileY, EntityType type)
 {
@@ -160,7 +156,17 @@ bool IsRotated(Entity *entity)
 
 bool IsColored(Entity *entity)
 {
-    return true;
+    switch(entity->type)
+    {
+    case DOOR_HORIZONTAL:
+    case DOOR_VERTICAL:
+    case BUTTON:
+        return true;
+        break;
+    default:
+        return false;
+        break;
+    }
 }
 
 void DrawEntityAt(Entity *entity, QPainter *painter, QRect renderRect)
@@ -173,6 +179,9 @@ void DrawEntityAt(Entity *entity, QPainter *painter, QRect renderRect)
         break;
     case BUTTON:
         DrawButtonAt((Button *)entity, painter, renderRect);
+        break;
+    case MONSTER:
+        DrawMonsterAt((Monster *)entity, painter, renderRect);
         break;
     default:
         assert(false);
@@ -196,3 +205,25 @@ Colored *ColoredComponent(Entity *entity)
     }
 }
 
+
+void MakeEntityMove(Entity *entity, Map *map)
+{
+    if(entity->type == MONSTER) MakeMonsterMove((Monster *)entity, map);
+}
+
+void MoveEntity(Entity *entity, Map *map, QPoint newPosition)
+{
+    Tile *oldTile = map->tile(entity->position.x(), entity->position.y());
+    for(int e = 0; e < oldTile->entities.N; e++)
+    {
+        if(oldTile->entities.E[e] == entity)
+        {
+            oldTile->entities.remove(e);
+            break;
+        }
+    }
+
+    entity->position = newPosition;
+    Tile *newTile = map->tile(entity->position.x(), entity->position.y());
+    newTile->entities.add(&entity);
+}

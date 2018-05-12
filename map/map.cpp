@@ -429,7 +429,8 @@ bool Map::saveMap(QString filename)
                 out << x << "x" << y << ":";
                 out << entity->type;
 
-                if(IsColored(entity)) out << "," << ColoredComponent(entity)->color << "\n";
+                if(IsColored(entity)) out << "," << ColoredComponent(entity)->color;
+                out  << "\n";
             }
         }
     }
@@ -967,6 +968,16 @@ void Map::movePlayer(int dx, int dy, bool force)
     }
     _solved = targetsLeft <= 0;
 
+
+    for(int x = 0; x < _width; x++)
+    {
+        for(int y = 0; y < _height; y++)
+        {
+            Tile *t = tile(x, y);
+            for(int e = 0; e < t->entities.N; e++) MakeEntityMove(t->entities.E[e], this);
+        }
+    }
+    
 }
 
 /*
