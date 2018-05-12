@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui multimedia
+QT       += core multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -35,14 +35,21 @@ SOURCES += global.cpp \
     map/entities/entity.cpp \
     map/entities/button.cpp \
     map/entities/door.cpp \
+    map/entities/monster.cpp \
     levelgrid.cpp \
     audiolibrary.cpp \
     highscorelist.cpp \
     gamedelegate.cpp \
     editor/editor.cpp \
-    editor/editorwidget.cpp \
     collections.cpp \
-    map/entities/monster.cpp
+    editor/editorwidget/buttoneditorwidget.cpp \
+    editor/editorwidget/editorwidget.cpp \
+    editor/editorwidget/labeleditorwidget.cpp \
+    editor/editorwidget/listeditorwidget.cpp \
+    editor/editorwidget/radioclustereditorwidget.cpp \
+    editor/editorwidget/radioeditorwidget.cpp \
+    editor/editorwidget/textfieldeditorwidget.cpp \
+    editor/editorwidget/toolboxeditorwidget.cpp \
 
 HEADERS  += game.h \
     mainwindow.h \
@@ -55,16 +62,21 @@ HEADERS  += game.h \
     map/entities/entity.h \
     map/entities/button.h \
     map/entities/door.h \
+    map/entities/monster.h \
     levelgrid.h \
     audiolibrary.h \
     highscorelist.h \
     gamedelegate.h \
     editor/editor.h \
-    editor/editorwidget.h \
     collections.h \
-    map/entities/monster.h
-
-FORMS    += mainwindow.ui
+    editor/editorwidget/buttoneditorwidget.h \
+    editor/editorwidget/editorwidget.h \
+    editor/editorwidget/labeleditorwidget.h \
+    editor/editorwidget/listeditorwidget.h \
+    editor/editorwidget/radioclustereditorwidget.h \
+    editor/editorwidget/radioeditorwidget.h \
+    editor/editorwidget/textfieldeditorwidget.h \
+    editor/editorwidget/toolboxeditorwidget.h \
 
 RESOURCES += \
     resources.qrc

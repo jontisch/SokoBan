@@ -7,7 +7,14 @@
 #include <QPaintEvent>
 #include <QMouseEvent>
 #include <QListWidgetItem>
-#include "editorwidget.h"
+#include "editorwidget/editorwidget.h"
+#include "editorwidget/buttoneditorwidget.h"
+#include "editorwidget/labeleditorwidget.h"
+#include "editorwidget/listeditorwidget.h"
+#include "editorwidget/radioeditorwidget.h"
+#include "editorwidget/radioclustereditorwidget.h"
+#include "editorwidget/textfieldeditorwidget.h"
+#include "editorwidget/toolboxeditorwidget.h"
 
 enum EditingMode
 {
@@ -39,10 +46,12 @@ private:
 
     Map *_map;
 
+    List<EditorWidget *> _widgets;
+
+
 
 
     RadioClusterEditorWidget *_toolboxRadioCluster;
-
 
     ToolboxEditorWidget *_drawToolBox;
     ToolboxEditorWidget *_dimensionsToolBox;
@@ -81,7 +90,6 @@ private:
     EntityType selectedEntityType;
 
     void updateUI();
-
     void operateOnTile(QPoint tile);
 
     TileType tileTypeForListRow[N_TILETYPES];
