@@ -1,0 +1,14 @@
+QMAKE_LICHECK_TIMESTAMP = "Thu Mar 30"
+QMAKE_DEFAULT_INCDIRS = \
+    d:/mingw/lib/gcc/mingw32/4.9.3/include/c++ \
+    d:/mingw/lib/gcc/mingw32/4.9.3/include/c++/mingw32 \
+    d:/mingw/lib/gcc/mingw32/4.9.3/include/c++/backward \
+    d:/mingw/lib/gcc/mingw32/4.9.3/include \
+    d:/mingw/include \
+    d:/mingw/lib/gcc/mingw32/4.9.3/include-fixed \
+    d:/mingw/mingw32/include
+QMAKE_DEFAULT_LIBDIRS = \
+    d:/mingw/lib/gcc/mingw32/4.9.3 \
+    d:/mingw/lib/gcc \
+    d:/mingw/mingw32/lib \
+    d:/mingw/lib
