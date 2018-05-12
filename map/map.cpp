@@ -322,12 +322,10 @@ void Map::setTilesInRect(QRect rect, TileType type)
     int x1, x2, y1, y2;
     rect.getCoords(&x1, &y1, &x2, &y2);
     rect = QRect(QPoint(min(x1, x2), min(y1, y2)), QPoint(max(x1, x2), max(y1, y2)));
-
     if(rect.left() < 0) rect.setLeft(0);
-    if(rect.top()) rect.setTop(0);
+    if(rect.top() < 0) rect.setTop(0);
     if(rect.right() >= _width) rect.setRight(_width-1);
     if(rect.bottom() >= _height) rect.setBottom(_height-1);
-
     for(int y = rect.top(); y <= rect.bottom(); y++)
     {
         for(int x = rect.left(); x <= rect.right(); x++)

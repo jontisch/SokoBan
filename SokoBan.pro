@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui multimedia
+QT       += core multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -40,8 +40,15 @@ SOURCES += global.cpp \
     highscorelist.cpp \
     gamedelegate.cpp \
     editor/editor.cpp \
-    editor/editorwidget.cpp \
-    collections.cpp
+    collections.cpp \
+    editor/editorwidget/buttoneditorwidget.cpp \
+    editor/editorwidget/editorwidget.cpp \
+    editor/editorwidget/labeleditorwidget.cpp \
+    editor/editorwidget/listeditorwidget.cpp \
+    editor/editorwidget/radioclustereditorwidget.cpp \
+    editor/editorwidget/radioeditorwidget.cpp \
+    editor/editorwidget/textfieldeditorwidget.cpp \
+    editor/editorwidget/toolboxeditorwidget.cpp \
 
 HEADERS  += game.h \
     mainwindow.h \
@@ -59,10 +66,15 @@ HEADERS  += game.h \
     highscorelist.h \
     gamedelegate.h \
     editor/editor.h \
-    editor/editorwidget.h \
-    collections.h
-
-FORMS    += mainwindow.ui
+    collections.h \
+    editor/editorwidget/buttoneditorwidget.h \
+    editor/editorwidget/editorwidget.h \
+    editor/editorwidget/labeleditorwidget.h \
+    editor/editorwidget/listeditorwidget.h \
+    editor/editorwidget/radioclustereditorwidget.h \
+    editor/editorwidget/radioeditorwidget.h \
+    editor/editorwidget/textfieldeditorwidget.h \
+    editor/editorwidget/toolboxeditorwidget.h \
 
 RESOURCES += \
     resources.qrc

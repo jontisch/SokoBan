@@ -1,5 +1,5 @@
 #include "editor.h"
-//#include <QApplication>
+
 #include <QListWidgetItem>
 #include <QDesktopWidget>
 #include <QDebug>
@@ -85,7 +85,6 @@ void Editor::operateOnTile(QPoint tile)
         _map->fillType(tile.x(), tile.y(), selectedTileType);
         break;
     case RECT_TYPE:
-        //qDebug() << _firstCorner << tile;
         _map->setTilesInRect(QRect(_firstCorner, tile), selectedTileType);
         break;
     case ADD_FLAG:

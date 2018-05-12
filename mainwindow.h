@@ -24,10 +24,6 @@ enum AppState
     STATE_EDITOR
 };
 
-namespace Ui {
-class MainWindow;
-}
-
 class MainWindow : public QMainWindow, public MenuActionDelegate, public GameDelegate
 {
     Q_OBJECT
